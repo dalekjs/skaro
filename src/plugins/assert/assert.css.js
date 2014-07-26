@@ -1,0 +1,11 @@
+// Status: IMPORTED
+// Docs: http://dalekjs.com/docs/assertions.html#meth-css
+// Source: https://github.com/dalekjs/dalek/blob/master/lib/dalek/assertions.js#L410-L499
+
+
+test.assert.css('#superColoredElement', 'background-color', 'rgba(255, 0, 0, 1)')
+
+// --------------------------------------------------------------------------------------
+
+
+
