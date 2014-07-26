@@ -10,7 +10,7 @@
 
 // --------------------------------------------------------------------------------------
 
-action.frame('#id-of-frame', function(dalek_file_signature) {
+browser.frame('#id-of-frame', function(dalek_file_signature) {
   return [
     'commands-performed-in-frame'
   ];
