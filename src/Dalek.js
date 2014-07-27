@@ -10,6 +10,7 @@ function Dalek(options) {
   this.options = options;
 
   this.initialize();
+  this.loadPlugins();
 }
 
 Dalek.prototype.initialize = function() {
@@ -28,6 +29,11 @@ Dalek.prototype.assert = function() {
   // TODO: the wrapping done in dalek.assert() has to register the function 
   // compare(value) { return options. }
   
+  console.log("foo", arguments);
+};
+
+Dalek.prototype.loadPlugins = function(path) {
+  require('./plugins/assert/assert.attribute')(this);
 };
 
 module.exports = Dalek;
