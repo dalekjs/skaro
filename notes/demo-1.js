@@ -18,7 +18,14 @@ module.exports = function (dalek, assert, action, wait) {
       assert.title('head title', 'Google'),
       // Error: attribute "title" of "head title" is "foobar" but "Google" was expected - demo-1.js:11
 
+      // working with custom comparison functions
+      assert.attribute('.selector', 'attr-name', 'value')
+      assert.attribute('.selector', 'attr-name', function(val){ return "no nononp"; })
+      assert.attribute('.selector', 'attr-name', is.between(2, 3))
 
+      // dealing with simple inversion of boolean comparison
+      assert.visible('selector')
+      assert.not.visible('selector')
 
       // associate the wait (reaction) with the click (action) 
       action.click('#button')
