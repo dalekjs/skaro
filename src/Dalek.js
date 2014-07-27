@@ -1,4 +1,5 @@
 var Q = require('q');
+var _ = require('lodash');
 
 // convenience accessors
 var DalekError = require('./core/DalekError');
@@ -12,14 +13,20 @@ var Registry = require('./core/Registry');
 var Unit = require('./core/Unit');
 
 function Dalek(options) {
-  this.options = options;
+  this.options = _.extend({}, Dalek.defaults);
+  _.extend(this.options, options);
 
   this.initialize();
   this.registry.initialize();
 }
 
+Dalek.defaults = {
+  selectorStrategy: 'css'
+};
+
 Dalek.prototype.initialize = function() {
   // convenience accessors
+  this._ = _;
   this.Q = Q;
   this.Error = DalekError(this);
   this.Selector = Selector(this);
