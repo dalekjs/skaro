@@ -16,9 +16,7 @@ assert.attribute({
 // --------------------------------------------------------------------------------------
 
 module.exports = function(dalek) {
-  // TODO: create color and text-output interface [keyword, selector, literal, index]
   var format = dalek.format;
-  // TODO: create driver interface
   var driver = dalek.driver;
 
   // plugin meta data
@@ -35,12 +33,8 @@ module.exports = function(dalek) {
       + ' equals ' + format.literal(options.value);
 
   var handler = function(options) {
-    // TODO: create Assertion (with promise interface)
     var assertion = new dalek.Assertion(label);
 
-    // TODO: define interface for access from plugins
-    // resolve(['value of element1', 'value of element2', …])
-    // reject('Selector did not match any elements')
     driver.element.attribute(options).then(function(values) {
       if (!values.length) {
         assertion.reject('Selector did not match any elements');
@@ -48,20 +42,20 @@ module.exports = function(dalek) {
       }
 
       values.some(function(value, index) {
-        // TODO: the wrapping done in dalek.assert() has to register the function 
-        // compare(value) { return options. }
         var result = options.compare(value);
         var message;
         if (result) {
+
+          // TODO: figure out how we can make messages simpler
           if (options.message) {
-            // TODO: figure out how this can play in
             message = options.message;
           } else if (typeof result === string) {
             message = result;
           } else {
-            message = format.index(index) + ' unexpected ' + format.literal(value);
+            message = ' unexpected ' + format.literal(value);
           }
-          assertion.reject(message);
+
+          assertion.reject(format.index(index) + message);
           return true;
         }
       });
