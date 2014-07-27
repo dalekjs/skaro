@@ -79,7 +79,7 @@ console.log(dalek.format);
       // WebDriver rejects on empty selector-result with string
       // any errors (including malformed selector) with DalekError
       assertion.reject
-    );
+    ).catch(dalek.catch);
 
     return assertion;
   };

@@ -36,6 +36,18 @@ Dalek.prototype.initialize = function() {
   this.assert = this.registry.assert;
 };
 
+Dalek.prototype.catch = function(error) {
+  // in some promise something went wrong on a script level
+  // in this case we need to be clear about what went wrong
+  // and halt execution. this is nothing we can recover from
+  console.error(error.stack);
+
+  // TODO: check if we need proper exit codes for different situations
+  // e.g. http://docs.openlinksw.com/virtuoso/signalsandexitcodes.html
+  console.log("\n\naborting Dalek because of script error in promise");
+  process.exit(1);
+};
+
 Dalek.prototype.unit = function(label, callback) {
   this.reporter.debug('registering a new Unit');
 };
