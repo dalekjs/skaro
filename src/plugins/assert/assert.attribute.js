@@ -2,7 +2,7 @@
 // Docs: http://dalekjs.com/docs/assertions.html#meth-attr
 // Source: https://github.com/dalekjs/dalek/blob/master/lib/dalek/assertions.js#L1294-L1368
 
-
+/*
 test.assert.attr('.jumpButton', 'type', 'submit');
 
 // --------------------------------------------------------------------------------------
@@ -14,7 +14,7 @@ assert.attribute({
 });
 
 // --------------------------------------------------------------------------------------
-
+*/
 module.exports = function(dalek) {
   var format = dalek.format;
   var driver = dalek.driver;
@@ -52,10 +52,10 @@ module.exports = function(dalek) {
           } else if (typeof result === string) {
             message = result;
           } else {
-            message = ' unexpected ' + format.literal(value);
+            message = ;
           }
-
-          assertion.reject(format.index(index) + message);
+          assertion.rejectWithMessage(index, options.message, result, ' unexpected ' + format.literal(value))
+          //assertion.reject(format.index(index) + message);
           return true;
         }
       });
