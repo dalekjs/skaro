@@ -15,15 +15,15 @@ function serialize(args) {
 }
 
 module.exports = function(dalek) {
-  
+
   function Reporter(options) {
     this.options = options;
   }
-  
+
   Reporter.prototype.log = function() {
     console.log.apply(console, arguments);
   };
-  
+
   Reporter.prototype.debug = function() {
     var args = serialize(arguments).map(function(item) {
       return chalk.bgWhite.blue(item);
@@ -31,6 +31,6 @@ module.exports = function(dalek) {
 
     console.log.apply(console, args);
   };
-  
+
   return Reporter;
 };

@@ -10,7 +10,7 @@ module.exports = function (dalek, assert, action, wait) {
     return [
       action.openUrl('google.com', {username: "foo", password: "bar"}),
       // Error: could not openUrl(google.com) - demo-1.js:5
-      
+
       until.event('load window', {timeout: 5000, retry: 1, repeat: 2}),
       // Error: event "load" on "window" not received - demo-1.js:8
 
@@ -27,14 +27,14 @@ module.exports = function (dalek, assert, action, wait) {
       assert.visible('selector')
       assert.not.visible('selector')
 
-      // associate the wait (reaction) with the click (action) 
+      // associate the wait (reaction) with the click (action)
       action.click('#button')
         .until.visible('#dialog'),
 
 
 
       assert.text({
-        selector: 'p'.css, 
+        selector: 'p'.css,
         match: 'all',
         // literal value
         expected: 'Google',
@@ -47,7 +47,7 @@ module.exports = function (dalek, assert, action, wait) {
 
     ];
   });
-  
+
 
 };
 
@@ -82,13 +82,13 @@ module.exports = function (dalek, assert, action, wait) {
       {name: 'load', selector: 'window', timeout: 5000, retry: 1},
       {name: 'load', selector: 'window', timeout: 5000, retry: 1},
     ], {mode: "any|all"}),
-    
+
     // Fully Qualified Example
     until.event({
-      name: 'transitionend', 
+      name: 'transitionend',
       selector: '#some-selector'.css,
       match: 'first',
-      timeout: 5000, 
+      timeout: 5000,
       retry: 1,
       message: 'width did not animate',
       // this function is run in the browser!
@@ -97,7 +97,7 @@ module.exports = function (dalek, assert, action, wait) {
           // this is the event we were looking for
           return true;
         }
-        
+
         // act like this event has never happened
         return false;
       }
@@ -111,18 +111,18 @@ module.exports = function (dalek, assert, action, wait) {
  */
 module.exports = function (dalek, assert, action, wait) {
   return [
-    
+
     // simple click and wait for something to show
     action.click('#button'),
     until.visible('#dialog'),
 
-    // associate the wait (reaction) with the click (action) 
+    // associate the wait (reaction) with the click (action)
     action.click('#button')
       .until.visible('#dialog'),
 
     // with default options
     until.visible('#dialog', {timeout: 5000, retry: 1})
-    
+
     // Fully Qualified Example
     until.visible({
       selector: '#dialog'.css,
@@ -131,6 +131,6 @@ module.exports = function (dalek, assert, action, wait) {
       retry: 1,
       // opacity, transform, …
     }
-    
+
   ];
 };

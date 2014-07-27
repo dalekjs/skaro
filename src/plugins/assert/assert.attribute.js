@@ -8,7 +8,7 @@ test.assert.attr('.jumpButton', 'type', 'submit');
 // --------------------------------------------------------------------------------------
 
 assert.attribute({
-  selector: '.jumpButton', 
+  selector: '.jumpButton',
   name: 'type',
   expected: 'submit'
 });

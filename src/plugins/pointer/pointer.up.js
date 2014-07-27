@@ -3,7 +3,7 @@
 // Docs: -
 // Source: -
 // WIRE: https://code.google.com/p/selenium/wiki/JsonWireProtocol#POST_/session/:sessionId/moveto
-// Note: Implemented in old Dalek but not documented 
+// Note: Implemented in old Dalek but not documented
 
 // Check the possibility of `offset` also accepting a string:
 // `middle center`, `left top`, etc.

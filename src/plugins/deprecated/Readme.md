@@ -9,4 +9,4 @@ discussable:
 * log.message
 * assert.numberOfElements
 * assert.numberOfVisibleElements
-* 
+*

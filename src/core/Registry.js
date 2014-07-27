@@ -3,15 +3,15 @@ var stackTrace = require('stack-trace');
 module.exports = function(dalek) {
 
   /*
-    ### REGISTRATION TIME ###  
-    
+    ### REGISTRATION TIME ###
+
     * message bus
     * enable .not.foo if meta.invertable
     * prevent options.match == "all" if meta.iterator
     * generate simple function from meta.signature
     * capture registration stack
     * capture registration stack
-  
+
     ### CALL TIME ###
     options: {
       name: 'attribute-name' // caller
@@ -26,7 +26,7 @@ module.exports = function(dalek) {
     // exported to dalek.assert
     this.assert = this.assert.bind(this);
   };
-  
+
   Registry.prototype.assert = function(name, meta, handler) {
     dalek.reporter.debug("registering assertion", name);
     if (this.assert[name]) {
@@ -35,10 +35,10 @@ module.exports = function(dalek) {
 
     var unitHandler = this.wrapForUnit(name, meta, handler);
     var registrationHandler = this.wrapForRegistration(name, meta, unitHandler);
-    
+
     this.assert[name] = registrationHandler;
   };
-  
+
   Registry.prototype.wrapForUnit = function(name, meta, handler) {
     return function() {
       dalek.reporter.debug("executing assertion", name);
@@ -103,10 +103,10 @@ module.exports = function(dalek) {
     // glob('../plugins/**/*.js');
     this.load();
   };
-  
+
   Registry.prototype.load = function(path) {
     require('../plugins/assert/assert.attribute')(dalek);
   };
-  
+
   return Registry;
 };

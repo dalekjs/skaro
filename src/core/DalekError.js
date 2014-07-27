@@ -12,8 +12,8 @@ module.exports = function(dalek) {
   function copyOwnFrom(target, source) {
     Object.getOwnPropertyNames(source).forEach(function(propName) {
       Object.defineProperty(
-        target, 
-        propName, 
+        target,
+        propName,
         Object.getOwnPropertyDescriptor(source, propName)
       );
     });

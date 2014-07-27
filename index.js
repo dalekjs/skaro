@@ -15,6 +15,6 @@ var assertionInstance = called();
 console.log('assertion', assertionInstance.label);
 
 assertionInstance.then(
-  function(message){ console.log("SUCCESS", message); }, 
+  function(message){ console.log("SUCCESS", message); },
   function(message){ console.log("ERROR", message); }
 );
