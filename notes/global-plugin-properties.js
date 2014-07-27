@@ -2,7 +2,7 @@ module.exports = function (dalek, assert, action, wait) {
   return [
 
     until.visible({
-      // specifiy which selector engine should be used 
+      // specifiy which selector engine should be used
       // value: string or instance of Selector ("css" "xpath" "sizzle")
       // if string was given, resolve it agains dalek.options.selectorStrategy
       // Dalek will always perform a querySelectorAll() like search for
@@ -25,7 +25,7 @@ module.exports = function (dalek, assert, action, wait) {
 
       // number of millicseconds to wait before aborting the method
       // default: dalek.options.timeout
-      timeout: 5000, 
+      timeout: 5000,
 
       // number of times to retry when timeout reached
       // this can be used for lower timeouts that will simply
@@ -37,6 +37,6 @@ module.exports = function (dalek, assert, action, wait) {
       message: 'width did not animate',
 
     }
-    
+
   ];
 };

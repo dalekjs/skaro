@@ -1,39 +1,38 @@
 module.exports = function(dalek) {
-  // TODO: create Assertion (with promise interface)
-  var format = dalek.format;
 
   function Assertion(label) {
     this.label = label;
-    this.deferred = Q.defer();
+    this.deferred = dalek.Q.defer();
 
     this.reject = this.deferred.reject.bind(this.deferred);
-    this.resolve = this.deferred.resolve.bind(this.resolve);
-    this.then = this.deferred.then.bind(this.resolve);
+    this.resolve = this.deferred.resolve.bind(this.deferred);
+    this.then = this.deferred.promise.then.bind(this.deferred.promise);
   }
 
-  Assertion.rejectWithMessage = function(index, messages) {
-    var message = '';
+  Assertion.prototype.rejectWithMessage = function(index, message, reason) {
+    var _message = '';
 
     if (typeof index === 'number') {
-      message += format.index(index) + ' ';
+      _message += dalek.format.index(index) + ' ';
     }
 
-    messages.some(function(item) {
-      if (item && typeof item === 'string') {
-        message += item;
-        return true;
-      }
-    });
+    if (message) {
+      _message += message;
+    } else if (typeof reason === 'string') {
+      _message += reason;
+    } else {
+      _message += 'unspecified failure';
+    }
 
-    this.reject(message);
+    this.reject(_message);
   };
 
-  Assertion.rejectSelector = function() {
+  Assertion.prototype.rejectSelector = function() {
     this.reject('Selector did not match any elements');
   };
 
-  Assertion.resolveItems = function(items) {
-    this.resolve(format.index(items) + ' elements passed');
+  Assertion.prototype.resolveItems = function(items) {
+    this.resolve(dalek.format.index(items) + ' elements passed');
   };
 
   return Assertion;
