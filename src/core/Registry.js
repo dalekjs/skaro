@@ -1,8 +1,7 @@
 var stackTrace = require('stack-trace');
-var _ = require('lodash');
 
 module.exports = function(dalek) {
-
+  var _ = dalek._;
   /*
     ### REGISTRATION TIME ###
 
@@ -22,6 +21,7 @@ module.exports = function(dalek) {
   function Registry(options) {
     // exported to dalek.assert
     this.assert = this.assert.bind(this);
+    this.assert.not = {};
   };
 
   Registry.prototype.assert = function(name, meta, handler) {
@@ -37,9 +37,12 @@ module.exports = function(dalek) {
     verifyMeta(type, namespace, name, meta, handler);
 
     var unitHandler = this.wrapForUnit(type, name, meta, handler);
-    var registrationHandler = this.wrapForRegistration(type, name, meta, unitHandler);
 
-    this[namespace][name] = registrationHandler;
+    this[namespace][name] = this.wrapForRegistration(type, name, meta, unitHandler);
+
+    if (meta.invertable) {
+      this[namespace].not[name] = this.wrapForRegistrationInverted(type, name, meta, unitHandler);
+    }
   };
 
   Registry.prototype.wrapForUnit = function(type, name, meta, handler) {
@@ -63,6 +66,19 @@ module.exports = function(dalek) {
       dalek.reporter.debug("calling assertion", name);
       var stack = getStack(callPlugin);
       var options = getOptions(type, name, meta, arguments, stack);
+      return unitHandler(options);
+    };
+
+    return callPlugin;
+  };
+
+  Registry.prototype.wrapForRegistrationInverted = function(type, name, meta, unitHandler) {
+    // executed within unit declaration
+    var callPlugin = function() {
+      dalek.reporter.debug("calling assertion", name);
+      var stack = getStack(callPlugin);
+      var options = getOptions(type, name, meta, arguments, stack);
+      options.inverted = true;
       return unitHandler(options);
     };
 

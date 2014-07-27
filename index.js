@@ -8,8 +8,8 @@ var dalek = new Dalek();
 
 // this is what happens inside a unit test definition
 console.log('----- registering attribute assertion');
-var called = dalek.assert.attribute('some-selector', 'attribute-name', 'Google');
-//var called = dalek.assert.attribute('some-selector', 'attribute-name', function(value){ return value === 'Apple'; });
+//var called = dalek.assert.attribute('some-selector', 'attribute-name', 'Google');
+var called = dalek.assert.not.attribute('some-selector', 'attribute-name', function(value){ return value === 'Apple'; });
 
 // this is what happens when the unit test is executed
 console.log('----- running attribute assertion in test');
