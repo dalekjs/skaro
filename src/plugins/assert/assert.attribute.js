@@ -27,40 +27,33 @@ module.exports = function(dalek) {
     iterator: true,
   };
 
-  // the name invocations of this plugin will show up as
-  var label = 'Attribute ' + format.keyword(options.name) 
-      + ' of ' + format.selector(options.selector) 
+  var handler = function(options) {
+    // the name invocations of this plugin will show up as
+    var label = 'Attribute ' + format.keyword(options.name)
+      + ' of ' + format.selector(options.selector)
       + ' equals ' + format.literal(options.value);
 
-  var handler = function(options) {
     var assertion = new dalek.Assertion(label);
 
     driver.element.attribute(options).then(function(values) {
       if (!values.length) {
-        assertion.reject('Selector did not match any elements');
+        assertion.rejectSelector();
         return;
       }
 
       values.some(function(value, index) {
         var result = options.compare(value);
-        var message;
         if (result) {
-
-          // TODO: figure out how we can make messages simpler
-          if (options.message) {
-            message = options.message;
-          } else if (typeof result === string) {
-            message = result;
-          } else {
-            message = ;
-          }
-          assertion.rejectWithMessage(index, options.message, result, ' unexpected ' + format.literal(value))
-          //assertion.reject(format.index(index) + message);
+          assertion.rejectWithMessage(index, [
+            options.message,
+            result,
+            ' unexpected ' + format.literal(value)
+          ]);
           return true;
         }
       });
 
-      assertion.resolve(format.index(values.length) + ' elements passed');
+      assertion.resolveItems(values.length);
     }, assertion.reject);
 
     return assertion;

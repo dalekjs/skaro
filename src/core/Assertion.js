@@ -1,5 +1,6 @@
 module.exports = function(dalek) {
   // TODO: create Assertion (with promise interface)
+  var format = dalek.format;
 
   function Assertion(label) {
     this.label = label;
@@ -10,9 +11,30 @@ module.exports = function(dalek) {
     this.then = this.deferred.then.bind(this.resolve);
   }
 
-  Assertion.rejectWithMessage = function(index) {
+  Assertion.rejectWithMessage = function(index, messages) {
+    var message = '';
 
+    if (typeof index === 'number') {
+      message += format.index(index) + ' ';
+    }
+
+    messages.some(function(item) {
+      if (item && typeof item === 'string') {
+        message += item;
+        return true;
+      }
+    });
+
+    this.reject(message);
   };
-  
+
+  Assertion.rejectSelector = function() {
+    this.reject('Selector did not match any elements');
+  };
+
+  Assertion.resolveItems = function(items) {
+    this.resolve(format.index(items) + ' elements passed');
+  };
+
   return Assertion;
 };
