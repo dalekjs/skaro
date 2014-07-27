@@ -51,7 +51,7 @@ Dalek.prototype.assert = function() {
    
    
 
-  console.log("foo", arguments);
+  this.reporter.debug("dalek.assert()", arguments);
 };
 
 Dalek.prototype.loadPlugins = function(path) {

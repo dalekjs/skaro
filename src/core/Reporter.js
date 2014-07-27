@@ -1,3 +1,19 @@
+// https://www.npmjs.org/package/chalk
+var chalk = require('chalk');
+
+function serialize(args) {
+  return [].slice.call(args, 0).map(function(item) {
+    if (typeof item === 'function') {
+      return String(item);
+    }
+    if (typeof item === 'object') {
+      return JSON.stringify(item, null, 2);
+    }
+
+    return item;
+  });
+}
+
 module.exports = function(dalek) {
   
   function Reporter(options) {
@@ -9,8 +25,9 @@ module.exports = function(dalek) {
   };
   
   Reporter.prototype.debug = function() {
-    var args = [].slice.call(arguments, 0);
-    console.info.apply(console, args);
+    var args = serialize(arguments);
+    args = chalk.bgWhite.blue(args);
+    console.log(args);
   };
   
   return Reporter;

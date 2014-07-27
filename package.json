@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/dalekjs/skaro",
   "dependencies": {
+    "chalk": "^0.5.1",
     "q": "^1.0.1"
   }
 }
