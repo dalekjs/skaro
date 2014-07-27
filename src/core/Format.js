@@ -34,9 +34,9 @@ module.exports = function(dalek) {
     return '{' + token + '}';
   };
 
-  Format.prototype.compare = function(compare) {
-    // TODO: compare function's displayName
-    return compare.displayName || '##compare.displayName##';
+  Format.prototype.expected = function(expected) {
+    // TODO: expected function's displayName
+    return expected.displayName || '##expected.displayName##';
   };
 
   return Format;

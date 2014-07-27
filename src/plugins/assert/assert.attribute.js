@@ -35,7 +35,7 @@ module.exports = function(dalek) {
     // the name invocations of this plugin will show up as
     var label = 'Attribute ' + format.keyword(options.name)
       + ' of ' + format.selector(options.selector)
-      + format.compare(options.compare);
+      + ' ' + format.expected(options.expected);
 
     // we're creating an assertion, give dalek that context
     var assertion = new dalek.Assertion(label);
@@ -52,9 +52,9 @@ module.exports = function(dalek) {
       // we always get an array returned, even if a single element was requested
       values.some(function(value, index) {
         // type of comparison is handed to us by plugin registration
-        var result = options.compare(value);
+        var result = options.expected(value);
         // if we said meta.invertable, we need to interpret
-        // the compare() result accordingly (i.e. invert)
+        // the expected() result accordingly (i.e. invert)
         if (!!result === !options.inverted) {
           // we caught an assertion failure. pass all the possible messages
           // to the assertion instance and have *it* figure out what to show
