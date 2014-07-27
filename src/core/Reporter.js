@@ -25,9 +25,11 @@ module.exports = function(dalek) {
   };
   
   Reporter.prototype.debug = function() {
-    var args = serialize(arguments);
-    args = chalk.bgWhite.blue(args);
-    console.log(args);
+    var args = serialize(arguments).map(function(item) {
+      return chalk.bgWhite.blue(item);
+    });
+
+    console.log.apply(console, args);
   };
   
   return Reporter;
