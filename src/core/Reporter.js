@@ -32,5 +32,13 @@ module.exports = function(dalek) {
     console.log.apply(console, args);
   };
 
+  Reporter.prototype.warning = function() {
+    var args = serialize(arguments).map(function(item) {
+      return chalk.bgYellow.red.bold(item);
+    });
+
+    console.log.apply(console, args);
+  };
+
   return Reporter;
 };
