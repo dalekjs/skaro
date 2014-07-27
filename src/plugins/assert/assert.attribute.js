@@ -25,16 +25,19 @@ module.exports = function(dalek) {
     signature: ['selector', 'name', 'expected'],
     // mark this plugin capable of handling {match: "all"}
     iterator: true,
+    // mark this plugin as capable of handling .not.attribute()
+    invertable: true,
   };
 
   var handler = function(options) {
     // the name invocations of this plugin will show up as
     var label = 'Attribute ' + format.keyword(options.name)
       + ' of ' + format.selector(options.selector)
-      + ' equals ' + format.literal(options.value);
+      + format.compare(options.compare);
 
     var assertion = new dalek.Assertion(label);
 
+    // TODO: think about signature
     driver.element.attribute(options).then(function(values) {
       if (!values.length) {
         assertion.rejectSelector();
