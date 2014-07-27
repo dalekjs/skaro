@@ -125,11 +125,25 @@ module.exports = function(dalek) {
     }
 
     if (typeof args[0] === 'object') {
+      // e.g. assert.foo({ selector: '.selector', timeout: 123 })
       _.extend(options, args[0]);
     } else {
+      // e.g. assert.foo('.selector')
       meta.signature.forEach(function(key, index) {
         options[key] = args[index];
       });
+      // e.g. assert.foo('.selector', { timeout: 123 })
+      var trailingOptions = args[args.length -1];
+      if (meta.signature.length == args.length -1 && typeof trailingOptions === 'object') {
+        Object.keys(trailingOptions).forEach(function(key) {
+          if (meta.signature.indexOf(key) !== -1) {
+            dalek.reporter.warning(dalek.format.keyword(key) + ' was specified inline and in the options. the inline value is used, the option is ignored.');
+            return;
+          }
+
+          options[key] = trailingOptions[key];
+        });
+      }
     }
 
     meta.required.forEach(function(key) {
