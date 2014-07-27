@@ -6,7 +6,7 @@ module.exports = function (dalek, assert, action, wait) {
     selectorStrategy: 'xpath',
   });
 
-  dalek.test('Page title is correct', function (options) {
+  dalek.unit('Page title is correct', function (options) {
     return [
       action.openUrl('google.com', {username: "foo", password: "bar"}),
       // Error: could not openUrl(google.com) - demo-1.js:5
