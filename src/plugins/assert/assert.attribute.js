@@ -16,6 +16,7 @@ assert.attribute({
 // --------------------------------------------------------------------------------------
 */
 module.exports = function(dalek) {
+console.log(dalek.format);
   var format = dalek.format;
   var driver = dalek.driver;
 

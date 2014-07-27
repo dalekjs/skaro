@@ -33,7 +33,7 @@ Dalek.prototype.initialize = function() {
   this.registry = new (Registry(this))(this.options);
 
   // convenience runtime accessors
-  this.assert = this.registry.assert.bind(this.registry);
+  this.assert = this.registry.assert;
 };
 
 Dalek.prototype.unit = function(label, callback) {
