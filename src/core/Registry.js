@@ -24,28 +24,41 @@ module.exports = function(dalek) {
     this.assert.not = {};
   };
 
+  // register an assertion plugin
   Registry.prototype.assert = function(name, meta, handler) {
     this.register('Assertion', 'assert', name, meta, handler);
   };
 
+  // generic plugin registration
   Registry.prototype.register = function(type, namespace, name, meta, handler) {
     dalek.reporter.debug("registering", type, name);
+
+    // there can only be one
     if (this[namespace][name]) {
-      throw new dalek.Error(type + ' »' + name + '« already registered!');
+      throw new dalek.Error(
+        format.keyword(type) + ' ' + format.keyword(name) + ' already registered!', 
+        dalek.Error.PLUGIN_REGISTRATION
+      );
     }
 
+    // make sure the plugin provided all the necessary meta data
     verifyMeta(type, namespace, name, meta, handler);
 
-    var unitHandler = this.wrapForUnit(type, name, meta, handler);
+    // wrap the plugin for execution in a unit
+    var unitHandler = this.decorateExecutionTime(type, name, meta, handler);
 
-    this[namespace][name] = this.wrapForRegistration(type, name, meta, unitHandler);
+    // wrap the unit-wrapped plugin so it can be called upon
+    this[namespace][name] = this.decorateCallTime(type, name, meta, unitHandler);
 
+    // register inverted assertions
     if (meta.invertable) {
-      this[namespace].not[name] = this.wrapForRegistrationInverted(type, name, meta, unitHandler);
+      this[namespace].not[name] = this.decorateCallTime(type, name, meta, unitHandler, true);
     }
   };
 
-  Registry.prototype.wrapForUnit = function(type, name, meta, handler) {
+  // wrap the actual plugin in a function that can be called at call-time,
+  // which then returns a function that can be called at execution-time
+  Registry.prototype.decorateExecutionTime = function(type, name, meta, handler) {
     // executed by wrapForRegistration
     return function(options) {
       // executed by unit.run()
@@ -55,43 +68,40 @@ module.exports = function(dalek) {
         // TODO: runtime options
         // like reading from dalek.data(), replacing config placeholders, etc.
 
+        // execute the actual plugin
         return handler(options);
       };
     };
   };
 
-  Registry.prototype.wrapForRegistration = function(type, name, meta, unitHandler) {
+  // wrap the execution-time-wrapped plugin with the necessary wranglers to import
+  // call-time parameterization of the plugin
+  Registry.prototype.decorateCallTime = function(type, name, meta, unitHandler, inverted) {
     // executed within unit declaration
     var callPlugin = function() {
       dalek.reporter.debug("calling assertion", name);
+      // save the stack trace of the plugin-call so the developer
+      // can quickly identify where something went wrong in their test
       var stack = getStack(callPlugin);
+      // wrangle and test whatever was passed into the plugin call
       var options = getOptions(type, name, meta, arguments, stack);
+      // assertions may be invertable
+      options.inverted = !!inverted;
+      // return the executionTime wrapper for unit.run()
       return unitHandler(options);
     };
 
     return callPlugin;
   };
 
-  Registry.prototype.wrapForRegistrationInverted = function(type, name, meta, unitHandler) {
-    // executed within unit declaration
-    var callPlugin = function() {
-      dalek.reporter.debug("calling assertion", name);
-      var stack = getStack(callPlugin);
-      var options = getOptions(type, name, meta, arguments, stack);
-      options.inverted = true;
-      return unitHandler(options);
-    };
-
-    return callPlugin;
-  };
-
+  // make sure the plugin's metadata are sound
   function verifyMeta(type, namespace, name, meta, handler) {
     if (!meta.signature) {
       meta.signature = [];
     }
 
     if (!Array.isArray(meta.signature)) {
-      throw new dalek.Error("meta.signature must be an array");
+      throw new dalek.Error(dalek.format.keyword('meta.signature') + " must be an array");
     }
 
     if (!meta.required) {
@@ -99,10 +109,11 @@ module.exports = function(dalek) {
     }
 
     if (!Array.isArray(meta.required)) {
-      throw new dalek.Error("meta.required must be an array");
+      throw new dalek.Error(dalek.format.keyword('meta.required') + " must be an array");
     }
   };
 
+  // import call-time parameterization
   function getOptions(type, name, meta, args, stack) {
     var format = dalek.format;
     var options = {
@@ -117,6 +128,7 @@ module.exports = function(dalek) {
 
     if (typeof args[0] === 'array') {
       // TODO: handle multiple execution if meta.multiple allows it
+      // this was discussed for until.event() in notes/demo-1.js
       throw new dalek.Error(
         'cannot handle mutliple occurences of the same test yet',
         dalek.Error.PLUGIN_CALL,
@@ -136,6 +148,7 @@ module.exports = function(dalek) {
       var trailingOptions = args[args.length -1];
       if (meta.signature.length == args.length -1 && typeof trailingOptions === 'object') {
         Object.keys(trailingOptions).forEach(function(key) {
+          // warn when option was specified twice
           if (meta.signature.indexOf(key) !== -1) {
             dalek.reporter.warning(dalek.format.keyword(key) + ' was specified inline and in the options. the inline value is used, the option is ignored.');
             return;
@@ -146,6 +159,9 @@ module.exports = function(dalek) {
       }
     }
 
+    // make sure that all the required options are there.
+    // since we know nothing about the expected content, 
+    // anything but null|undefined is good
     meta.required.forEach(function(key) {
       if (options[key] === undefined || options[key] === null) {
         throw new dalek.Error(
@@ -156,6 +172,7 @@ module.exports = function(dalek) {
       }
     });
 
+    // prevent inverted calls for plugins that are not invertable
     if (options.inverted && !meta.invertable) {
       throw new dalek.Error(
         format.keyword(type) + ' ' + format.keyword(name) + ' does not support inverted tests',
@@ -164,6 +181,7 @@ module.exports = function(dalek) {
       );
     }
 
+    // prevent {match:"all"} for plugins that don't support iteration
     if (options.match === 'all' && !meta.iterator) {
       throw new dalek.Error(
         format.keyword(type) + ' ' + format.keyword(name) + ' does not support ' + format.literal('{match: "all"}'),
@@ -172,6 +190,7 @@ module.exports = function(dalek) {
       );
     }
 
+    // register default comparator for literal values
     if (typeof expected !== 'function') {
       // TODO: move to dalek.is.equal
       options.expectedValue = options.expected;
@@ -181,17 +200,18 @@ module.exports = function(dalek) {
           ('unexpected ' + dalek.format.literal(value));
       };
       options.expected.displayName = 'equal to ' + dalek.format.literal(options.expectedValue);
-
-      console.log(options.expected.displayName);
     }
 
+    // within a plugin a selector should always be a Selector instance
     if (typeof options.selector === 'string') {
-      options.selector = new dalek.Selector(options.selector, dalek.options.selectorStrategy)
+      options.selector = new dalek.Selector(options.selector, dalek.options.selectorStrategy);
     }
 
     return options;
   };
 
+  // extract the useful (developer-relevant) parts of the call-stack
+  // to present in case of problems during plugin call and exection-time
   function getStack(below) {
     // https://github.com/felixge/node-stack-trace
     var stack = [];
@@ -204,6 +224,7 @@ module.exports = function(dalek) {
         line: callSite.getLineNumber(),
       };
 
+      // we don't care about anything deeper than this
       if (site.name === 'Module._compile') {
         return true;
       }
