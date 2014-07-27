@@ -1,5 +1,4 @@
 module.exports = function(dalek) {
-  var Q = dalek.Q;
 
   // TODO: create driver interface
   function Driver(options) {
@@ -24,7 +23,7 @@ module.exports = function(dalek) {
             reject(new DalekError('lost connection to browser', DalekError.NETWORK))
             reject(new DalekError('request timed out', DalekError.TIMEOUT))
        */
-      var deferred = Q.defer();
+      var deferred = dalek.Q.defer();
       deferred.resolve(['Google', 'Microsoft']);
       return deferred.promise;
     }

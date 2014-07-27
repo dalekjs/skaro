@@ -1,4 +1,5 @@
 module.exports = function(dalek) {
+
   function Selector(text, strategy) {
     this.text = text;
     this.strategy = strategy || 'css';

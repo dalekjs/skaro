@@ -1,5 +1,4 @@
 module.exports = function(dalek) {
-  var Selector = dalek.Selector;
 
   // options.color boolean - disable color output
   function Format(options) {
@@ -25,7 +24,7 @@ module.exports = function(dalek) {
 
   Format.prototype.selector = function(token) {
     if (typeof token === 'string') {
-      token = new Selector(token);
+      token = new dalek.Selector(token);
     }
 
     return '{' + token.strategy + '} »' + token.text + '«';
