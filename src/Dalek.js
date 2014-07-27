@@ -1,10 +1,13 @@
 var Q = require('q');
 
-var Driver = require('./core/Driver');
+// convenience accessors
 var DalekError = require('./core/DalekError');
-var Format = require('./core/Format');
 var Selector = require('./core/Selector');
 var Assertion = require('./core/Assertion');
+// runtime interfaces
+var Driver = require('./core/Driver');
+var Format = require('./core/Format');
+var Reporter = require('./core/Reporter');
 
 function Dalek(options) {
   this.options = options;
@@ -20,15 +23,34 @@ Dalek.prototype.initialize = function() {
   this.Selector = Selector(this);
   this.Assertion = Assertion(this);
 
+  // runtime interfaces
   this.driver = new (Driver(this))(this.options);
   this.format = new (Format(this))(this.options);
+  this.reporter = new (Reporter(this))(this.options);
 };
 
 // plugin registration
 Dalek.prototype.assert = function() {
-  // TODO: the wrapping done in dalek.assert() has to register the function 
-  // compare(value) { return options. }
+  /*
+    ### REGISTRATION TIME ###  
+    
+    * message bus
+    * 
+    
   
+    ### CALL TIME ###
+    options: {
+      name: 'attribute-name' // caller
+      selector: Selector // caller
+      compare: function // caller | generated
+      inverted: boolean // caller - comes from assert.not.plugin()
+      message: 'text' // caller, optional
+    }
+    returns promise like object
+   */
+   
+   
+
   console.log("foo", arguments);
 };
 

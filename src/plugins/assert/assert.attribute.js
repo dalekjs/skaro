@@ -46,7 +46,7 @@ module.exports = function(dalek) {
 
       values.some(function(value, index) {
         var result = options.compare(value);
-        if (result) {
+        if (!!result === !options.inverted) {
           assertion.rejectWithMessage(index, [
             options.message,
             result,
