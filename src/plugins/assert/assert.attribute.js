@@ -16,7 +16,6 @@ assert.attribute({
 // --------------------------------------------------------------------------------------
 */
 module.exports = function(dalek) {
-console.log(dalek.format);
   var format = dalek.format;
   var driver = dalek.driver;
 
@@ -57,11 +56,7 @@ console.log(dalek.format);
         if (!!result === !options.inverted) {
           // we caught an assertion failure. pass all the possible messages
           // to the assertion instance and have *it* figure out what to show
-          assertion.rejectWithMessage(index, [
-            options.message,
-            result,
-            ' unexpected ' + format.literal(value)
-          ]);
+          assertion.rejectWithMessage(index, options.message, result);
           // end the loop, one failure is all we needed
           return true;
         }

@@ -9,21 +9,22 @@ module.exports = function(dalek) {
     this.then = this.deferred.promise.then.bind(this.deferred.promise);
   }
 
-  Assertion.prototype.rejectWithMessage = function(index, messages) {
-    var message = '';
+  Assertion.prototype.rejectWithMessage = function(index, message, reason) {
+    var _message = '';
 
     if (typeof index === 'number') {
-      message += dalek.format.index(index) + ' ';
+      _message += dalek.format.index(index) + ' ';
     }
 
-    messages.some(function(item) {
-      if (item && typeof item === 'string') {
-        message += item;
-        return true;
-      }
-    });
+    if (message) {
+      _message += message;
+    } else if (typeof reason === 'string') {
+      _message += reason;
+    } else {
+      _message += 'unspecified failure';
+    }
 
-    this.reject(message);
+    this.reject(_message);
   };
 
   Assertion.prototype.rejectSelector = function() {

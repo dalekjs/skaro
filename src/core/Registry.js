@@ -56,7 +56,7 @@ module.exports = function(dalek) {
          name: 'attribute-name',
          selector: new dalek.Selector('some-selector'),
          expected: 'Google',
-         compare: function(value) { return value === this.expected; },
+         compare: function(value) { return value === 'Google' ? '' : ('unexpected ' + dalek.format.literal(value)); },
          inverted: false,
          message: null
        };

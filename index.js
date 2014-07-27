@@ -13,8 +13,8 @@ console.log('----- running attribute assertion in test');
 var assertionInstance = called();
 
 console.log('assertion', assertionInstance.label);
-assertionInstance.then(function(message) {
-  console.log('SUCCESS', message);
-}, function(error) {
-  console.log('ERROR', message);
-});
+
+assertionInstance.then(
+  function(message){ console.log("SUCCESS", message); }, 
+  function(message){ console.log("ERROR", message); }
+);
