@@ -76,7 +76,11 @@ module.exports = function(dalek) {
         });
 
         // execute the actual plugin
-        return handler(options);
+        var handle = handler(options);
+        // make sure it can't run forever (unless it does so synchronously)
+        options.timeout && handle.timeout(options.timeout);
+
+        return handle;
       };
     };
   };
