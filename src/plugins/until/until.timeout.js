@@ -47,6 +47,9 @@ module.exports = function(dalek) {
 
   // plugin meta data
   var meta = {
+    // group to sort the plugin into
+    namespace: 'until',
+    // name of the plugin
     name: 'timeout',
     // allow calls like assert.click('.some-thing')
     signature: ['timeout'],
@@ -71,5 +74,5 @@ module.exports = function(dalek) {
   };
 
   // register plugin
-  dalek.until(meta.name, meta, handler);
+  dalek.registerPlugin(meta, handler);
 };

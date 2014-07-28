@@ -55,6 +55,9 @@ module.exports = function(dalek) {
 
   // plugin meta data
   var meta = {
+    // group to sort the plugin into
+    namespace: 'action',
+    // name of the plugin
     name: 'click',
     // allow calls like assert.click('.some-thing')
     signature: ['selector'],
@@ -107,5 +110,5 @@ module.exports = function(dalek) {
   };
 
   // register plugin
-  dalek.action(meta.name, meta, handler);
+  dalek.registerPlugin(meta, handler);
 };

@@ -43,9 +43,13 @@ module.exports = (function(){
     this.registry = new (_Registry(this))(this.options);
 
     // convenience runtime accessors
-    this.assert = this.registry.assert;
-    this.action = this.registry.action;
-    this.until = this.registry.until;
+    this.registerPlugin = this.registry.registerPlugin;
+  };
+
+  Dalek.prototype._registerPlugins = function(plugins) {
+    Object.keys(plugins).forEach(function(namespace) {
+      this[namespace] = plugins[namespace];
+    }.bind(this));
   };
 
   Dalek.prototype.catch = function(error) {

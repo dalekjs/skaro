@@ -50,6 +50,9 @@ module.exports = function(dalek) {
 
   // plugin meta data
   var meta = {
+    // group to sort the plugin into
+    namespace: 'assert',
+    // name of the plugin
     name: 'attribute',
     // allow calls like assert.attribute('.some-thing', 'attr-name', 'expected-value')
     signature: ['selector', 'name', 'expected'],
@@ -112,5 +115,5 @@ module.exports = function(dalek) {
   };
 
   // register plugin
-  dalek.assert(meta.name, meta, handler);
+  dalek.registerPlugin(meta, handler);
 };
