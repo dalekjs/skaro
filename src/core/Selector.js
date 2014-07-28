@@ -1,3 +1,8 @@
+/*
+    The Selector is a simple interface to allow basic selector mutation
+    and differentiation between differen engines, like xpath, css, sizzle.
+ */
+
 module.exports = function(dalek) {
 
   function Selector(text, strategy) {
