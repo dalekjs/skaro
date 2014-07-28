@@ -21,11 +21,15 @@ module.exports = function(dalek) {
       assert: {
         not: {}
       },
+      'is': {
+        not: {}
+      },
       action: {},
-      until: {}
+      until: {},
     };
 
     this.registerPlugin = this.registerPlugin.bind(this);
+    this.registerExpectation = this.registerExpectation.bind(this);
   }
 
   // generic plugin registration
@@ -62,6 +66,47 @@ module.exports = function(dalek) {
     dalek._registerPlugins(this.plugins);
   };
 
+  Registry.prototype.registerExpectation = function(meta, handler) {
+    dalek.reporter.debug('registering', 'expectation', meta.name);
+
+    // make sure the plugin provided all the necessary meta data
+    meta.namespace = 'is';
+    verifyMeta(meta, handler);
+
+    // there can only be one
+    if (this.plugins['is'][meta.name]) {
+      throw new dalek.Error(
+        dalek.format.keyword('Expectation') + ' ' + dalek.format.keyword(meta.name) + ' already registered!',
+        dalek.Error.PLUGIN_REGISTRATION
+      );
+    }
+
+    var unitHandler = function(options) {
+      var expectation = function(value) {
+        dalek.reporter.debug('executing expectation', meta.name);
+        options.value = value;
+        return handler(options);
+      };
+
+      if (typeof meta.displayName === 'function') {
+        expectation.displayName = meta.displayName(options);
+      } else {
+        expectation.displayName = meta.displayName;
+      }
+
+      return expectation;
+    };
+
+    this.plugins.is[meta.name] = this.decorateCallTime(meta, unitHandler);
+
+    if (meta.invertable) {
+      this.plugins.is.not[meta.name] = this.decorateCallTime(meta, unitHandler, true);
+    }
+
+    // export plugin to dalek
+    dalek._registerPlugins(this.plugins);
+  };
+
   // wrap the actual plugin in a function that can be called at call-time,
   // which then returns a function that can be called at execution-time
   Registry.prototype.decorateExecutionTime = function(meta, handler) {
@@ -69,7 +114,7 @@ module.exports = function(dalek) {
     return function(calltimeOptions) {
       // executed by unit.run()
       return function(runtimeOptions) {
-        dalek.reporter.debug('executing assertion', meta.name);
+        dalek.reporter.debug('executing plugin', meta.name);
 
         // TODO: runtime options
         // like reading from dalek.data(), replacing config placeholders, etc.
@@ -97,13 +142,13 @@ module.exports = function(dalek) {
   Registry.prototype.decorateCallTime = function(meta, unitHandler, inverted) {
     // executed within unit declaration
     var callPlugin = function() {
-      dalek.reporter.debug('calling assertion', meta.name);
+      dalek.reporter.debug('calling plugin', meta.name);
       // save the stack trace of the plugin-call so the developer
       // can quickly identify where something went wrong in their test
       var stack = getStack(callPlugin);
       // wrangle and test whatever was passed into the plugin call
       var options = getOptions(meta, arguments, stack);
-      // assertions may be invertable
+      // assertions and expectations may be invertable
       options.inverted = !!inverted;
       // return the executionTime wrapper for unit.run()
       return unitHandler(options);
@@ -161,7 +206,7 @@ module.exports = function(dalek) {
       timeout: null,
       retry: null,
       message: null,
-      // Assertion specific
+      // Assertion and Expectation specific
       expected: null,
       inverted: null,
     };
@@ -231,17 +276,8 @@ module.exports = function(dalek) {
     }
 
     // register default comparator for literal values
-    if (options.expected !== null && typeof options.expected !== 'function') {
-      // TODO: move to dalek.is.equal
-      options.expectedValue = options.expected;
-      options.expected = function isEqual(value) {
-        /*jshint laxbreak:true */
-        return value === options.expectedValue
-          ? '' :
-          ('unexpected ' + dalek.format.literal(value));
-        /*jshint laxbreak:false */
-      };
-      options.expected.displayName = 'equal to ' + dalek.format.literal(options.expectedValue);
+    if (meta.namespace !== 'is' && options.expected !== null && typeof options.expected !== 'function') {
+      options.expected = dalek.is.equal(options.expected);
     }
 
     // within a plugin a selector should always be a Selector instance
@@ -290,6 +326,10 @@ module.exports = function(dalek) {
     require('../plugins/assert/assert.attribute')(dalek);
     require('../plugins/action/action.click')(dalek);
     require('../plugins/until/until.timeout')(dalek);
+    require('../plugins/is/is.between')(dalek);
+    require('../plugins/is/is.equal')(dalek);
+    require('../plugins/is/is.text')(dalek);
+
   };
 
   return Registry;

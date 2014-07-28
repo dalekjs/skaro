@@ -45,7 +45,7 @@ module.exports = function(dalek) {
     required: ['expected'],
   };
   
-  dalek.registerAssertion(meta, function(options) {
+  dalek.registerExpectation(meta, function(options) {
     if (options.flags && options.flags.ignoreCase) {
       options.value = (options.value + '').toLowerCase();
       options.expected = (options.expected + '').toLowerCase();

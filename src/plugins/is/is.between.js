@@ -39,7 +39,7 @@ module.exports = function(dalek) {
     required: ['lower', 'upper'],
   };
 
-  dalek.registerAssertion(meta, function() {
+  dalek.registerExpectation(meta, function() {
     ['lower', 'upper', 'value'].forEach(function() {
       if (typeof options[key] !== 'number') {
         options[key] = parseFloat(options[key]);

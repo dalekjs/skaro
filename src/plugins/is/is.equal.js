@@ -41,7 +41,7 @@ module.exports = function(dalek) {
     required: ['expected'],
   };
 
-  dalek.registerAssertion(meta, function(options) {
+  dalek.registerExpectation(meta, function(options) {
     var result = options.value === options.expected;
 
     if (options.inverted === result) {

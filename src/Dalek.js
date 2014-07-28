@@ -44,6 +44,7 @@ module.exports = (function(){
 
     // convenience runtime accessors
     this.registerPlugin = this.registry.registerPlugin;
+    this.registerExpectation = this.registry.registerExpectation;
   };
 
   Dalek.prototype._registerPlugins = function(plugins) {
