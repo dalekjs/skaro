@@ -34,11 +34,18 @@ test.assert.foo.is('Hello World')
 */
 
 module.exports = function(dalek) {
-  dalek.registerAssertion('equal', function(inverted, value, expected) {
-    var result = value === expected;
+  var meta = {
+    name: 'equal',
+    invertable: true,
+    signature: ['expected'],
+    required: ['expected'],
+  };
 
-    if (Boolean(inverted) === result) {
-      return 'unexpected ' + dalek.format.literal(value);
+  dalek.registerAssertion(meta, function(options) {
+    var result = options.value === options.expected;
+
+    if (options.inverted === result) {
+      return 'unexpected ' + dalek.format.literal(options.value);
     }
 
     return null;

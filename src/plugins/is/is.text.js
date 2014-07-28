@@ -32,28 +32,35 @@ is.not.text(expected, {
 * Source: https://github.com/dalekjs/dalek/blob/master/lib/dalek/assertions.js#L1782-L1794
 
 ```js
-test.assert.foo.is('Hello World')
+test.assert.foo.is.equalsCaseInsensitive('Hello World')
 ```
 
 */
 
 module.exports = function(dalek) {
-  dalek.registerAssertion('text', function(inverted, value, expected, options) {
-    if (options && options.ignoreCase) {
-      value = (value + '').toLowerCase();
-      expected = (expected + '').toLowerCase();
+  var meta = {
+    name: 'text',
+    invertable: true,
+    signature: ['expected', 'flags'],
+    required: ['expected'],
+  };
+  
+  dalek.registerAssertion(meta, function(options) {
+    if (options.flags && options.flags.ignoreCase) {
+      options.value = (options.value + '').toLowerCase();
+      options.expected = (options.expected + '').toLowerCase();
     }
 
-    if (options && options.ignoreWhitespace) {
+    if (options.flags && options.flags.ignoreWhitespace) {
       var whitespace = /[\w\r\n]+/g;
-      value = (value + '').replace(whitespace, ' ').trim();
-      expected = (expected + '').replace(whitespace, ' ').trim();
+      options.value = (options.value + '').replace(whitespace, ' ').trim();
+      options.expected = (options.expected + '').replace(whitespace, ' ').trim();
     }
 
-    var result = value === expected;
+    var result = options.value === options.expected;
 
-    if (Boolean(inverted) === result) {
-      return 'unexpected ' + dalek.format.literal(value);
+    if (options.inverted === result) {
+      return 'unexpected ' + dalek.format.literal(options.value);
     }
 
     return null;

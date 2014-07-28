@@ -1,7 +1,7 @@
 /**
-# compare values for strict equality
+# test if a value is in a given range
 
-compare one value to another using strict equality
+assert that a value is between a and b, where all values are treated as floats.
 
 
 ## Examples
@@ -32,25 +32,26 @@ test.assert.foo.is.between(10, 20)
 */
 
 module.exports = function(dalek) {
-  dalek.registerAssertion('between', function(inverted, value, lower, upper) {
-    if (typeof lower !== 'number') {
-      lower = parseFloat(lower);
-    }
+  var meta = {
+    name: 'between',
+    invertable: true,
+    signature: ['lower', 'upper'],
+    required: ['lower', 'upper'],
+  };
 
-    if (typeof upper !== 'number') {
-      upper = parseFloat(upper);
-    }
+  dalek.registerAssertion(meta, function() {
+    ['lower', 'upper', 'value'].forEach(function() {
+      if (typeof options[key] !== 'number') {
+        options[key] = parseFloat(options[key]);
+      }
+    });
 
-    if (typeof value !== 'number') {
-      value = parseFloat(value);
-    }
+    var _lower = Math.min(options.lower, options.upper);
+    var _upper = Math.max(options.lower, options.upper);
+    var result = lower <= options.value && options.value <= _upper;
 
-    var _lower = Math.min(lower, upper);
-    var _upper = Math.max(lower, upper);
-    var result = lower <= value && value <= _upper;
-
-    if (Boolean(inverted) === result) {
-      return dalek.format.literal(value) 
+    if (options.inverted === result) {
+      return dalek.format.literal(options.value) 
         + ' is not between ' + dalek.format.literal(_lower) 
         + ' and ' + dalek.format.literal(_upper);
     }
