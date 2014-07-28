@@ -4,8 +4,8 @@
     for user error, network error, etc.
  */
 
-module.exports = function(dalek) {
-  // see http://www.2ality.com/2011/12/subtyping-builtins.html
+module.exports = function(/*dalek*/) {
+  'use strict';
 
   function DalekError(message, code, stack) {
     var superInstance = Error.apply(null, arguments);
@@ -22,6 +22,7 @@ module.exports = function(dalek) {
   DalekError.prototype = Object.create(Error.prototype);
   DalekError.prototype.constructor = DalekError;
 
+  // see http://www.2ality.com/2011/12/subtyping-builtins.html
   function copyOwnFrom(target, source) {
     Object.getOwnPropertyNames(source).forEach(function(propName) {
       Object.defineProperty(
@@ -32,7 +33,7 @@ module.exports = function(dalek) {
     });
 
     return target;
-  };
+  }
 
   return DalekError;
 };

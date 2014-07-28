@@ -6,20 +6,8 @@
 // https://www.npmjs.org/package/chalk
 var chalk = require('chalk');
 
-function serialize(args) {
-  return [].slice.call(args, 0).map(function(item) {
-    if (typeof item === 'function') {
-      return String(item);
-    }
-    if (typeof item === 'object') {
-      return JSON.stringify(item, null, 2);
-    }
-
-    return item;
-  });
-}
-
 module.exports = function(dalek) {
+  'use strict';
 
   function Reporter(options) {
     this.options = options;
@@ -58,7 +46,7 @@ module.exports = function(dalek) {
       if (!error._stack) {
         console.log(error.stack);
         return;
-      } else 
+      } 
 
       error._stack.forEach(function(callSite) {
         console.log(' at ' + chalk.red(callSite.name) + ' (' + chalk.yellow(callSite.file) + ':' + chalk.cyan(callSite.line) + ')' );
@@ -69,6 +57,19 @@ module.exports = function(dalek) {
 
     // regular Error
     console.log(error.stack || error);
+  };
+
+  function serialize(args) {
+    return [].slice.call(args, 0).map(function(item) {
+      if (typeof item === 'function') {
+        return String(item);
+      }
+      if (typeof item === 'object') {
+        return JSON.stringify(item, null, 2);
+      }
+
+      return item;
+    });
   }
 
   return Reporter;

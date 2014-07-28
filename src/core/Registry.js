@@ -11,13 +11,17 @@
 var stackTrace = require('stack-trace');
 
 module.exports = function(dalek) {
+  'use strict';
+
   var _ = dalek._;
 
   function Registry(options) {
+    this.options = options;
+
     // exported to dalek.assert
     this.assert = this.assert.bind(this);
     this.assert.not = {};
-  };
+  }
 
   // register an assertion plugin
   Registry.prototype.assert = function(name, meta, handler) {
@@ -26,12 +30,12 @@ module.exports = function(dalek) {
 
   // generic plugin registration
   Registry.prototype.register = function(type, namespace, name, meta, handler) {
-    dalek.reporter.debug("registering", type, name);
+    dalek.reporter.debug('registering', type, name);
 
     // there can only be one
     if (this[namespace][name]) {
       throw new dalek.Error(
-        format.keyword(type) + ' ' + format.keyword(name) + ' already registered!', 
+        dalek.format.keyword(type) + ' ' + dalek.format.keyword(name) + ' already registered!', 
         dalek.Error.PLUGIN_REGISTRATION
       );
     }
@@ -58,7 +62,7 @@ module.exports = function(dalek) {
     return function(calltimeOptions) {
       // executed by unit.run()
       return function(runtimeOptions) {
-        dalek.reporter.debug("executing assertion", name);
+        dalek.reporter.debug('executing assertion', name);
 
         // TODO: runtime options
         // like reading from dalek.data(), replacing config placeholders, etc.
@@ -82,7 +86,7 @@ module.exports = function(dalek) {
   Registry.prototype.decorateCallTime = function(type, name, meta, unitHandler, inverted) {
     // executed within unit declaration
     var callPlugin = function() {
-      dalek.reporter.debug("calling assertion", name);
+      dalek.reporter.debug('calling assertion', name);
       // save the stack trace of the plugin-call so the developer
       // can quickly identify where something went wrong in their test
       var stack = getStack(callPlugin);
@@ -98,13 +102,13 @@ module.exports = function(dalek) {
   };
 
   // make sure the plugin's metadata are sound
-  function verifyMeta(type, namespace, name, meta, handler) {
+  function verifyMeta(type, namespace, name, meta /*, handler*/) {
     if (!meta.signature) {
       meta.signature = [];
     }
 
     if (!Array.isArray(meta.signature)) {
-      throw new dalek.Error(dalek.format.keyword('meta.signature') + " must be an array");
+      throw new dalek.Error(dalek.format.keyword('meta.signature') + ' must be an array');
     }
 
     if (!meta.required) {
@@ -112,9 +116,9 @@ module.exports = function(dalek) {
     }
 
     if (!Array.isArray(meta.required)) {
-      throw new dalek.Error(dalek.format.keyword('meta.required') + " must be an array");
+      throw new dalek.Error(dalek.format.keyword('meta.required') + ' must be an array');
     }
-  };
+  }
 
   // import call-time parameterization
   function getOptions(type, name, meta, args, stack) {
@@ -131,7 +135,7 @@ module.exports = function(dalek) {
       inverted: null,
     };
 
-    if (typeof args[0] === 'array') {
+    if (Array.isArray(args[0])) {
       // TODO: handle multiple execution if meta.multiple allows it
       // this was discussed for until.event() in notes/demo-1.js
       throw new dalek.Error(
@@ -151,7 +155,7 @@ module.exports = function(dalek) {
       });
       // e.g. assert.foo('.selector', { timeout: 123 })
       var trailingOptions = args[args.length -1];
-      if (meta.signature.length == args.length -1 && typeof trailingOptions === 'object') {
+      if (meta.signature.length === args.length -1 && typeof trailingOptions === 'object') {
         Object.keys(trailingOptions).forEach(function(key) {
           // warn when option was specified twice
           if (meta.signature.indexOf(key) !== -1) {
@@ -200,9 +204,11 @@ module.exports = function(dalek) {
       // TODO: move to dalek.is.equal
       options.expectedValue = options.expected;
       options.expected = function isEqual(value) {
+        /*jshint laxbreak:true */
         return value === options.expectedValue
           ? '' :
           ('unexpected ' + dalek.format.literal(value));
+        /*jshint laxbreak:false */
       };
       options.expected.displayName = 'equal to ' + dalek.format.literal(options.expectedValue);
     }
@@ -213,7 +219,7 @@ module.exports = function(dalek) {
     }
 
     return options;
-  };
+  }
 
   // extract the useful (developer-relevant) parts of the call-stack
   // to present in case of problems during plugin call and exection-time
@@ -239,15 +245,17 @@ module.exports = function(dalek) {
     });
 
     return stack;
-  };
+  }
 
   Registry.prototype.initialize = function(path) {
     // TODO: glob plugins from directory
     // glob('../plugins/**/*.js');
+    path+'';
     this.load();
   };
 
   Registry.prototype.load = function(path) {
+    path+'';
     require('../plugins/assert/assert.attribute')(dalek);
   };
 

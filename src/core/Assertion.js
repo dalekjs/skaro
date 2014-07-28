@@ -1,4 +1,5 @@
 module.exports = function(dalek) {
+  'use strict';
 
   function Assertion(label) {
     this.label = label;

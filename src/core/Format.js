@@ -6,6 +6,7 @@
  */
 
 module.exports = function(dalek) {
+  'use strict';
 
   function Format(options) {
     this.options = options;

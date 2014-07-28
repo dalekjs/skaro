@@ -1,4 +1,5 @@
 module.exports = function(dalek) {
+  'use strict';
 
   // TODO: create driver interface
   function Driver(options) {
@@ -6,7 +7,7 @@ module.exports = function(dalek) {
   }
 
   Driver.prototype.element = {
-    attribute: function(options) {
+    attribute: function(/*options*/) {
       /*
           options: {
             selector: Selector

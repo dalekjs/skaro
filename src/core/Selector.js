@@ -4,6 +4,7 @@
  */
 
 module.exports = function(dalek) {
+  'use strict';
 
   function Selector(text, strategy) {
     this.text = text;
@@ -12,7 +13,7 @@ module.exports = function(dalek) {
     if (Selector.strategies.indexOf(this.strategy) === -1) {
       throw new dalek.Error('Unknown strategy »' + this.strategy + '« for selector »' + this.text + '«');
     }
-  };
+  }
 
   Selector.strategies = ['css', 'xpath', 'sizzle'];
 
@@ -46,7 +47,7 @@ module.exports = function(dalek) {
       enumerable: false,
       configurable: false,
       get: function() {
-        return new Selector(strategy, this + "");
+        return new Selector(strategy, this + '');
       }
     });
   });

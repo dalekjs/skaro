@@ -2,61 +2,65 @@ var Q = require('q');
 var _ = require('lodash');
 
 // convenience accessors
-var DalekError = require('./core/DalekError');
-var Selector = require('./core/Selector');
-var Assertion = require('./core/Assertion');
+var _DalekError = require('./core/DalekError');
+var _Selector = require('./core/Selector');
+var _Assertion = require('./core/Assertion');
 // runtime interfaces
-var Driver = require('./core/Driver');
-var Format = require('./core/Format');
-var Reporter = require('./core/Reporter');
-var Registry = require('./core/Registry');
-var Unit = require('./core/Unit');
+var _Driver = require('./core/Driver');
+var _Format = require('./core/Format');
+var _Reporter = require('./core/Reporter');
+var _Registry = require('./core/Registry');
+var _Unit = require('./core/Unit');
 
-function Dalek(options) {
-  this.options = _.extend({}, Dalek.defaults);
-  _.extend(this.options, options);
+module.exports = (function(){
+  'use strict';
 
-  this.initialize();
-  this.registry.initialize();
-}
+  function Dalek(options) {
+    this.options = _.extend({}, Dalek.defaults);
+    _.extend(this.options, options);
 
-Dalek.defaults = {
-  selectorStrategy: 'css'
-};
+    this.initialize();
+    this.registry.initialize();
+  }
 
-Dalek.prototype.initialize = function() {
-  // convenience accessors
-  this._ = _;
-  this.Q = Q;
-  this.Error = DalekError(this);
-  this.Selector = Selector(this);
-  this.Assertion = Assertion(this);
-  this.Unit = new Unit(this);
+  Dalek.defaults = {
+    selectorStrategy: 'css'
+  };
 
-  // runtime interfaces
-  this.driver = new (Driver(this))(this.options);
-  this.format = new (Format(this))(this.options);
-  this.reporter = new (Reporter(this))(this.options);
-  this.registry = new (Registry(this))(this.options);
+  Dalek.prototype.initialize = function() {
+    // convenience accessors
+    this._ = _;
+    this.Q = Q;
+    this.Error = _DalekError(this);
+    this.Selector = _Selector(this);
+    this.Assertion = _Assertion(this);
+    this.Unit = _Unit(this);
 
-  // convenience runtime accessors
-  this.assert = this.registry.assert;
-};
+    // runtime interfaces
+    this.driver = new (_Driver(this))(this.options);
+    this.format = new (_Format(this))(this.options);
+    this.reporter = new (_Reporter(this))(this.options);
+    this.registry = new (_Registry(this))(this.options);
 
-Dalek.prototype.catch = function(error) {
-  // in some promise something went wrong on a script level
-  // in this case we need to be clear about what went wrong
-  // and halt execution. this is nothing we can recover from
-  console.error(error.stack);
+    // convenience runtime accessors
+    this.assert = this.registry.assert;
+  };
 
-  // TODO: check if we need proper exit codes for different situations
-  // e.g. http://docs.openlinksw.com/virtuoso/signalsandexitcodes.html
-  console.log("\n\naborting Dalek because of script error in promise");
-  process.exit(1);
-};
+  Dalek.prototype.catch = function(error) {
+    // in some promise something went wrong on a script level
+    // in this case we need to be clear about what went wrong
+    // and halt execution. this is nothing we can recover from
+    this.reporter.error(error);
 
-Dalek.prototype.unit = function(label, callback) {
-  this.reporter.debug('registering a new Unit');
-};
+    // TODO: check if we need proper exit codes for different situations
+    // e.g. http://docs.openlinksw.com/virtuoso/signalsandexitcodes.html
+    this.reporter.log('\n\naborting Dalek because of script error in promise');
+    process.exit(1);
+  };
 
-module.exports = Dalek;
+  Dalek.prototype.unit = function(/*label, callback*/) {
+    this.reporter.debug('registering a new Unit');
+  };
+
+  return Dalek;
+})();
