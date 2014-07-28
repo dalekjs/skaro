@@ -1,3 +1,13 @@
+/*
+    The Registry takes care of exposing plugins to the user.
+    A plugin is never called directly, it is always accessed
+    via a wrapped function provided by the registry. In this
+    wrapper things like parameterization, default values and
+    simple argument validation are performed. The Registry is
+    a bit more complicated so that defining and using plugins
+    must not.
+ */
+
 var stackTrace = require('stack-trace');
 
 module.exports = function(dalek) {
