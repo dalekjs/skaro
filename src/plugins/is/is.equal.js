@@ -39,6 +39,9 @@ module.exports = function(dalek) {
     invertable: true,
     signature: ['expected'],
     required: ['expected'],
+    displayName: function(options) {
+      return 'equals ' + dalek.format.literal(options.expected);
+    },
   };
 
   dalek.registerExpectation(meta, function(options) {

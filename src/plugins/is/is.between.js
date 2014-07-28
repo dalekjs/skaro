@@ -37,6 +37,9 @@ module.exports = function(dalek) {
     invertable: true,
     signature: ['lower', 'upper'],
     required: ['lower', 'upper'],
+    displayName: function(options) {
+      return 'between ' + dalek.format.literal(options.lower) + ' and ' + dalek.format.literal(options.upper);
+    },
   };
 
   dalek.registerExpectation(meta, function() {
