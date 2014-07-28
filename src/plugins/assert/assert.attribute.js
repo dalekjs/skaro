@@ -47,6 +47,7 @@ module.exports = function(dalek) {
 
   // plugin meta data
   var meta = {
+    name: 'attribute',
     // allow calls like assert.attribute('.some-thing', 'attr-name', 'expected-value')
     signature: ['selector', 'name', 'expected'],
     // list of properties that must be specified at the very least
@@ -64,7 +65,7 @@ module.exports = function(dalek) {
       + ' ' + format.expected(options.expected);
 
     // we're creating an assertion, give dalek that context
-    var assertion = new dalek.Handle(label);
+    var handle = new dalek.Handle(label, dalek.Handle.ASSERTION, meta.name);
 
     // data we need to pass to WebDriver
     var data = {
@@ -84,7 +85,7 @@ module.exports = function(dalek) {
         if (!!result === !options.inverted) {
           // we caught an assertion failure. pass all the possible messages
           // to the assertion instance and have *it* figure out what to show
-          assertion.rejectWithMessage(index, options.message, result);
+          handle.rejectWithMessage(index, options.message, result);
           // end the loop, one failure is all we needed
           return true;
         }
@@ -92,7 +93,7 @@ module.exports = function(dalek) {
 
       // all tests passed, if assertion was rejected,
       // this call is ignored by the Promise
-      assertion.resolveItems(values.length);
+      handle.resolveItems(values.length);
     };
 
     // talk to WebDriver
@@ -101,12 +102,12 @@ module.exports = function(dalek) {
       handleResults,
       // WebDriver rejects on empty selector-result with string
       // any errors (including malformed selector) with DalekError
-      assertion.reject
+      handle.reject
     ).catch(dalek.catch);
 
-    return assertion;
+    return handle;
   };
 
   // register plugin
-  dalek.assert('attribute', meta, handler);
+  dalek.assert(meta.name, meta, handler);
 };
