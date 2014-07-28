@@ -6,8 +6,10 @@
 module.exports = function(dalek) {
   'use strict';
 
-  function Handle(label) {
+  function Handle(label, type, name) {
     this.label = label;
+    this.type = type;
+    this.name = name;
     this.deferred = dalek.Q.defer();
 
     this.reject = this.deferred.reject.bind(this.deferred);
@@ -17,6 +19,9 @@ module.exports = function(dalek) {
     this.stopTimeout = this.stopTimeout.bind(this);
     this.then(this._stopTimeout).catch(this._stopTimeout);
   }
+
+  Handle.ACTION = 1;
+  Handle.ASSERTION = 2;
 
   Handle.prototype.timeout = function(duration) {
     this._timeout = setTimeout(function() {
