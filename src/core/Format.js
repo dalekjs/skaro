@@ -1,6 +1,12 @@
+/*
+    Formatting output is up to the reporter.
+    HTML will require different handling than the console or a plaintext log file.
+    Format is not supposed to actually format the output, but markup certain pieces
+    of a string so they can be styles by the reporter later on.
+ */
+
 module.exports = function(dalek) {
 
-  // options.color boolean - disable color output
   function Format(options) {
     this.options = options;
   }
