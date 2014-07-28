@@ -4,7 +4,7 @@ var _ = require('lodash');
 // convenience accessors
 var _DalekError = require('./core/DalekError');
 var _Selector = require('./core/Selector');
-var _Assertion = require('./core/Assertion');
+var _Handle = require('./core/Handle');
 // runtime interfaces
 var _Driver = require('./core/Driver');
 var _Format = require('./core/Format');
@@ -33,7 +33,7 @@ module.exports = (function(){
     this.Q = Q;
     this.Error = _DalekError(this);
     this.Selector = _Selector(this);
-    this.Assertion = _Assertion(this);
+    this.Handle = _Handle(this);
     this.Unit = _Unit(this);
 
     // runtime interfaces

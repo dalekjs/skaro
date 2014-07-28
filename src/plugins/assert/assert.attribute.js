@@ -64,7 +64,7 @@ module.exports = function(dalek) {
       + ' ' + format.expected(options.expected);
 
     // we're creating an assertion, give dalek that context
-    var assertion = new dalek.Assertion(label);
+    var assertion = new dalek.Handle(label);
 
     // data we need to pass to WebDriver
     var data = {

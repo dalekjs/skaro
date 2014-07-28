@@ -1,7 +1,12 @@
+/*
+    The Handle used to communicate intention and status
+    between plugins and their authority (usually a Unit)
+ */
+
 module.exports = function(dalek) {
   'use strict';
 
-  function Assertion(label) {
+  function Handle(label) {
     this.label = label;
     this.deferred = dalek.Q.defer();
 
@@ -13,17 +18,17 @@ module.exports = function(dalek) {
     this.then(this._stopTimeout).catch(this._stopTimeout);
   }
 
-  Assertion.prototype.timeout = function(duration) {
+  Handle.prototype.timeout = function(duration) {
     this._timeout = setTimeout(function() {
       this.reject(new dalek.Error('Timeout of ' + duration + 'ms reached', dalek.Error.TIMEOUT));
     }, duration);
   };
 
-  Assertion.prototype.stopTimeout = function() {
+  Handle.prototype.stopTimeout = function() {
     clearTimeout(this._timeout);
   };
 
-  Assertion.prototype.rejectWithMessage = function(index, message, reason) {
+  Handle.prototype.rejectWithMessage = function(index, message, reason) {
     var _message = '';
 
     if (typeof index === 'number') {
@@ -41,13 +46,13 @@ module.exports = function(dalek) {
     this.reject(_message);
   };
 
-  Assertion.prototype.rejectSelector = function() {
+  Handle.prototype.rejectSelector = function() {
     this.reject('Selector did not match any elements');
   };
 
-  Assertion.prototype.resolveItems = function(items) {
+  Handle.prototype.resolveItems = function(items) {
     this.resolve(dalek.format.index(items) + ' elements passed');
   };
 
-  return Assertion;
+  return Handle;
 };
