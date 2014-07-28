@@ -19,6 +19,14 @@ domain.run(function() {
   // ]);
 
   // this is what happens inside a unit test definition
+  console.log('----- registering expectation equals');
+  var called = dalek.is.not.equal('some-value');
+  console.log(called.displayName);
+  console.log('----- executing expectation equals');
+  var result = called('some-value');
+  console.log(result);
+
+  // this is what happens inside a unit test definition
   console.log('----- registering attribute assertion');
 
   // literal example
@@ -43,7 +51,6 @@ domain.run(function() {
     function(message){ console.log("ERROR", message); }
   );
 
-
   console.log('----- registering click action');
   var called = dalek.action.click('some-selector');
   console.log('----- running attribute assertion in test');
@@ -56,7 +63,7 @@ domain.run(function() {
   );
 
   console.log('----- registering timeout waiting');
-  var called = dalek.until.timeout(3000);
+  var called = dalek.until.timeout(1000);
   console.log('----- running timeout wait in test');
   var untilInstance = called({runtime: 'options'});
   // this is what is returned to the unit test
