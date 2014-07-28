@@ -42,7 +42,7 @@ module.exports = function(dalek) {
     },
   };
 
-  dalek.registerExpectation(meta, function() {
+  dalek.registerExpectation(meta, function(options) {
     ['lower', 'upper', 'value'].forEach(function() {
       if (typeof options[key] !== 'number') {
         options[key] = parseFloat(options[key]);
