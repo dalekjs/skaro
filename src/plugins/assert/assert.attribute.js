@@ -91,7 +91,7 @@ module.exports = function(dalek) {
         }
       });
 
-      // all tests passed, if assertion was rejected,
+      // all tests passed, if handle was rejected,
       // this call is ignored by the Promise
       handle.resolveItems(values.length);
     };
