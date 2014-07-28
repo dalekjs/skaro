@@ -27,9 +27,18 @@ module.exports = function (dalek, assert, action, wait) {
       assert.visible('selector')
       assert.not.visible('selector')
 
-      // associate the wait (reaction) with the click (action)
-      action.click('#button')
-        .until.visible('#dialog'),
+
+
+      // conditionals can simply "splice" their
+      // way into the execution chain
+      // TODO: action.conditional()
+      dalek.conditional('depending on weather', function() {
+        if (weatherIsGood) {
+          return [
+            action.more("tests");
+          ]
+        }
+      }),
 
 
 
@@ -115,10 +124,6 @@ module.exports = function (dalek, assert, action, wait) {
     // simple click and wait for something to show
     action.click('#button'),
     until.visible('#dialog'),
-
-    // associate the wait (reaction) with the click (action)
-    action.click('#button')
-      .until.visible('#dialog'),
 
     // with default options
     until.visible('#dialog', {timeout: 5000, retry: 1})
