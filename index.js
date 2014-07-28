@@ -49,9 +49,21 @@ domain.run(function() {
   console.log('----- running attribute assertion in test');
   var actionInstance = called({runtime: 'options'});
   // this is what is returned to the unit test
-  console.log('assertion', actionInstance.label);
+  console.log('action', actionInstance.label);
   actionInstance.then(
     function(message){ console.log("SUCCESS", message); },
     function(message){ console.log("ERROR", message); }
   );
+
+  console.log('----- registering timeout waiting');
+  var called = dalek.until.timeout(3000);
+  console.log('----- running timeout wait in test');
+  var untilInstance = called({runtime: 'options'});
+  // this is what is returned to the unit test
+  console.log('until', untilInstance.label);
+  untilInstance.then(
+    function(message){ console.log("SUCCESS", message); },
+    function(message){ console.log("ERROR", message); }
+  );
+  
 });

@@ -45,6 +45,7 @@ module.exports = (function(){
     // convenience runtime accessors
     this.assert = this.registry.assert;
     this.action = this.registry.action;
+    this.until = this.registry.until;
   };
 
   Dalek.prototype.catch = function(error) {

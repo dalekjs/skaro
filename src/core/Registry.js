@@ -21,6 +21,7 @@ module.exports = function(dalek) {
     // exported to dalek.assert
     this.assert = this.assert.bind(this);
     this.action = this.action.bind(this);
+    this.until = this.until.bind(this);
     this.assert.not = {};
   }
 
@@ -33,6 +34,12 @@ module.exports = function(dalek) {
   Registry.prototype.assert = function(name, meta, handler) {
     this.register('Assertion', 'assert', name, meta, handler);
   };
+
+  // register an until plugin
+  Registry.prototype.until = function(name, meta, handler) {
+    this.register('Wait', 'until', name, meta, handler);
+  };
+
 
   // generic plugin registration
   Registry.prototype.register = function(type, namespace, name, meta, handler) {
@@ -268,6 +275,7 @@ module.exports = function(dalek) {
     path+'';
     require('../plugins/assert/assert.attribute')(dalek);
     require('../plugins/action/action.click')(dalek);
+    require('../plugins/until/until.timeout')(dalek);
   };
 
   return Registry;

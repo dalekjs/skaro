@@ -22,6 +22,7 @@ module.exports = function(dalek) {
 
   Handle.ACTION = 1;
   Handle.ASSERTION = 2;
+  Handle.UNTIL = 3;
 
   Handle.prototype.timeout = function(duration) {
     this._timeout = setTimeout(function() {
