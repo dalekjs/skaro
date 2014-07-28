@@ -61,6 +61,8 @@ module.exports = function(dalek) {
     // mark this plugin capable of handling {match: "all"}
     iterator: true,
     // mark this plugin as capable of handling .not.attribute()
+    // this should be done only for assertions that have a boolean result (such as "visible", "hidden")
+    // for assertions that take a value for comparison, this should be handled via the expected function callback
     invertable: true,
   };
 
