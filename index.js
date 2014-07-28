@@ -22,12 +22,12 @@ domain.run(function() {
   console.log('----- registering attribute assertion');
 
   // literal example
-  // var called = dalek.assert.attribute('some-selector', 'attribute-name', 'Google');
+  var called = dalek.assert.attribute('some-selector', 'attribute-name', 'Google');
 
   // custom function example
-  var comp = function(value){ return value === 'Apple' ? '' : 'bla bla'; };
-  comp.displayName = 'deine mudder';
-  var called = dalek.assert.not.attribute('some-selector', 'attribute-name', comp);
+  // var comp = function(value){ return value === 'Apple' ? '' : 'bla bla'; };
+  // comp.displayName = 'deine mudder';
+  // var called = dalek.assert.not.attribute('some-selector', 'attribute-name', comp);
 
   // using is-plugin example
   // var called = dalek.assert.not.attribute('some-selector', 'attribute-name', is.equal('foobar'));
@@ -43,4 +43,15 @@ domain.run(function() {
     function(message){ console.log("ERROR", message); }
   );
 
+
+  console.log('----- registering click action');
+  var called = dalek.action.click('some-selector');
+  console.log('----- running attribute assertion in test');
+  var actionInstance = called({runtime: 'options'});
+  // this is what is returned to the unit test
+  console.log('assertion', actionInstance.label);
+  actionInstance.then(
+    function(message){ console.log("SUCCESS", message); },
+    function(message){ console.log("ERROR", message); }
+  );
 });

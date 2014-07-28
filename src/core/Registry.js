@@ -267,6 +267,7 @@ module.exports = function(dalek) {
   Registry.prototype.load = function(path) {
     path+'';
     require('../plugins/assert/assert.attribute')(dalek);
+    require('../plugins/action/action.click')(dalek);
   };
 
   return Registry;
