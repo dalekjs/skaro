@@ -88,9 +88,7 @@ module.exports = function(dalek) {
       values.some(function(value, index) {
         // type of comparison is handed to us by plugin registration
         var result = options.expected(value);
-        // if we said meta.invertable, we need to interpret
-        // the expected() result accordingly (i.e. invert)
-        if (!!result === !options.inverted) {
+        if (result) {
           // we caught an assertion failure. pass all the possible messages
           // to the assertion instance and have *it* figure out what to show
           handle.rejectWithMessage(index, options.message, result);
