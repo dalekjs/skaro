@@ -21,5 +21,12 @@
     "lodash": "^2.4.1",
     "q": "^1.0.1",
     "stack-trace": "0.0.9"
+  },
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "gulp": "^3.8.6",
+    "gulp-clean": "^0.3.1",
+    "gulp-coverage": "^0.1.24",
+    "gulp-mocha": "^0.5.2"
   }
 }
