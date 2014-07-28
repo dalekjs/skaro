@@ -22,6 +22,9 @@ assert.attribute({
 Attribute and Property values may differ. For example, if you want to check an input element's value, you want to check the property `value` (that gets updated through user input, the attribute `value` does not).
 
 
+## Compatibility
+
+
 ## See Also
 
 * assert.property

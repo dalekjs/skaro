@@ -1,6 +1,6 @@
 /**
 {
-  Categoriy: 'pointer'
+  Category: 'pointer'
 }
 
 # Click On A DOM element
