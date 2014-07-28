@@ -201,7 +201,7 @@ module.exports = function(dalek) {
     }
 
     // register default comparator for literal values
-    if (typeof options.expected !== 'function') {
+    if (options.expected !== null && typeof options.expected !== 'function') {
       // TODO: move to dalek.is.equal
       options.expectedValue = options.expected;
       options.expected = function isEqual(value) {
