@@ -26,7 +26,7 @@ module.exports = function(dalek) {
     this.reporters = [];
   }
 
-  Reporter.protoype.add = function(reporter) {
+  Reporter.prototype.add = function(reporter) {
     this.reporters.push(reporter);
   };
 
