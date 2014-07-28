@@ -7,7 +7,20 @@ module.exports = function(dalek) {
     this.reject = this.deferred.reject.bind(this.deferred);
     this.resolve = this.deferred.resolve.bind(this.deferred);
     this.then = this.deferred.promise.then.bind(this.deferred.promise);
+
+    this.stopTimeout = this.stopTimeout.bind(this);
+    this.then(this._stopTimeout).catch(this._stopTimeout);
   }
+
+  Assertion.prototype.timeout = function(duration) {
+    this._timeout = setTimeout(function() {
+      this.reject(new dalek.Error('Timeout of ' + duration + 'ms reached', dalek.Error.TIMEOUT));
+    }, duration);
+  };
+
+  Assertion.prototype.stopTimeout = function() {
+    clearTimeout(this._timeout);
+  };
 
   Assertion.prototype.rejectWithMessage = function(index, message, reason) {
     var _message = '';
