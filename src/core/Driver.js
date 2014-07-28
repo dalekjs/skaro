@@ -23,6 +23,7 @@ module.exports = function(dalek) {
             reject(new DalekError('browser unable to execute selector'))
             reject(new DalekError('lost connection to browser', DalekError.NETWORK))
             reject(new DalekError('request timed out', DalekError.TIMEOUT))
+            reject(new DalekError('Chrome driver does not support fetching attributes', DalekError.DRIVER))
        */
       var deferred = dalek.Q.defer();
       deferred.resolve(['Google', 'Microsoft']);
@@ -44,6 +45,7 @@ module.exports = function(dalek) {
             reject(new DalekError('browser unable to execute selector'))
             reject(new DalekError('lost connection to browser', DalekError.NETWORK))
             reject(new DalekError('request timed out', DalekError.TIMEOUT))
+            reject(new DalekError('Firefox driver does not support the click method', DalekError.DRIVER))
        */
       var deferred = dalek.Q.defer();
       deferred.resolve([true, 'element not found']);
