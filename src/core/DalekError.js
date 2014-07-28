@@ -1,3 +1,9 @@
+/*
+    DalekError is a specialization of the Error object so that we
+    can properly differentiate what went wrong. It is to be used
+    for user error, network error, etc.
+ */
+
 module.exports = function(dalek) {
   // see http://www.2ality.com/2011/12/subtyping-builtins.html
 
