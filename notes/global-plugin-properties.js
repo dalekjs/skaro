@@ -32,6 +32,7 @@ module.exports = function (dalek, assert, action, wait) {
       // this can be used for lower timeouts that will simply
       // log a warning instead of failing
       // default: 0
+      // TODO: implement retry
       retry: 1,
 
       // log message for failure case,
