@@ -39,7 +39,8 @@ module.exports = function (dalek, assert, action, wait) {
       // overwrites the error-message returned by the an expected-callback of an assertion
       message: 'width did not animate',
 
-      // --- Assertion specific ---
+
+      // --- Assertion and Expectation specific ---
 
       // specify the value an assertion is to validate against
       // value: anything but a function object is converted to is.equal(options.expected)
