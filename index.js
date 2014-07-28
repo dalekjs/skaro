@@ -34,7 +34,7 @@ domain.run(function() {
 
   // this is what happens when the unit test is executed
   console.log('----- running attribute assertion in test');
-  var assertionInstance = called();
+  var assertionInstance = called({runtime: 'options'});
 
   // this is what is returned to the unit test
   console.log('assertion', assertionInstance.label);

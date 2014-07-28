@@ -55,13 +55,21 @@ module.exports = function(dalek) {
   // which then returns a function that can be called at execution-time
   Registry.prototype.decorateExecutionTime = function(type, name, meta, handler) {
     // executed by wrapForRegistration
-    return function(options) {
+    return function(calltimeOptions) {
       // executed by unit.run()
-      return function() {
+      return function(runtimeOptions) {
         dalek.reporter.debug("executing assertion", name);
 
         // TODO: runtime options
         // like reading from dalek.data(), replacing config placeholders, etc.
+
+        // merge runtime and calltime options, giving calltime precedence
+        var options = _.extend({}, calltimeOptions);
+        Object.keys(runtimeOptions).forEach(function(key) {
+          if (options[key] === null || options[key] === undefined) {
+            options[key] = runtimeOptions[key];
+          }
+        });
 
         // execute the actual plugin
         return handler(options);
@@ -115,10 +123,12 @@ module.exports = function(dalek) {
       called: stack,
       selector: null,
       match: 'first',
+      timeout: null,
+      retry: null,
+      message: null,
+      // Assertion specific
       expected: null,
-      compare: null,
       inverted: null,
-      message: null
     };
 
     if (typeof args[0] === 'array') {
