@@ -50,5 +50,26 @@ module.exports = function(dalek) {
     console.log.apply(console, args);
   };
 
+  Reporter.prototype.error = function(error) {
+    console.log('\n');
+
+    if (error instanceof dalek.Error) {
+      console.log(chalk.bgRed.white.bold(error.message));
+      if (!error._stack) {
+        console.log(error.stack);
+        return;
+      } else 
+
+      error._stack.forEach(function(callSite) {
+        console.log(' at ' + chalk.red(callSite.name) + ' (' + chalk.yellow(callSite.file) + ':' + chalk.cyan(callSite.line) + ')' );
+      });
+      
+      return;
+    }
+
+    // regular Error
+    console.log(error.stack || error);
+  }
+
   return Reporter;
 };
