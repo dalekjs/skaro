@@ -19,10 +19,18 @@ module.exports = function(dalek) {
   };
 
   Reporter.prototype.log = function() {
+    if (this.options.silent) {
+      return;
+    }
+
     console.log.apply(console, arguments);
   };
 
   Reporter.prototype.debug = function() {
+    if (this.options.silent) {
+      return;
+    }
+
     var args = serialize(arguments).map(function(item) {
       return chalk.bgWhite.blue(item);
     });
@@ -31,6 +39,10 @@ module.exports = function(dalek) {
   };
 
   Reporter.prototype.warning = function() {
+    if (this.options.silent) {
+      return;
+    }
+
     var args = serialize(arguments).map(function(item) {
       return chalk.bgYellow.red.bold(item);
     });
@@ -39,6 +51,10 @@ module.exports = function(dalek) {
   };
 
   Reporter.prototype.error = function(error) {
+    if (this.options.silent) {
+      return;
+    }
+
     console.log('\n');
 
     if (error instanceof dalek.Error) {
