@@ -12,22 +12,7 @@ var stackTrace = require('stack-trace');
 
 module.exports = function(dalek) {
   var _ = dalek._;
-  /*
-    ### REGISTRATION TIME ###
 
-    * message bus
-    * enable .not.foo if meta.invertable
-
-    ### CALL TIME ###
-    options: {
-      name: 'attribute-name' // caller
-      selector: Selector // caller
-      compare: function // caller | generated
-      inverted: boolean // caller - comes from assert.not.plugin()
-      message: 'text' // caller, optional
-    }
-    returns promise like object
-   */
   function Registry(options) {
     // exported to dalek.assert
     this.assert = this.assert.bind(this);
