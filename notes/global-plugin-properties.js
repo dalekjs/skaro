@@ -16,6 +16,7 @@ module.exports = function (dalek, assert, action, wait) {
       match: 'first',
       // filter callback for imperative element selection
       // function is executed in browser space
+      // TODO: implement match: function(){}
       match: function(element, index, list) {
         // if match is a function, the plugin will not
         // execute webdriver.queryElements() but wrap this
@@ -33,9 +34,22 @@ module.exports = function (dalek, assert, action, wait) {
       // default: 0
       retry: 1,
 
-      // log message for failure case
+      // log message for failure case,
+      // overwrites the error-message returned by the an expected-callback of an assertion
       message: 'width did not animate',
 
+      // --- Assertion specific ---
+
+      // specify the value an assertion is to validate against
+      // value: anything but a function object is converted to is.equal(options.expected)
+      // return: the function is to return a string (error message) in case of failure
+      // and a falsy value (false, empty-string) in case of success,
+      // example: function(value) { return value === 'foobar' ? '' : ('unexpected ' + dalek.format.literal(value)) }
+      expected: '',
+      // flag to make an assertion work the other way around,
+      // if default would be to check === 'foo', the inverted
+      // way is to !(check === 'foo')
+      inverted: false,
     }
 
   ];
