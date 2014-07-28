@@ -1,3 +1,8 @@
+/*
+    The Reporter is the interface used to broadcast messages to
+    any and all connected reporter instances
+ */
+
 // https://www.npmjs.org/package/chalk
 var chalk = require('chalk');
 
@@ -18,7 +23,12 @@ module.exports = function(dalek) {
 
   function Reporter(options) {
     this.options = options;
+    this.reporters = [];
   }
+
+  Reporter.protoype.add = function(reporter) {
+    this.reporters.push(reporter);
+  };
 
   Reporter.prototype.log = function() {
     console.log.apply(console, arguments);
