@@ -1,19 +1,44 @@
-// Status: IMPORTED
-// Docs: http://dalekjs.com/docs/assertions.html#meth-attr
-// Source: https://github.com/dalekjs/dalek/blob/master/lib/dalek/assertions.js#L1294-L1368
+/**
+# Assert Attribute Value
 
-/*
-test.assert.attr('.jumpButton', 'type', 'submit');
+Assert the value of a DOM element's attribute.
 
-// --------------------------------------------------------------------------------------
+## Examples
 
+```js
+// compact notation
+assert.attribute('.selector', 'attribute-name', 'expected-value');
+// option notation
 assert.attribute({
-  selector: '.jumpButton',
-  name: 'type',
-  expected: 'submit'
+  selector: '.selector',
+  name: 'attribute-name',
+  expected: 'expected-value'
 });
+```
 
-// --------------------------------------------------------------------------------------
+
+## Notes
+
+Attribute and Property values may differ. For example, if you want to check an input element's value, you want to check the property `value` (that gets updated through user input, the attribute `value` does not).
+
+
+## See Also
+
+* assert.property
+* assert.value
+* assert.disabled
+* assert.selected
+
+
+## Dalek 0.0.x Reference
+
+* Docs: http://dalekjs.com/docs/assertions.html#meth-attr
+* Source: https://github.com/dalekjs/dalek/blob/master/lib/dalek/assertions.js#L1294-L1368
+
+```js
+test.assert.attr('.jumpButton', 'type', 'submit');
+```
+
 */
 module.exports = function(dalek) {
   var format = dalek.format;
