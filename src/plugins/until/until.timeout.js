@@ -54,7 +54,9 @@ module.exports = function(dalek) {
     // allow calls like assert.click('.some-thing')
     signature: ['timeout'],
     // list of properties that must be specified at the very least
-    required: ['timeout']
+    required: ['timeout'],
+    // disable the automatic timeout
+    timeout: false,
   };
 
   var handler = function(options) {
@@ -63,8 +65,6 @@ module.exports = function(dalek) {
 
     // we're creating an action, give dalek that context
     var handle = new dalek.Handle(label, dalek.Handle.UNTIL, meta.name);
-    // disable dalkek's automatic timeout-to-failure handling
-    handle.timeout = function(){};
 
     setTimeout(function() {
       handle.resolve('timeout passed');
