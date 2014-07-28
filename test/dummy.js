@@ -1,11 +1,16 @@
-var expect = require('chai').expect;
-var Dalek = require('../src/Dalek.js')
+'use strict';
 
-describe('Can init', function(){
-  describe('#construct()', function(){
-    it('should be an object', function(){
-      var dalek = new Dalek({});
+var expect = require('chai').expect;
+var Dalek = require('../src/Dalek.js');
+
+describe('Can init', function() {
+  describe('#construct()', function() {
+    it('should be an object', function() {
+      var dalek = new Dalek({
+        silent: true
+      });
+
       expect(dalek).to.be.an('object');
-    })
-  })
-})
+    });
+  });
+});
