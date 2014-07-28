@@ -20,8 +20,14 @@ module.exports = function(dalek) {
 
     // exported to dalek.assert
     this.assert = this.assert.bind(this);
+    this.action = this.action.bind(this);
     this.assert.not = {};
   }
+
+  // register an action plugin
+  Registry.prototype.action = function(name, meta, handler) {
+    this.register('Action', 'action', name, meta, handler);
+  };
 
   // register an assertion plugin
   Registry.prototype.assert = function(name, meta, handler) {
