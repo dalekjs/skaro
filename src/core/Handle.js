@@ -15,16 +15,18 @@ module.exports = function(dalek) {
     this.reject = this.deferred.reject.bind(this.deferred);
     this.resolve = this.deferred.resolve.bind(this.deferred);
     this.then = this.deferred.promise.then.bind(this.deferred.promise);
+    this.catch = this.deferred.promise.catch.bind(this.deferred.promise);
 
     this.stopTimeout = this.stopTimeout.bind(this);
     this.then(this._stopTimeout).catch(this._stopTimeout);
   }
 
-  Handle.SUITE = 1;
-  Handle.UNIT = 2;
-  Handle.ACTION = 3;
-  Handle.ASSERTION = 4;
-  Handle.UNTIL = 5;
+  Handle.DALEK = 1;
+  Handle.SUITE = 2;
+  Handle.UNIT = 3;
+  Handle.ACTION = 4;
+  Handle.ASSERTION = 5;
+  Handle.UNTIL = 6;
 
   Handle.prototype.timeout = function(duration) {
     this._timeout = setTimeout(function() {
