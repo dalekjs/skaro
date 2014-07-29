@@ -80,7 +80,7 @@ module.exports = function(dalek) {
     verifyMeta(meta, handler);
 
     // there can only be one
-    if (this.plugins['is'][meta.name]) {
+    if (this.plugins.is[meta.name]) {
       throw new dalek.Error(
         dalek.format.keyword('Expectation') + ' ' + dalek.format.keyword(meta.name) + ' already registered!',
         dalek.Error.PLUGIN_REGISTRATION
