@@ -2,7 +2,6 @@ module.exports = function(dalek) {
   'use strict';
 
   var _ = dalek._;
-  var Q = dalek.Q;
 
   function Unit(label, options, callback, called) {
     this.label = label;
@@ -19,10 +18,12 @@ module.exports = function(dalek) {
     }
 
     this._tasks = [];
+
+    this._runLoop = this._runLoop.bind(this);
   }
 
-  Unit.prototype.options = function(options) {
-    if (typeof options === undefined) {
+  Unit.prototype.options = function(options, defaultValue) {
+    if (options === undefined) {
       return _.clone(this._options);
     }
 
@@ -34,6 +35,7 @@ module.exports = function(dalek) {
   };
 
   Unit.prototype.initialize = function() {
+    dalek.reporter.debug('initializing unit', this.label);
     this._tasks = this._initialize(this.options);
 
     if (!Array.isArray(this._tasks)) {
@@ -52,11 +54,47 @@ module.exports = function(dalek) {
       );
     }
 
-    dalek.reporter.debug('initialized unit', this.label);
+    this.handle = new dalek.Handle(this.label, dalek.Handle.UNIT);
+    this.handle.children = this._tasks.length;
+    this.handle.operations = 0;
+
+    return this.handle;
   };
 
   Unit.prototype.run = function() {
     dalek.reporter.debug('Running Unit', this.label);
+    this._runLoop();
+    return this.handle;
+  };
+
+  Unit.prototype._runLoop = function() {
+    var task = this._tasks.shift();
+    if (!task) {
+      this.handle.resolve();
+      return;
+    }
+
+    var taskHandle = task(this.options());
+    this.handle.operations++;
+    dalek.reporter.started(taskHandle);
+
+    if (taskHandle.type === dalek.Handle.ASSERTION) {
+      // TODO: if dalek.options('assertion.faulure') === 'continue';
+    }
+
+    var success = function(message) {
+      dalek.reporter.succeeded(taskHandle, message);
+      this._runLoop();
+    }.bind(this);
+
+    var failure = function(message) {
+      dalek.reporter.failed(taskHandle, message);
+      this.handle.reject(taskHandle);
+    }.bind(this);
+
+    taskHandle
+      .then(success, failure)
+      .catch(dalek.catch);
   };
 
   return Unit;
