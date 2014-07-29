@@ -7,8 +7,11 @@ The new API is trying to bring in ideas expressed in [breaking backward-compatib
 ## Open Topics
 
 * writing tests for the runner
+* epxorting the dalek.* objects (e.g. `dalek.is`, `dalek.assert`, …) to [global](http://nodejs.org/api/globals.html#globals_global) scope. *The test-file loader could export to global scope before loading files and revert that after the files were loaded.*
 * integration of Reporters ([junit](https://github.com/dalekjs/dalek-reporter-junit), [html](https://github.com/dalekjs/dalek-reporter-html), [json](https://github.com/dalekjs/dalek-reporter-json), [console ?](https://github.com/dalekjs/dalek-reporter-console))
 * integration of [CLI](https://github.com/dalekjs/dalek-cli) 
+* importing dalek test suites and local plugins
+* importing `dalek-*` plugins right off `node_modules`, maybe [matchdep](https://www.npmjs.org/package/matchdep)?
 * handling of CLI arguments, ENV, [config file](https://github.com/dalekjs/dalek/blob/master/lib/dalek/config.js)
 * handling of [data()](https://github.com/dalekjs/dalek/blob/master/lib/dalek/actions.js#L1214) what about the old `.buffer()` concept?
 * figure out how markdown and meta-object of plugins can be converted to a proper API documentation (see [action.click](https://github.com/dalekjs/skaro/blob/master/src/plugins/action/action.click.js), [assert.attribute](https://github.com/dalekjs/skaro/blob/master/src/plugins/assert/assert.attribute.js), [is.equal](https://github.com/dalekjs/skaro/blob/master/src/plugins/is/is.equal.js), [until.timeout](https://github.com/dalekjs/skaro/blob/master/src/plugins/until/until.timeout.js))
@@ -21,7 +24,7 @@ The new API is trying to bring in ideas expressed in [breaking backward-compatib
 
 ---
 
-* implement driver facade
+* ~~implement driver facade~~ we'll expose [WD.js](https://github.com/admc/wd) to plugins directly. We're not sure about how to handle "additional features" (like HTTP Auth or SSL certificate validation pages) at this point.
 * implement all the plugins
 * implement all the expectations ([chai?](http://chaijs.com/api/assert/))
 
