@@ -206,13 +206,16 @@ module.exports = function(dalek) {
   function getOptions(meta, args, stack) {
     var format = dalek.format;
     var options = {
+      // generated options
       called: stack,
+      arguments: [].slice.call(args, 0),
+      // generic plugin options
       selector: null,
       match: 'first',
       timeout: null,
       retry: null,
       message: null,
-      // Assertion and Expectation specific
+      // Assertion and Expectation specific options
       expected: null,
       inverted: null,
     };

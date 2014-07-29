@@ -48,11 +48,23 @@ module.exports = function (dalek, assert, action, wait) {
       // and a falsy value (false, empty-string) in case of success,
       // example: function(value) { return value === 'foobar' ? '' : ('unexpected ' + dalek.format.literal(value)) }
       expected: '',
+
       // flag to make an assertion work the other way around,
       // if default would be to check === 'foo', the inverted
       // way is to !(check === 'foo')
       inverted: false,
-    }
 
+
+      // --- Generated properties ---
+
+      // call-stack at call-time (i.e. during suite/unit definition phase)
+      // used internally to provide error messages that make sense
+      called: [{ name: 'functionName', file: 'file.js', line: 123 }],
+
+      // the arguments (as array) at call-time, this may be useful to plugins such as log.* 
+      // where you want to allow log.message('key1', 'key2', 'key3')
+      arguments: [],
+
+    })
   ];
 };
