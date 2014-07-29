@@ -81,7 +81,7 @@ module.exports = function(dalek) {
 
     var taskHandle = task(this.options());
     this.handle.operations++;
-    if (!this.options('silentUnlessError')) {
+    if (!this.options('mute')) {
       dalek.reporter.started(taskHandle);
     }
 
@@ -90,7 +90,7 @@ module.exports = function(dalek) {
     }
 
     var success = function(message) {
-      if (!this.options('silentUnlessError')) {
+      if (!this.options('mute')) {
         dalek.reporter.succeeded(taskHandle, message);
       }
 
@@ -98,10 +98,12 @@ module.exports = function(dalek) {
     }.bind(this);
 
     var failure = function(message) {
-      if (this.options('silentUnlessError')) {
-        dalek.reporter.started(taskHandle);
+      if (!this.options('mute')) {
+        dalek.reporter.failed(taskHandle, message);
+      } else {
+        taskHandle.mutedMessage = message;
       }
-      dalek.reporter.failed(taskHandle, message);
+
       this.handle.reject(taskHandle);
     }.bind(this);
 

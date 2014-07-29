@@ -89,13 +89,16 @@ module.exports = function(dalek) {
 
     var unitHandle = unit.initialize();
     unit.run({
-      silentUnlessError: true
+      mute: true
     });
 
     // report only in failure case
     unitHandle.catch(function(failure) {
       dalek.reporter.started(unitHandle);
+      dalek.reporter.started(failure);
+      dalek.reporter.failed(failure, failure.mutedMessage);
       dalek.reporter.failed(unitHandle, failure);
+
       this.handle.reject(unitHandle);
       throw failure;
     }.bind(this));
