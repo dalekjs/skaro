@@ -20,9 +20,11 @@ module.exports = function(dalek) {
     this.then(this._stopTimeout).catch(this._stopTimeout);
   }
 
-  Handle.ACTION = 1;
-  Handle.ASSERTION = 2;
-  Handle.UNTIL = 3;
+  Handle.SUITE = 1;
+  Handle.UNIT = 2;
+  Handle.ACTION = 3;
+  Handle.ASSERTION = 4;
+  Handle.UNTIL = 5;
 
   Handle.prototype.timeout = function(duration) {
     this._timeout = setTimeout(function() {
