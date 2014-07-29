@@ -290,7 +290,8 @@ module.exports = function(dalek) {
 
     // within a plugin a selector should always be a Selector instance
     if (typeof options.selector === 'string') {
-      options.selector = new dalek.Selector(options.selector, dalek.options.selectorStrategy);
+      // TODO: figure out where default options come from
+      options.selector = new dalek.Selector(options.selector, dalek.options('selectorStrategy'));
     }
 
     return options;

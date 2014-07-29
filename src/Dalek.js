@@ -17,8 +17,9 @@ module.exports = (function(){
   'use strict';
 
   function Dalek(options) {
-    this.options = _.extend({}, Dalek.defaults);
-    _.extend(this.options, options);
+    // TODO: figure out where default options come from
+    this._options = _.extend({}, Dalek.defaults);
+    _.extend(this._options, options);
 
     this.initialize();
     this.registry.initialize();
@@ -26,6 +27,22 @@ module.exports = (function(){
 
   Dalek.defaults = {
     selectorStrategy: 'css'
+  };
+
+  Dalek.prototype.options = function(options, defaultValue) {
+    var _options = this._options;
+
+    // TODO: load options from Suite/Unit when in that mode?
+
+    if (typeof options === undefined) {
+      return _.clone(_options);
+    }
+
+    if (typeof options === 'string') {
+      return _options[options] !== undefined ? _options[options] : defaultValue;
+    }
+
+    _.extend(_options, options || {});
   };
 
   Dalek.prototype.initialize = function() {
