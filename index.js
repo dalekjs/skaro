@@ -31,6 +31,7 @@ dalek.suite('name of the suite', function(suite, options) {
     return [
       //dalek.browser.openUrl('localhost');
       dalek.action.click('.before-unit'),
+      dalek.assert.attribute('.rainbow', 'color', dalek.is.not.equal('green')),
     ];
   });
 
