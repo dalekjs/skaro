@@ -24,10 +24,12 @@ module.exports = function(dalek) {
     var label = chalk.bgBlack.yellow(handle.label);
     switch (handle.type) {
       case Handle.SUITE:
+        console.log('\n------------------------------------------------------------\n');
         console.log(chalk.bgBlue.white('Suite'), label, 'with', handle.children, 'units');
         break;
 
       case Handle.UNIT:
+        console.log('\n');
         console.log('', chalk.bgBlue.white('Unit'), label, 'with', handle.children, 'tasks');
         break;
 
