@@ -20,7 +20,6 @@ module.exports = (function(){
   'use strict';
 
   function Dalek(options) {
-    // TODO: figure out where default options come from
     this._options = _.extend({}, Dalek.defaults);
     _.extend(this._options, options);
 
