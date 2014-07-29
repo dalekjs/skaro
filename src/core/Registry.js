@@ -16,8 +16,6 @@
     handle.then(successHandler, errorHandler);
  */
 
-var stackTrace = require('stack-trace');
-
 module.exports = function(dalek) {
   'use strict';
 
@@ -153,7 +151,7 @@ module.exports = function(dalek) {
       dalek.reporter.debug('calling plugin', meta.name);
       // save the stack trace of the plugin-call so the developer
       // can quickly identify where something went wrong in their test
-      var stack = getStack(callPlugin);
+      var stack = dalek.getStack(callPlugin);
       // wrangle and test whatever was passed into the plugin call
       var options = getOptions(meta, arguments, stack);
       // assertions and expectations may be invertable
@@ -295,32 +293,6 @@ module.exports = function(dalek) {
     }
 
     return options;
-  }
-
-  // extract the useful (developer-relevant) parts of the call-stack
-  // to present in case of problems during plugin call and exection-time
-  function getStack(below) {
-    // https://github.com/felixge/node-stack-trace
-    var stack = [];
-    var trace = stackTrace.get(below);
-
-    trace.some(function(callSite) {
-      var site = {
-        name: callSite.getFunctionName(),
-        file: callSite.getFileName(),
-        line: callSite.getLineNumber(),
-      };
-
-      // we don't care about anything deeper than this
-      if (site.name === 'Module._compile') {
-        return true;
-      }
-
-      stack.push(site);
-      return false;
-    });
-
-    return stack;
   }
 
   Registry.prototype.initialize = function(path) {

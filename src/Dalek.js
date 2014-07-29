@@ -1,6 +1,9 @@
+'use strict';
+
+// utilities
 var Q = require('q');
 var _ = require('lodash');
-
+var getStack = require('./util/getStack');
 // convenience accessors
 var _DalekError = require('./core/DalekError');
 var _Selector = require('./core/Selector');
@@ -49,6 +52,7 @@ module.exports = (function(){
     // convenience accessors
     this._ = _;
     this.Q = Q;
+    this.getStack = getStack;
     this.Error = _DalekError(this);
     this.Selector = _Selector(this);
     this.Handle = _Handle(this);
