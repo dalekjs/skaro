@@ -69,6 +69,9 @@ module.exports = (function(){
 
     // runtime data
     this._suites = [];
+
+    this.catch = this.catch.bind(this);
+    this._runLoop = this._runLoop.bind(this);
   };
 
   Dalek.prototype._registerPlugins = function(plugins) {
@@ -100,17 +103,43 @@ module.exports = (function(){
     this.reporter.debug('RUN, FORREST, RUN!');
 
     // TODO: figure out what needs to be run here
-    // this._runSuites();
+
+    this.handle = new this.Handle('Dalek Master Process', this.Handle.DALEK);
+    this.handle.children = this._suites.length;
+    this.handle.operations = 0;
+
+    setTimeout(this._runLoop);
+
+    return this.handle;
   };
 
-  Dalek.prototype._runSuites = function() {
-    this.reporter.debug('Dalek running Suites');
+  Dalek.prototype._runLoop = function() {
+    var suite = this._suites.shift();
+    if (!suite) {
+      this.handle.resolve();
+      return;
+    }
 
-    this._suites.forEach(function(suite) {
-      //this.reporter.debug('initializ, waaah');
+    var suiteHandle = suite.initialize();
+    this.handle.operations++;
+    this.reporter.started(suiteHandle);
 
-      suite.initialize();
-    }.bind(this));
+    suite.run();
+
+    var success = function(message) {
+      this.reporter.succeeded(suiteHandle, message);
+      this._runLoop();
+    }.bind(this);
+
+    var failure = function(message) {
+      this.reporter.failed(suiteHandle, message);
+      this.handle.reject(suiteHandle);
+    }.bind(this);
+
+    suiteHandle
+      .then(success, failure)
+      .catch(this.catch);
+
   };
 
   return Dalek;
