@@ -17,11 +17,10 @@ var _Suite = require('./core/Suite');
 var _Unit = require('./core/Unit');
 
 module.exports = (function(){
-  'use strict';
 
   function Dalek(options) {
     this._options = _.extend({}, Dalek.defaults);
-    _.extend(this._options, options);
+    _.extend(this._options, options || {});
 
     this.initialize();
     this.registry.initialize();
@@ -35,8 +34,7 @@ module.exports = (function(){
     var _options = this._options;
 
     // TODO: load options from Suite/Unit when in that mode?
-
-    if (typeof options === undefined) {
+    if (options === undefined) {
       return _.clone(_options);
     }
 
@@ -59,10 +57,11 @@ module.exports = (function(){
     this.Suite = _Suite(this);
 
     // runtime interfaces
-    this.driver = new (_Driver(this))(this.options);
-    this.format = new (_Format(this))(this.options);
-    this.reporter = new (_Reporter(this))(this.options);
-    this.registry = new (_Registry(this))(this.options);
+    // (inherit global config)
+    this.driver = new (_Driver(this))(this._options);
+    this.format = new (_Format(this))(this._options);
+    this.reporter = new (_Reporter(this))(this._options);
+    this.registry = new (_Registry(this))(this._options);
 
     // convenience runtime accessors
     this.registerPlugin = this.registry.registerPlugin;
