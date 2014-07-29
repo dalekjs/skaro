@@ -143,10 +143,6 @@ module.exports = function(dalek) {
   };
 
   Reporter.prototype.error = function(error) {
-    if (this.options.silent) {
-      return;
-    }
-
     console.log('\n');
 
     if (error instanceof dalek.Error) {
