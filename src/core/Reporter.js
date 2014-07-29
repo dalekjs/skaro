@@ -9,6 +9,8 @@ var chalk = require('chalk');
 module.exports = function(dalek) {
   'use strict';
 
+  var Handle = dalek.Handle;
+
   function Reporter(options) {
     this.options = options;
     this.reporters = [];
@@ -17,6 +19,96 @@ module.exports = function(dalek) {
   Reporter.prototype.add = function(reporter) {
     this.reporters.push(reporter);
   };
+
+  Reporter.prototype.started = function(handle) {
+    var label = chalk.bgBlack.yellow(handle.label);
+    switch (handle.type) {
+      case Handle.SUITE:
+        console.log(chalk.bgBlue.white('Suite'), label, 'with', handle.children, 'units');
+        break;
+
+      case Handle.UNIT:
+        console.log('', chalk.bgBlue.white('Unit'), label, 'with', handle.children, 'tasks');
+        break;
+
+      case Handle.ASSERTION:
+        console.log('  ', chalk.bgBlue.white('Assertion'), label);
+        break;
+
+      case Handle.UNTIL:
+        console.log('  ', chalk.bgCyan.black('Wait'), label);
+        break;
+
+      //case Handle.ACTION:
+      default:
+        console.log('  ', chalk.bgMagenta.white('Action'), label);
+        break;
+    }
+  };
+
+  Reporter.prototype.retried = function(/*handle, retryHandle*/) {
+    // TODO: implement retry
+    //console.log('  ', chalk.blue('retrying'), chalk.bgBlack.blue(handle.label));
+  };
+
+  Reporter.prototype.succeeded = function(handle, message) {
+    // message only supplied for Tasks, but not Unit and Suite
+    var _message = chalk.bgBlack.white(message);
+    var _success = chalk.bgBlack.green('⌞ success');
+    switch (handle.type) {
+      case Handle.SUITE:
+        console.log(_success, chalk.bgBlack.white('Suite passed'));
+        break;
+
+      case Handle.UNIT:
+        console.log('', _success, chalk.bgBlack.white('Unit passed'));
+        break;
+
+      case Handle.ASSERTION:
+        console.log('  ', _success, _message);
+        break;
+
+      case Handle.UNTIL:
+        console.log('  ', _success, _message);
+        break;
+
+      //case Handle.ACTION:
+      default:
+        console.log('  ', _success, _message);
+        break;
+    }
+  };
+
+  Reporter.prototype.failed = function(handle, message) {
+    // message is failure response of task in Unit,
+    // handle of failed task in Suite
+    var _message = chalk.bgRed.white(message);
+    var _error = chalk.bgBlack.red('⌞ error');
+    switch (handle.type) {
+      case Handle.SUITE:
+        console.log(_error, chalk.bgRed.white('Suite failed'));
+        break;
+
+      case Handle.UNIT:
+        console.log('', _error, chalk.bgRed.white('Unit failed'));
+        break;
+
+      case Handle.ASSERTION:
+        console.log('  ', _error, _message);
+        break;
+
+      case Handle.UNTIL:
+        console.log('  ', _error, _message);
+        break;
+
+      //case Handle.ACTION:
+      default:
+        console.log('  ', _error, _message);
+        break;
+    }
+  };
+
+
 
   Reporter.prototype.log = function() {
     if (this.options.silent) {
