@@ -113,7 +113,7 @@ module.exports = function(dalek) {
       this.options(options);
     }
 
-    this._runLoop();
+    setTimeout(this._runLoop);
     return this.handle;
   };
 
