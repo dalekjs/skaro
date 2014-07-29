@@ -39,10 +39,10 @@ working with browser scripts [research]
 
 improve scalability [research]
 
+* think about `continueOnFailure` on task-level, unit-level and suite-level - this should allow running all the tests to figure out what is failing, rather than aborting execution on first failure
 * look at [dalek.ui](https://github.com/rodneyrehm/dalek-api/blob/master/breaking-bc-api.md#remembering-ui-elements) to compensate for the dropped .query()
 * think about **macros** (re-usable unit-fragments)
 * look at [semantic phases](https://github.com/rodneyrehm/dalek-api/blob/master/breaking-bc-api.md#semantic-phases)
-
 
 ---
 
