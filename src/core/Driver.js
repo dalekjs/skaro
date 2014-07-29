@@ -48,7 +48,8 @@ module.exports = function(dalek) {
             reject(new DalekError('Firefox driver does not support the click method', DalekError.DRIVER))
        */
       var deferred = dalek.Q.defer();
-      deferred.resolve([true, 'element not found']);
+      // deferred.resolve([true, 'element not found']);
+      deferred.resolve([true, true]);
       return deferred.promise;
     }
   };

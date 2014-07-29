@@ -4,7 +4,9 @@ console.log('----- loading dalek');
 var Dalek = require('./src/Dalek');
 
 console.log('----- starting dalek');
-var dalek = new Dalek();
+var dalek = new Dalek({
+  silent: true
+});
 
 var domain = require('domain').create();
 domain.on('error', function(error) {
@@ -26,18 +28,24 @@ dalek.suite('name of the suite', function(suite, options) {
   });
 
   suite.beforeUnit(function() {
-    console.log('run before each unit to set up common stuff');
+    return [
+      //dalek.browser.openUrl('localhost');
+      dalek.action.click('.before-unit'),
+    ];
   });
 
-  suite.afterUnit(function() {
-    console.log('run after each unit (even on failure?) to clean things up');
+  suite.afterUnit(function(succeeded) {
+    return [
+      //dalek.log.message('after unit ', succeded ? 'successful' : 'failed');
+      dalek.action.click('.after-unit'),
+    ];
   });
 
   suite.unit('first unit', function(options) {
     return [
       dalek.action.click('.somewhere'),
       dalek.until.timeout(100),
-      dalek.assert.attribute('.rainbow', 'color', 'green'),
+      dalek.assert.attribute('.rainbow', 'color', dalek.is.not.equal('green')),
     ];
   });
 
@@ -60,7 +68,13 @@ dalek.suite('other suite', function(suite) {
 });
 
 console.log('----- running suites');
-dalek._runSuites();
+var handle = dalek.run().then(function() {
+  console.log('\nEXTERMINATED');
+}, function(failedSuiteHandle) {
+  console.log('\nDALEK FAILED');
+});
+
+console.log('----- waiting for the rain');
 
 return;
 
