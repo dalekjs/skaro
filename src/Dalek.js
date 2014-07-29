@@ -68,6 +68,9 @@ module.exports = (function(){
     // convenience runtime accessors
     this.registerPlugin = this.registry.registerPlugin;
     this.registerExpectation = this.registry.registerExpectation;
+
+    // runtime data
+    this._suites = [];
   };
 
   Dalek.prototype._registerPlugins = function(plugins) {
@@ -88,12 +91,28 @@ module.exports = (function(){
     process.exit(1);
   };
 
-  Dalek.prototype.suite = function(/*label, callback*/) {
-    this.reporter.debug('registering a new Suite');
+  Dalek.prototype.suite = function(label, callback) {
+    this.reporter.debug('registering suite', label);
+    var called = this.getStack(this.suite);
+    var suite = new this.Suite(label, this.options(), callback, called);
+    this._suites.push(suite);
   };
 
-  Dalek.prototype.unit = function(/*label, callback*/) {
-    this.reporter.debug('registering a new Unit');
+  Dalek.prototype.run = function() {
+    this.reporter.debug('RUN, FORREST, RUN!');
+
+    // TODO: figure out what needs to be run here
+    // this._runSuites();
+  };
+
+  Dalek.prototype._runSuites = function() {
+    this.reporter.debug('Dalek running Suites');
+
+    this._suites.forEach(function(suite) {
+      //this.reporter.debug('initializ, waaah');
+
+      suite.initialize();
+    }.bind(this));
   };
 
   return Dalek;

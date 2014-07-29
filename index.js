@@ -18,6 +18,56 @@ domain.run(function() {
   //   {name: 'someFunction', file: 'index.js', line: 123}
   // ]);
 
+console.log('----- registering suites');
+dalek.suite('name of the suite', function(suite, options) {
+
+  suite.options({
+    foo: 'bar'
+  });
+
+  suite.beforeUnit(function() {
+    console.log('run before each unit to set up common stuff');
+  });
+
+  suite.afterUnit(function() {
+    console.log('run after each unit (even on failure?) to clean things up');
+  });
+
+  suite.unit('first unit', function(options) {
+    return [
+      dalek.action.click('.somewhere'),
+      dalek.until.timeout(100),
+      dalek.assert.attribute('.rainbow', 'color', 'green'),
+    ];
+  });
+
+  suite.unit('second unit', function(options) {
+    return [
+      dalek.action.click('.kansas'),
+    ];
+  });
+
+});
+
+dalek.suite('other suite', function(suite) {
+
+  suite.unit('lalalal', function(options) {
+    return [
+      dalek.action.click('.kansas'),
+    ];
+  });
+
+});
+
+console.log('----- running suites');
+dalek._runSuites();
+
+return;
+
+  // provoke failure
+  //dalek.assert.attribute('some-selector');
+
+
   // this is what happens inside a unit test definition
   console.log('----- registering expectation equals');
   var called = dalek.is.not.equal('some-value');
