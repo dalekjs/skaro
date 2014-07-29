@@ -6,6 +6,14 @@
     simple argument validation are performed. The Registry is
     a bit more complicated so that defining and using plugins
     must not.
+
+
+    while the process of wrapping and unwrapping plugin handlers
+    may look complicated, the following behavior is the result:
+
+    var plugin = dalek.assert.attribute({ calltimeOptions });
+    var handle = plugin({ runtimeOptions });
+    handle.then(successHandler, errorHandler);
  */
 
 var stackTrace = require('stack-trace');
