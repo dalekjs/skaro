@@ -4,18 +4,28 @@ module.exports = function (dalek, assert, action, wait) {
     // group to sort the plugin into
     // default groups are: assert, action, until
     namespace: 'assert',
+
     // name of the plugin
     name: 'something',
+
     // allow calls like assert.attribute('.some-thing', 'attr-name', 'expected-value')
     signature: ['selector', 'name', 'expected'],
+
     // list of properties that must be specified at the very least
     required: ['selector', 'name'],
+
     // mark this plugin capable of handling {match: "all"}
     iterator: true,
+
     // mark this plugin as capable of handling .not.attribute()
     invertable: true,
+
     // disable the automatic timeout
     timeout: false,
+
+    // disable the internal retry mechanism
+    // TODO: implement retry
+    retry: false,
 
 
     // --- Expectation specific ---
@@ -24,6 +34,7 @@ module.exports = function (dalek, assert, action, wait) {
     displayName: 'is.green'
     displayName: function(options) {
       return 'color equals ' + dalek.format.literal(options.expected);
-    },  
+    },
+
   };
 };

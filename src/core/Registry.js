@@ -133,6 +133,24 @@ module.exports = function(dalek) {
           }
         });
 
+        /*
+          // TODO: implement retry
+          // retry handling cannot like this because we have to return the handle, not a promise
+          // but really this would be the place it should be done, because timeout() handling is
+          // done here as well…
+
+          return handle.catch(function(error) {
+            if (!options.retry || meta.retry === false) {
+              throw error;
+            }
+
+            options.retry -= 1;
+            var retryHandle = executeHandler(options);
+            dalek.reporter.retried(handle, retryHandle);
+            return retryHandle;
+          });
+        */
+
         // execute the actual plugin
         var handle = handler(options);
         // make sure it can't run forever (unless it does so synchronously)
@@ -213,6 +231,7 @@ module.exports = function(dalek) {
       selector: null,
       match: 'first',
       timeout: null,
+      // TODO: implement retry
       retry: null,
       message: null,
       // Assertion and Expectation specific options
