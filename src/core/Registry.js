@@ -256,7 +256,7 @@ module.exports = function(dalek) {
     meta.required.forEach(function(key) {
       if (options[key] === undefined || options[key] === null) {
         throw new dalek.Error(
-          format.keyword(meta.namespace) + ' ' + format.keyword(meta.name) + ' required parameter ' + format.keyword(key),
+          format.keyword(meta.namespace) + ' ' + format.keyword(meta.name) + ' requires parameter ' + format.keyword(key),
           dalek.Error.PLUGIN_CALL,
           stack
         );
