@@ -10,6 +10,7 @@ var _Driver = require('./core/Driver');
 var _Format = require('./core/Format');
 var _Reporter = require('./core/Reporter');
 var _Registry = require('./core/Registry');
+var _Suite = require('./core/Suite');
 var _Unit = require('./core/Unit');
 
 module.exports = (function(){
@@ -35,6 +36,7 @@ module.exports = (function(){
     this.Selector = _Selector(this);
     this.Handle = _Handle(this);
     this.Unit = _Unit(this);
+    this.Suite = _Suite(this);
 
     // runtime interfaces
     this.driver = new (_Driver(this))(this.options);
@@ -63,6 +65,10 @@ module.exports = (function(){
     // e.g. http://docs.openlinksw.com/virtuoso/signalsandexitcodes.html
     this.reporter.log('\n\naborting Dalek because of script error in promise');
     process.exit(1);
+  };
+
+  Dalek.prototype.suite = function(/*label, callback*/) {
+    this.reporter.debug('registering a new Suite');
   };
 
   Dalek.prototype.unit = function(/*label, callback*/) {
