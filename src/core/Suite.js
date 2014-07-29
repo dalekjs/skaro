@@ -88,7 +88,9 @@ module.exports = function(dalek) {
     }
 
     var unitHandle = unit.initialize();
-    unit.run();
+    unit.run({
+      silentUnlessError: true
+    });
 
     // report only in failure case
     unitHandle.catch(function(failure) {
@@ -101,8 +103,13 @@ module.exports = function(dalek) {
     return unitHandle;
   };
 
-  Suite.prototype.run = function() {
+  Suite.prototype.run = function(options) {
     dalek.reporter.debug('Running Suite', this.label);
+
+    if (options) {
+      this.options(options);
+    }
+
     this._runLoop();
     return this.handle;
   };

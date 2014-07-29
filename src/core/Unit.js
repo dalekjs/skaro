@@ -61,8 +61,13 @@ module.exports = function(dalek) {
     return this.handle;
   };
 
-  Unit.prototype.run = function() {
+  Unit.prototype.run = function(options) {
     dalek.reporter.debug('Running Unit', this.label);
+
+    if (options) {
+      this.options(options);
+    }
+
     this._runLoop();
     return this.handle;
   };
@@ -76,18 +81,26 @@ module.exports = function(dalek) {
 
     var taskHandle = task(this.options());
     this.handle.operations++;
-    dalek.reporter.started(taskHandle);
+    if (!this.options('silentUnlessError')) {
+      dalek.reporter.started(taskHandle);
+    }
 
     if (taskHandle.type === dalek.Handle.ASSERTION) {
       // TODO: if dalek.options('assertion.faulure') === 'continue';
     }
 
     var success = function(message) {
-      dalek.reporter.succeeded(taskHandle, message);
+      if (!this.options('silentUnlessError')) {
+        dalek.reporter.succeeded(taskHandle, message);
+      }
+
       this._runLoop();
     }.bind(this);
 
     var failure = function(message) {
+      if (this.options('silentUnlessError')) {
+        dalek.reporter.started(taskHandle);
+      }
       dalek.reporter.failed(taskHandle, message);
       this.handle.reject(taskHandle);
     }.bind(this);
