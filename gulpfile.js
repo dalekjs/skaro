@@ -23,7 +23,7 @@ gulp.task('test', function () {
 
 gulp.task('lint', function() {
   var jshint = require('gulp-jshint');
-  return gulp.src('{./src/*.js,./src/core/*.js,./src/util/*.js,./test/**/*.js}')
+  return gulp.src('{./src/*.js,./src/core/*.js,./src/util/*.js,./test/**/*.js,./bin/**/*.js,./example/**/*.js}')
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
     //.pipe(jshint.reporter('fail'))
