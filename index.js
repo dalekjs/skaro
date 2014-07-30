@@ -21,6 +21,31 @@ domain.run(function() {
   // ]);
 
 console.log('----- registering suites');
+
+dalek.beforeDalek(function() {
+  return [
+    dalek.action.click('.before-dalek'),
+  ];
+});
+
+dalek.afterDalek(function() {
+  return [
+    dalek.action.click('.after-dalek'),
+  ];
+});
+
+dalek.beforeSuite(function() {
+  return [
+    dalek.action.click('.before-suite'),
+  ];
+});
+
+dalek.afterSuite(function() {
+  return [
+    dalek.action.click('.after-suite'),
+  ];
+});
+
 dalek.suite('name of the suite', function(suite, options) {
 
   suite.options({
