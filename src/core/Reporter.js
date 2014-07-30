@@ -25,12 +25,12 @@ module.exports = function(dalek) {
     switch (handle.type) {
       case Handle.SUITE:
         console.log('\n------------------------------------------------------------\n');
-        console.log(chalk.bgBlue.white('Suite'), label, 'with', handle.children, 'units');
+        console.log(chalk.bgBlue.white('Suite'), label, 'with', handle.operationsPlanned, 'units');
         break;
 
       case Handle.UNIT:
         console.log('\n');
-        console.log('', chalk.bgBlue.white('Unit'), label, 'with', handle.children, 'tasks');
+        console.log('', chalk.bgBlue.white('Unit'), label, 'with', handle.operationsPlanned, 'tasks');
         break;
 
       case Handle.ASSERTION:
@@ -59,11 +59,11 @@ module.exports = function(dalek) {
     var _success = chalk.bgBlack.green('⌞ success');
     switch (handle.type) {
       case Handle.SUITE:
-        console.log(_success, chalk.bgBlack.white('Suite passed'));
+        console.log(_success, chalk.bgBlack.white('Suite passed'), chalk.bgBlack.yellow(handle.operationsPerformed), 'Units');
         break;
 
       case Handle.UNIT:
-        console.log('', _success, chalk.bgBlack.white('Unit passed'));
+        console.log('', _success, chalk.bgBlack.white('Unit passed'), chalk.bgBlack.yellow(handle.operationsPerformed), 'Tasks');
         break;
 
       case Handle.ASSERTION:
@@ -88,11 +88,11 @@ module.exports = function(dalek) {
     var _error = chalk.bgBlack.red('⌞ error');
     switch (handle.type) {
       case Handle.SUITE:
-        console.log(_error, chalk.bgRed.white('Suite failed'));
+        console.log(_error, chalk.bgRed.white('Suite failed'), 'in Unit', chalk.bgBlack.yellow(handle.operationsPerformed), 'of', chalk.bgBlack.yellow(handle.operationsPlanned));
         break;
 
       case Handle.UNIT:
-        console.log('', _error, chalk.bgRed.white('Unit failed'));
+        console.log('', _error, chalk.bgRed.white('Unit failed'), 'in Task', chalk.bgBlack.yellow(handle.operationsPerformed), 'of', chalk.bgBlack.yellow(handle.operationsPlanned));
         break;
 
       case Handle.ASSERTION:

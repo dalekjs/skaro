@@ -105,8 +105,7 @@ module.exports = (function(){
     // TODO: figure out what needs to be run here
 
     this.handle = new this.Handle('Dalek Master Process', this.Handle.DALEK);
-    this.handle.children = this._suites.length;
-    this.handle.operations = 0;
+    this.handle.setOperations(this._suites.length);
 
     setTimeout(this._runLoop);
 
@@ -121,7 +120,7 @@ module.exports = (function(){
     }
 
     var suiteHandle = suite.initialize();
-    this.handle.operations++;
+    this.handle.performOperation();
     this.reporter.started(suiteHandle);
 
     suite.run();

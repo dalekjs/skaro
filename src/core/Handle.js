@@ -8,14 +8,25 @@ module.exports = function(dalek) {
 
   function Handle(label, type, name) {
     this.label = label;
+    this.status = null;
+    this.message = null;
+
     this.type = type;
     this.name = name;
     this.deferred = dalek.Q.defer();
+
+    this.operationsPlanned = 0;
+    this.operationsPerformed = 0;
 
     this.reject = this.deferred.reject.bind(this.deferred);
     this.resolve = this.deferred.resolve.bind(this.deferred);
     this.then = this.deferred.promise.then.bind(this.deferred.promise);
     this.catch = this.deferred.promise.catch.bind(this.deferred.promise);
+
+    this.deferred.promise.then(
+      this._resolved.bind(this),
+      this._rejected.bind(this)
+    );
 
     this.stopTimeout = this.stopTimeout.bind(this);
     this.then(this._stopTimeout).catch(this._stopTimeout);
@@ -38,30 +49,59 @@ module.exports = function(dalek) {
     clearTimeout(this._timeout);
   };
 
+
+  Handle.prototype.setOperations = function(ops) {
+    this.operationsPlanned = ops;
+  };
+
+  Handle.prototype.setOperationsPerformed = function(ops) {
+    this.operationsPerformed = ops;
+  };
+
+  Handle.prototype.performOperation = function() {
+    this.operationsPerformed++;
+  };
+
+
+  Handle.prototype._resolved = function(message) {
+    this.message = message;
+    this.status = true;
+  };
+
+  Handle.prototype._rejected = function(message) {
+    this.message = message;
+    this.status = false;
+  };
+
+
   Handle.prototype.rejectWithMessage = function(index, message, reason) {
-    var _message = '';
+    this.message = '';
 
     if (typeof index === 'number') {
-      _message += dalek.format.index(index) + ' ';
+      this.message += dalek.format.index(index) + ' ';
+      this.operationsPerformed = index;
     }
 
     if (message) {
-      _message += message;
+      this.message += message;
     } else if (typeof reason === 'string') {
-      _message += reason;
+      this.message += reason;
     } else {
-      _message += 'unspecified failure';
+      this.message += 'unspecified failure';
     }
 
-    this.reject(_message);
+    this.reject(this.message);
   };
 
   Handle.prototype.rejectSelector = function() {
-    this.reject('Selector did not match any elements');
+    this.message = 'Selector did not match any elements';
+    this.reject(this.message);
   };
 
   Handle.prototype.resolveItems = function(items) {
-    this.resolve(dalek.format.index(items) + ' elements passed');
+    this.message = dalek.format.index(items) + ' elements passed';
+    this.operationsPerformed = items;
+    this.resolve(this.message);
   };
 
   return Handle;

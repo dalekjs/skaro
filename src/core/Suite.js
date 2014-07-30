@@ -49,8 +49,7 @@ module.exports = function(dalek) {
     }
 
     this.handle = new dalek.Handle(this.label, dalek.Handle.SUITE);
-    this.handle.children = this._units.length;
-    this.handle.operations = 0;
+    this.handle.setOperations(this._units.length);
 
     return this.handle;
   };
@@ -96,7 +95,7 @@ module.exports = function(dalek) {
     unitHandle.catch(function(failure) {
       dalek.reporter.started(unitHandle);
       dalek.reporter.started(failure);
-      dalek.reporter.failed(failure, failure.mutedMessage);
+      dalek.reporter.failed(failure, failure.message);
       dalek.reporter.failed(unitHandle, failure);
 
       this.handle.reject(unitHandle);
@@ -125,7 +124,7 @@ module.exports = function(dalek) {
     }
 
     var unitHandle = unit.initialize();
-    this.handle.operations++;
+    this.handle.performOperation();
 
     this.runBeforeUnit().then(function() {
       unit.run();

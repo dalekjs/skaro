@@ -55,8 +55,7 @@ module.exports = function(dalek) {
     }
 
     this.handle = new dalek.Handle(this.label, dalek.Handle.UNIT);
-    this.handle.children = this._tasks.length;
-    this.handle.operations = 0;
+    this.handle.setOperations(this._tasks.length);
 
     return this.handle;
   };
@@ -80,7 +79,8 @@ module.exports = function(dalek) {
     }
 
     var taskHandle = task(this.options());
-    this.handle.operations++;
+    this.handle.performOperation();
+
     if (!this.options('mute')) {
       dalek.reporter.started(taskHandle);
     }
@@ -100,8 +100,6 @@ module.exports = function(dalek) {
     var failure = function(message) {
       if (!this.options('mute')) {
         dalek.reporter.failed(taskHandle, message);
-      } else {
-        taskHandle.mutedMessage = message;
       }
 
       this.handle.reject(taskHandle);
