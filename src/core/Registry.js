@@ -19,6 +19,7 @@
 module.exports = function(dalek) {
   'use strict';
 
+  var glob = require('glob');
   var _ = dalek._;
 
   function Registry(options) {
@@ -316,22 +317,14 @@ module.exports = function(dalek) {
     return options;
   }
 
-  Registry.prototype.initialize = function(path) {
-    // TODO: glob plugins from directory
-    // glob('../plugins/**/*.js');
-    path+'';
-    this.load();
+  Registry.prototype.initialize = function() {
+    // TODO: windows compatible paths
+    glob.sync(__dirname + '/../plugins/**/*.js')
+      .forEach(this.load.bind(this));
   };
 
   Registry.prototype.load = function(path) {
-    path+'';
-    require('../plugins/assert/assert.attribute')(dalek);
-    require('../plugins/action/action.click')(dalek);
-    require('../plugins/until/until.timeout')(dalek);
-    require('../plugins/is/is.between')(dalek);
-    require('../plugins/is/is.equal')(dalek);
-    require('../plugins/is/is.text')(dalek);
-
+    require(path)(dalek);
   };
 
   return Registry;
