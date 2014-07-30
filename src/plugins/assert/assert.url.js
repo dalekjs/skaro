@@ -1,11 +1,46 @@
-// Status: IMPORTED
-// Category: Navigation
-// Docs: http://dalekjs.com/docs/assertions.html#meth-url
-// Source: https://github.com/dalekjs/dalek/blob/master/lib/dalek/assertions.js#L1207-L1261
+'use strict';
+/**
+{
+  Category: 'navigation'
+}
+
+# Name Of Plugin
+
+Description Of Plugin
 
 
-test.assert.url('http://doctorwhotv.co.uk/', 'URL is as expected')
+## Examples
 
-// --------------------------------------------------------------------------------------
+```js
+// compact notation
+assert.url('expected text')
+// option notation
+assert.url({
+  expected: 'expected text'
+})
+```
 
-assert.url()
+
+## Notes
+
+
+## Compatibility
+
+
+## See Also
+
+
+## Dalek 0.0.x Reference
+
+* Docs: http://dalekjs.com/docs/assertions.html#meth-url
+* Source: https://github.com/dalekjs/dalek/blob/master/lib/dalek/assertions.js#L1207-L1261
+
+```js
+test.assert.url('http://doctorwhotv.co.uk/', 'URL is as expected');
+```
+
+*/
+
+module.exports = function(/*dalek*/) {
+  // TODO: implement plugin assert.url
+};

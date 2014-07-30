@@ -1,5 +1,9 @@
 'use strict';
 /**
+{
+  Category: 'dom'
+}
+
 # Assert Attribute Value
 
 Assert the value of a DOM element's attribute.
