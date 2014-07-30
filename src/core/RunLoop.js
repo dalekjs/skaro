@@ -74,7 +74,8 @@ module.exports = function(dalek) {
 
   RunLoop.prototype._run = function() {
     this.runBeforeFirst()
-      .then(this._runLoop);
+      .then(this._runLoop)
+      .catch(dalek.catch);
   };
 
   RunLoop.prototype._runLoop = function() {
