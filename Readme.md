@@ -7,10 +7,16 @@ Docs that lead up to this can be found [here](https://github.com/rodneyrehm/dale
 
 ## Open Topics
 
+error reporting
+
+*`Object #<Object> has no method 'timeout'` is being shown instead of `no plugin by the name of 'until.timeout' found`
+
+---
+
 required interfaces and packages [research, implementation]
 
 * integration of [CLI](https://github.com/dalekjs/dalek-cli) 
-  * handling of CLI arguments, ENV, [config file](https://github.com/dalekjs/dalek/blob/master/lib/dalek/config.js)
+  * dalek-cli should be able to distinguish between old-dalek and new-dalek (@asciidisco)
 * importing dalek test suites and local plugins
   * importing `dalek-*` plugins right off `node_modules`, maybe [matchdep](https://www.npmjs.org/package/matchdep)?
   * alphabetical order? randomized order?
@@ -24,6 +30,7 @@ required interfaces and packages [research, implementation]
 convenience [implementation]
 
 * exporting the dalek.* objects (e.g. `dalek.is`, `dalek.assert`, …) to [global](http://nodejs.org/api/globals.html#globals_global) scope. *The test-file loader could export to global scope before loading files and revert that after the files were loaded.*
+* include web server, so one can simply `--serve directory` (including setting the baseUrl for tests)
 
 ---
 
