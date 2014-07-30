@@ -77,16 +77,16 @@ module.exports = function(dalek) {
     return this.runUnitWrapper(this._beforeUnit);
   };
 
-  Suite.prototype.runAfterUnit = function() {
-    return this.runUnitWrapper(this._afterUnit);
+  Suite.prototype.runAfterUnit = function(succeeded) {
+    return this.runUnitWrapper(this._afterUnit, {succeeded: succeeded});
   };
 
-  Suite.prototype.runUnitWrapper = function(unit) {
+  Suite.prototype.runUnitWrapper = function(unit, initOptions) {
     if (!unit) {
       return dalek.Q();
     }
 
-    var unitHandle = unit.initialize();
+    var unitHandle = unit.initialize(initOptions);
     unit.run({
       mute: true
     });
@@ -133,12 +133,12 @@ module.exports = function(dalek) {
 
     var success = function() {
       dalek.reporter.succeeded(unitHandle);
-      this.runAfterUnit().then(this._runLoop);
+      this.runAfterUnit(true).then(this._runLoop);
     }.bind(this);
 
     var failure = function(failure) {
       dalek.reporter.failed(unitHandle, failure);
-      this.runAfterUnit().then(this.handle.reject);
+      this.runAfterUnit(false).then(this.handle.reject);
     }.bind(this);
 
     unitHandle

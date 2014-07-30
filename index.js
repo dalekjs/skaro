@@ -35,7 +35,13 @@ dalek.suite('name of the suite', function(suite, options) {
     ];
   });
 
-  suite.afterUnit(function(succeeded) {
+  suite.afterUnit(function(options) {
+    if (options.succeeded) {
+      // unit passed
+    } else {
+      // unit failed
+    }
+
     return [
       //dalek.log.message('after unit ', succeded ? 'successful' : 'failed');
       dalek.action.click('.after-unit'),

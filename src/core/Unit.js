@@ -34,9 +34,10 @@ module.exports = function(dalek) {
     _.extend(this._options, options);
   };
 
-  Unit.prototype.initialize = function() {
+  Unit.prototype.initialize = function(options) {
     dalek.reporter.debug('initializing unit', this.label);
-    this._tasks = this._initialize(this.options);
+    this.options(options || {});
+    this._tasks = this._initialize(this.options());
 
     if (!Array.isArray(this._tasks)) {
       throw new dalek.Error(
