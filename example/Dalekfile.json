@@ -1,0 +1,5 @@
+{
+  "some": "options",
+  "test": ["tests/**/*.js"],
+  "plugin": ["plugins/**/*.js"]
+}

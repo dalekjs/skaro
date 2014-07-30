@@ -1,0 +1,10 @@
+{
+  "tests": "./tests/**/*.js",
+
+  "reporter": ["JUnit", {
+    "name": "json",
+    "destination": "./reports/report.json"
+  }],
+
+  "browser": ["Chrome"],
+}
