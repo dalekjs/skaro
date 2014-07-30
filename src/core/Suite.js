@@ -18,10 +18,11 @@ module.exports = function(dalek) {
     }
 
     this._units = [];
-    this._beforeUnit = null;
-    this._afterUnit = null;
 
-    this._runLoop = this._runLoop.bind(this);
+    this.runLoop = new dalek.RunLoop(this.options());
+    this.run = this.runLoop.run.bind(this.runLoop);
+    this.beforeUnit = this.runLoop.beforeEach.bind(this.runLoop);
+    this.afterUnit = this.runLoop.afterEach.bind(this.runLoop);
   }
 
   Suite.prototype.options = function(options, defaultValue) {
@@ -48,8 +49,10 @@ module.exports = function(dalek) {
       );
     }
 
-    this.handle = new dalek.Handle(this.label, dalek.Handle.SUITE);
+    this.handle = new dalek.Handle(this.label, dalek.Handle.SUITE, 'Suite');
     this.handle.setOperations(this._units.length);
+
+    this.runLoop.initialize(this.options(), this._units, this.handle);
 
     return this.handle;
   };
@@ -59,91 +62,6 @@ module.exports = function(dalek) {
     var called = dalek.getStack(this.unit);
     var unit = new dalek.Unit(label, this.options(), callback, called);
     this._units.push(unit);
-  };
-
-  Suite.prototype.beforeUnit = function(callback) {
-    dalek.reporter.debug('registering unit', 'before:suite');
-    var called = dalek.getStack(this.beforeUnit);
-    this._beforeUnit = new dalek.Unit('before:suite', this.options(), callback, called);
-  };
-
-  Suite.prototype.afterUnit = function(callback) {
-    dalek.reporter.debug('registering unit', 'after:suite');
-    var called = dalek.getStack(this.afterUnit);
-    this._afterUnit = new dalek.Unit('after:suite', this.options(), callback, called);
-  };
-
-  Suite.prototype.runBeforeUnit = function() {
-    return this.runUnitWrapper(this._beforeUnit);
-  };
-
-  Suite.prototype.runAfterUnit = function(succeeded) {
-    return this.runUnitWrapper(this._afterUnit, {succeeded: succeeded});
-  };
-
-  Suite.prototype.runUnitWrapper = function(unit, initOptions) {
-    if (!unit) {
-      return dalek.Q();
-    }
-
-    var unitHandle = unit.initialize(initOptions);
-    unit.run({
-      mute: true
-    });
-
-    // report only in failure case
-    unitHandle.catch(function(failure) {
-      dalek.reporter.started(unitHandle);
-      dalek.reporter.started(failure);
-      dalek.reporter.failed(failure, failure.message);
-      dalek.reporter.failed(unitHandle, failure);
-
-      this.handle.reject(unitHandle);
-      throw failure;
-    }.bind(this));
-
-    return unitHandle;
-  };
-
-  Suite.prototype.run = function(options) {
-    dalek.reporter.debug('Running Suite', this.label);
-
-    if (options) {
-      this.options(options);
-    }
-
-    setTimeout(this._runLoop);
-    return this.handle;
-  };
-
-  Suite.prototype._runLoop = function() {
-    var unit = this._units.shift();
-    if (!unit) {
-      this.handle.resolve();
-      return;
-    }
-
-    var unitHandle = unit.initialize();
-    this.handle.performOperation();
-
-    this.runBeforeUnit().then(function() {
-      unit.run();
-      dalek.reporter.started(unitHandle);
-    }.bind(this));
-
-    var success = function() {
-      dalek.reporter.succeeded(unitHandle);
-      this.runAfterUnit(true).then(this._runLoop);
-    }.bind(this);
-
-    var failure = function(failure) {
-      dalek.reporter.failed(unitHandle, failure);
-      this.runAfterUnit(false).then(this.handle.reject);
-    }.bind(this);
-
-    unitHandle
-      .then(success, failure)
-      .catch(dalek.catch);
   };
 
   return Suite;
