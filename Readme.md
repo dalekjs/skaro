@@ -13,8 +13,11 @@ required interfaces and packages [research, implementation]
   * handling of CLI arguments, ENV, [config file](https://github.com/dalekjs/dalek/blob/master/lib/dalek/config.js)
 * importing dalek test suites and local plugins
   * importing `dalek-*` plugins right off `node_modules`, maybe [matchdep](https://www.npmjs.org/package/matchdep)?
+  * alphabetical order? randomized order?
+  * do we need a defined index script?
 * integration of Reporters ([junit](https://github.com/dalekjs/dalek-reporter-junit), [html](https://github.com/dalekjs/dalek-reporter-html), [json](https://github.com/dalekjs/dalek-reporter-json), [console ?](https://github.com/dalekjs/dalek-reporter-console))
 * ~~implement driver facade~~ we'll expose [WD.js](https://github.com/admc/wd) to plugins directly. We're not sure about how to handle "additional features" (like HTTP Auth or SSL certificate validation pages) at this point.
+* Dalek Remote Proxy
 
 ---
 

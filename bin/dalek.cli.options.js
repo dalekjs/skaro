@@ -53,14 +53,12 @@ module.exports = function() {
       }
     },
 
-    // plugins
+    // resources
     plugin: {
       type: 'string',
       list: true,
       help: 'plugin file(s) to load'
     },
-
-    // tests
     test: {
       type: 'string',
       list: true,
