@@ -19,7 +19,8 @@ module.exports = function(dalek) {
 
     this._tasks = [];
 
-    this._runLoop = this._runLoop.bind(this);
+    this.runLoop = new dalek.RunLoop(this.options());
+    this.run = this.runLoop.run.bind(this.runLoop);
   }
 
   Unit.prototype.options = function(options, defaultValue) {
@@ -49,68 +50,13 @@ module.exports = function(dalek) {
 
     // Units may be empty because they were conditional, in such a case
     // they should still be logged and not bring down the entire test
-    // if (!this._tasks.length) {
-    //   throw new dalek.Error(
-    //     'Unit ' + dalek.format.literal(this.label) + ' does not contain any Tasks',
-    //     dalek.Error.PLUGIN_CALL,
-    //     this.called
-    //   );
-    // }
 
-    this.handle = new dalek.Handle(this.label, dalek.Handle.UNIT);
+    this.handle = new dalek.Handle(this.label, dalek.Handle.UNIT, 'Unit');
     this.handle.setOperations(this._tasks.length);
 
+    this.runLoop.initialize(this.options(), this._tasks, this.handle);
+
     return this.handle;
-  };
-
-  Unit.prototype.run = function(options) {
-    dalek.reporter.debug('Running Unit', this.label);
-
-    if (options) {
-      this.options(options);
-    }
-
-    setTimeout(this._runLoop);
-    return this.handle;
-  };
-
-  Unit.prototype._runLoop = function() {
-    var task = this._tasks.shift();
-    if (!task) {
-      this.handle.resolve();
-      return;
-    }
-
-    var taskHandle = task(this.options());
-    this.handle.performOperation();
-
-    if (!this.options('mute')) {
-      dalek.reporter.started(taskHandle);
-    }
-
-    if (taskHandle.type === dalek.Handle.ASSERTION) {
-      // TODO: if dalek.options('assertion.faulure') === 'continue';
-    }
-
-    var success = function(message) {
-      if (!this.options('mute')) {
-        dalek.reporter.succeeded(taskHandle, message);
-      }
-
-      this._runLoop();
-    }.bind(this);
-
-    var failure = function(message) {
-      if (!this.options('mute')) {
-        dalek.reporter.failed(taskHandle, message);
-      }
-
-      this.handle.reject(taskHandle);
-    }.bind(this);
-
-    taskHandle
-      .then(success, failure)
-      .catch(dalek.catch);
   };
 
   return Unit;
