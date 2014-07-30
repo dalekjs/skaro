@@ -5,7 +5,8 @@ var Dalek = require('./src/Dalek');
 
 console.log('----- starting dalek');
 var dalek = new Dalek({
-  silent: true
+  // silent: false,
+  // debug: true,
 });
 
 var domain = require('domain').create();
