@@ -166,23 +166,15 @@ module.exports = function(dalek) {
     }
 
     console.log('\n');
+    console.log(chalk.bgRed.white.bold(error.message));
 
-    if (error instanceof dalek.Error) {
-      console.log(chalk.bgRed.white.bold(error.message));
-      if (!error._stack) {
-        console.log(error.stack);
-        return;
-      } 
-
-      error._stack.forEach(function(callSite) {
-        console.log(' at ' + chalk.red(callSite.name) + ' (' + chalk.yellow(callSite.file) + ':' + chalk.cyan(callSite.line) + ')' );
-      });
-      
-      return;
+    if (!error._stack) {
+      error._stack = dalek.getStack(null, error);
     }
 
-    // regular Error
-    console.log(error.stack || error);
+    error._stack.forEach(function(callSite) {
+      console.log(' at ' + chalk.red(callSite.name) + ' (' + chalk.yellow(callSite.file) + ':' + chalk.cyan(callSite.line) + ')' );
+    });
   };
 
   function serialize(args) {
