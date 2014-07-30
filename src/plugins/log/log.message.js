@@ -1,6 +1,6 @@
 /*
 // Status: IMPORTED
-// Category: Keyboard
+// category: Keyboard
 // Docs: http://dalekjs.com/docs/actions.html#meth-log.message
 // Source: https://github.com/dalekjs/dalek/blob/master/lib/dalek/actions.js#L1208-L1249
 

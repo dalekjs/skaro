@@ -1,7 +1,7 @@
 'use strict';
 /**
 {
-  Category: 'document'
+  category: 'document'
 }
 
 # Name Of Plugin

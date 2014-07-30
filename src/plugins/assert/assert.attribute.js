@@ -1,7 +1,7 @@
 'use strict';
 /**
 {
-  Category: 'dom'
+  category: 'dom'
 }
 
 # Assert Attribute Value

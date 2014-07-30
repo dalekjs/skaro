@@ -1,7 +1,7 @@
 'use strict';
 /**
 {
-  Category: 'pointer'
+  category: 'pointer'
 }
 
 # Name Of Plugin

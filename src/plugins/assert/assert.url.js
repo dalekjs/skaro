@@ -1,7 +1,7 @@
 'use strict';
 /**
 {
-  Category: 'navigation'
+  category: 'navigation'
 }
 
 # Name Of Plugin

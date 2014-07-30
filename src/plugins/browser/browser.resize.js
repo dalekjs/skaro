@@ -1,7 +1,7 @@
 'use strict';
 /**
 {
-  Category: 'screen'
+  category: 'screen'
 }
 
 # Name Of Plugin

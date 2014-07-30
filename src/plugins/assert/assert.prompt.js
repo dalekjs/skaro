@@ -1,7 +1,7 @@
 'use strict';
 /**
 {
-  Category: 'dialog'
+  category: 'dialog'
 }
 
 # Name Of Plugin

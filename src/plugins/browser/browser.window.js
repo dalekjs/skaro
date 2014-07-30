@@ -1,6 +1,6 @@
 /**
 {
-  Category: 'browser'
+  category: 'browser'
 }
 
 # Name Of Plugin

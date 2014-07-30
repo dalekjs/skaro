@@ -1,7 +1,7 @@
 'use strict';
 /**
 {
-  Category: 'dialog'
+  category: 'dialog'
 }
 
 # Accept an Alert, Confirmation, Prompt

@@ -1,7 +1,7 @@
 'use strict';
 /**
 {
-  Category: 'form'
+  category: 'form'
 }
 
 # Name Of Plugin

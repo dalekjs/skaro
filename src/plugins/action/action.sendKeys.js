@@ -1,7 +1,7 @@
 'use strict';
 /**
 {
-  Category: 'keyboard'
+  category: 'keyboard'
 }
 
 # Name Of Plugin

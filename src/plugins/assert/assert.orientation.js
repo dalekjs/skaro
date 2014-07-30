@@ -1,7 +1,7 @@
 'use strict';
 /**
 {
-  Category: 'browser'
+  category: 'screen'
 }
 
 # Name Of Plugin

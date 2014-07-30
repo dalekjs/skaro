@@ -1,7 +1,7 @@
 'use strict';
 /**
 {
-  Category: 'pointer'
+  category: 'pointer'
 }
 
 # Click On A DOM element

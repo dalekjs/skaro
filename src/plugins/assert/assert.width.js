@@ -1,6 +1,6 @@
 /**
 {
-  Category: 'style'
+  category: 'style'
 }
 
 # Name Of Plugin

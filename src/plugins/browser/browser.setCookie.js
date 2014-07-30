@@ -1,7 +1,7 @@
 'use strict';
 /**
 {
-  Category: 'cookie'
+  category: 'cookie'
 }
 
 # Name Of Plugin

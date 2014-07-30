@@ -1,7 +1,7 @@
 'use strict';
 /**
 {
-  Category: 'script'
+  category: 'script'
 }
 
 # Name Of Plugin
