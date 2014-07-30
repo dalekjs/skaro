@@ -28,6 +28,7 @@ module.exports = (function(){
     this.registry.initialize();
   }
 
+  // TODO: offload Dalek default configuration to src/Dalekfile.json
   Dalek.defaults = {
     selectorStrategy: 'css'
   };
