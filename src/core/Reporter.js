@@ -21,6 +21,10 @@ module.exports = function(dalek) {
   };
 
   Reporter.prototype.started = function(handle) {
+    if (this.options.silent) {
+      return;
+    }
+
     var label = chalk.bgBlack.yellow(handle.label);
     switch (handle.type) {
       case Handle.SUITE:
@@ -49,11 +53,19 @@ module.exports = function(dalek) {
   };
 
   Reporter.prototype.retried = function(/*handle, retryHandle*/) {
+    if (this.options.silent) {
+      return;
+    }
+
     // TODO: implement retry
     //console.log('  ', chalk.blue('retrying'), chalk.bgBlack.blue(handle.label));
   };
 
   Reporter.prototype.succeeded = function(handle, message) {
+    if (this.options.silent) {
+      return;
+    }
+
     // message only supplied for Tasks, but not Unit and Suite
     var _message = chalk.bgBlack.white(message);
     var _success = chalk.bgBlack.green('⌞ success');
@@ -82,6 +94,10 @@ module.exports = function(dalek) {
   };
 
   Reporter.prototype.failed = function(handle, message) {
+    if (this.options.silent) {
+      return;
+    }
+
     // message is failure response of task in Unit,
     // handle of failed task in Suite
     var _message = chalk.bgRed.white(message);
@@ -113,7 +129,7 @@ module.exports = function(dalek) {
 
 
   Reporter.prototype.log = function() {
-    if (this.options.silent) {
+    if (!this.options.debug) {
       return;
     }
 
@@ -121,7 +137,7 @@ module.exports = function(dalek) {
   };
 
   Reporter.prototype.debug = function() {
-    if (this.options.silent) {
+    if (!this.options.debug || this.options.silent) {
       return;
     }
 
@@ -145,6 +161,10 @@ module.exports = function(dalek) {
   };
 
   Reporter.prototype.error = function(error) {
+    if (this.options.silent) {
+      return;
+    }
+
     console.log('\n');
 
     if (error instanceof dalek.Error) {
