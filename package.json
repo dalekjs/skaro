@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "new dalek interface",
   "main": "index.js",
+  "bin": {
+    "dalek": "./bin/dalek.cli.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,6 +22,7 @@
   "dependencies": {
     "chalk": "^0.5.1",
     "lodash": "^2.4.1",
+    "nomnom": "^1.8.0",
     "q": "^1.0.1",
     "stack-trace": "0.0.9"
   },
