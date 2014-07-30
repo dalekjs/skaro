@@ -4,6 +4,10 @@ This repository is a work-in-progress playground for figuring out how to proceed
 
 Docs that lead up to this can be found [here](https://github.com/rodneyrehm/dalek-api/). The new API is trying to bring in ideas expressed in [breaking backward-compatibility](https://github.com/rodneyrehm/dalek-api/blob/master/breaking-bc-api.md)
 
+## Playground
+
+running `bin/dalek.cli.js` will show current status…
+
 
 ## Open Topics
 
