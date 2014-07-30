@@ -7,10 +7,6 @@ Docs that lead up to this can be found [here](https://github.com/rodneyrehm/dale
 
 ## Open Topics
 
-* `beforeSuite`/`afterSuite` similar to `beforeUnit`/`afterUnit`
-* `beforeDalek`/`afterDalek` similar to `beforeUnit`/`afterUnit`
-* inline-function example to circumvent the plugin-infrastructure for one-off code?
-
 required interfaces and packages [research, implementation]
 
 * integration of [CLI](https://github.com/dalekjs/dalek-cli) 

@@ -93,7 +93,14 @@ dalek.suite('other suite', function(suite) {
 
   suite.unit('lalalal', function(options) {
     return [
-      dalek.action.click('.kansas'),
+      //inline-function-tasks
+      function(options) {
+        var handle = new dalek.Handle("Explain what you are doing", dalek.Handle.ACTION);
+        setTimeout(function() {
+          handle.resolve("response text");
+        });
+        return handle;
+      }
     ];
   });
 
