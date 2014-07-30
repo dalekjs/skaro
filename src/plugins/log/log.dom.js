@@ -1,3 +1,4 @@
+/*
 // Status: IMPORTED
 // Category: Keyboard
 // Docs: http://dalekjs.com/docs/actions.html#meth-log.dom
@@ -10,3 +11,9 @@ test.log.dom('#smth')
 
 log.dom('#selector')
 
+*/
+
+module.exports = function() {
+  // TODO: implement plugin log.dom
+  // Not sure I see the point in this function
+};

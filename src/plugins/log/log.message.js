@@ -1,3 +1,4 @@
+/*
 // Status: IMPORTED
 // Category: Keyboard
 // Docs: http://dalekjs.com/docs/actions.html#meth-log.message
@@ -12,3 +13,9 @@ test.log.message(function() {
 
 log.message()
 
+*/
+
+module.exports = function() {
+  // TODO: implement plugin log.message
+  // Not sure I see the point in this function
+};
