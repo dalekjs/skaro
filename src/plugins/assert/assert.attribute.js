@@ -1,3 +1,4 @@
+'use strict';
 /**
 # Assert Attribute Value
 
@@ -68,9 +69,11 @@ module.exports = function(dalek) {
 
   var handler = function(options) {
     // the name invocations of this plugin will show up as
+    /*jshint laxbreak:true */
     var label = 'Attribute ' + format.keyword(options.name)
       + ' of ' + format.selector(options.selector)
       + ' ' + format.expected(options.expected);
+    /*jshint laxbreak:false */
 
     // we're creating an assertion, give dalek that context
     var handle = new dalek.Handle(label, dalek.Handle.ASSERTION, meta.name);

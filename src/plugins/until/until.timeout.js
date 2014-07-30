@@ -1,3 +1,4 @@
+'use strict';
 /**
 # Wait for fixed duration
 
@@ -43,7 +44,6 @@ test.wait(10000);
 
 module.exports = function(dalek) {
   var format = dalek.format;
-  var driver = dalek.driver;
 
   // plugin meta data
   var meta = {

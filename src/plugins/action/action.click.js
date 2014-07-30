@@ -1,3 +1,4 @@
+'use strict';
 /**
 {
   Category: 'pointer'

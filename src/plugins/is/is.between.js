@@ -1,3 +1,4 @@
+'use strict';
 /**
 # test if a value is in a given range
 
@@ -43,7 +44,7 @@ module.exports = function(dalek) {
   };
 
   dalek.registerExpectation(meta, function(options) {
-    ['lower', 'upper', 'value'].forEach(function() {
+    ['lower', 'upper', 'value'].forEach(function(key) {
       if (typeof options[key] !== 'number') {
         options[key] = parseFloat(options[key]);
       }
@@ -51,12 +52,14 @@ module.exports = function(dalek) {
 
     var _lower = Math.min(options.lower, options.upper);
     var _upper = Math.max(options.lower, options.upper);
-    var result = lower <= options.value && options.value <= _upper;
+    var result = _lower <= options.value && options.value <= _upper;
 
     if (options.inverted === result) {
+      /*jshint laxbreak:true */
       return dalek.format.literal(options.value) 
         + ' is not between ' + dalek.format.literal(_lower) 
         + ' and ' + dalek.format.literal(_upper);
+      /*jshint laxbreak:false */
     }
 
     return null;
