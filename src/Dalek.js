@@ -8,6 +8,7 @@ var getStack = require('./util/getStack');
 var _DalekError = require('./core/DalekError');
 var _Selector = require('./core/Selector');
 var _Handle = require('./core/Handle');
+var _RunLoop = require('./core/RunLoop');
 // runtime interfaces
 var _Driver = require('./core/Driver');
 var _Format = require('./core/Format');
@@ -53,6 +54,7 @@ module.exports = (function(){
     this.Error = _DalekError(this);
     this.Selector = _Selector(this);
     this.Handle = _Handle(this);
+    this.RunLoop = _RunLoop(this);
     this.Unit = _Unit(this);
     this.Suite = _Suite(this);
 
@@ -71,7 +73,12 @@ module.exports = (function(){
     this._suites = [];
 
     this.catch = this.catch.bind(this);
-    this._runLoop = this._runLoop.bind(this);
+
+    this.runLoop = new this.RunLoop(this.options());
+    this.beforeDalek = this.runLoop.beforeFirst.bind(this.runLoop);
+    this.beforeSuite = this.runLoop.beforeEach.bind(this.runLoop);
+    this.afterSuite = this.runLoop.afterEach.bind(this.runLoop);
+    this.afterDalek = this.runLoop.afterLast.bind(this.runLoop);
   };
 
   Dalek.prototype._registerPlugins = function(plugins) {
@@ -99,46 +106,19 @@ module.exports = (function(){
     this._suites.push(suite);
   };
 
+
+
+
   Dalek.prototype.run = function() {
     this.reporter.debug('RUN, FORREST, RUN!');
 
-    // TODO: figure out what needs to be run here
-
-    this.handle = new this.Handle('Dalek Master Process', this.Handle.DALEK);
+    this.handle = new this.Handle('Dalek Master Process', this.Handle.DALEK, 'Dalek');
     this.handle.setOperations(this._suites.length);
 
-    setTimeout(this._runLoop);
+    this.runLoop.initialize(this.options(), this._suites, this.handle);
+    this.runLoop.run();
 
     return this.handle;
-  };
-
-  Dalek.prototype._runLoop = function() {
-    var suite = this._suites.shift();
-    if (!suite) {
-      this.handle.resolve();
-      return;
-    }
-
-    var suiteHandle = suite.initialize();
-    this.handle.performOperation();
-    this.reporter.started(suiteHandle);
-
-    suite.run();
-
-    var success = function(message) {
-      this.reporter.succeeded(suiteHandle, message);
-      this._runLoop();
-    }.bind(this);
-
-    var failure = function(message) {
-      this.reporter.failed(suiteHandle, message);
-      this.handle.reject(suiteHandle);
-    }.bind(this);
-
-    suiteHandle
-      .then(success, failure)
-      .catch(this.catch);
-
   };
 
   return Dalek;
