@@ -46,13 +46,15 @@ module.exports = function(dalek) {
       );
     }
 
-    if (!this._tasks.length) {
-      throw new dalek.Error(
-        'Unit ' + dalek.format.literal(this.label) + ' does not contain any Tasks',
-        dalek.Error.PLUGIN_CALL,
-        this.called
-      );
-    }
+    // Units may be empty because they were conditional, in such a case
+    // they should still be logged and not bring down the entire test
+    // if (!this._tasks.length) {
+    //   throw new dalek.Error(
+    //     'Unit ' + dalek.format.literal(this.label) + ' does not contain any Tasks',
+    //     dalek.Error.PLUGIN_CALL,
+    //     this.called
+    //   );
+    // }
 
     this.handle = new dalek.Handle(this.label, dalek.Handle.UNIT);
     this.handle.setOperations(this._tasks.length);
