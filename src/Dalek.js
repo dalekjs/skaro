@@ -19,9 +19,10 @@ var _Unit = require('./core/Unit');
 
 module.exports = (function(){
 
-  function Dalek(options) {
+  function Dalek(config) {
+    this.config = config;
     this._options = _.extend({}, Dalek.defaults);
-    _.extend(this._options, options || {});
+    _.extend(this._options, config.toJSON());
 
     this.initialize();
     this.registry.initialize();
