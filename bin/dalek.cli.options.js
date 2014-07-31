@@ -47,10 +47,7 @@ module.exports = function() {
     version: {
       abbr: 'v',
       flag: true,
-      help: 'print version and exit',
-      callback: function() {
-        return 'version ' + require('../package.json').version;
-      }
+      help: 'print version and exit'
     },
 
     // resources

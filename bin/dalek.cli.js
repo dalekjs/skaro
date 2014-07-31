@@ -5,6 +5,11 @@
 
 var cliOptions = require('./dalek.cli.options.js')();
 
+if (cliOptions.version) {
+  require('./dalek.cli.version')();
+  return;
+}
+
 if (cliOptions.command === 'remote') {
   // TODO: Dalek Remote Proxy
   console.log('fire up the proxy');
