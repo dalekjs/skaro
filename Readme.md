@@ -38,6 +38,12 @@ convenience [implementation]
 
 ---
 
+plugins [research]
+
+* share code between mutliple plugins (assert and until, for example), if we wanted to add something like [trulyVisible](http://useallfive.com/thoughts/javascript-tool-detect-if-a-dom-element-is-truly-visible/)
+
+---
+
 working with browser scripts [research]
 
 * handling of [data()](https://github.com/dalekjs/dalek/blob/master/lib/dalek/actions.js#L1214) what about the old `.buffer()` concept?
