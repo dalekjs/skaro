@@ -42,6 +42,9 @@ module.exports = function() {
     // locally installed packages
     executeToJSON('npm ls --json --depth 0').then(filterDalek),
   ]).spread(function (_global, _local) {
+
+    // TODO: add WD.js version to output
+
     console.log('  globally installed Dalek packages');
     console.log(_global);
 

@@ -102,7 +102,17 @@ module.exports = function() {
       default: 'localhost',
       help: 'network interface to bind to'
     }
-  }).help('Start Dalek as a remote proxy');
+  }).help('Start Dalek as a remote proxy').callback(function() {
+    console.log('NOT IMPLEMENTED YET');
+    process.exit(1);
+  });
 
+  nomnom.command('verify')
+    .help('Verfiy Dalek installation integrity').callback(function() {
+      // TODO: implement facility that detects installed browser drivers,
+      // initializes them and verifies their status.
+      console.log('NOT IMPLEMENTED YET');
+      process.exit(1);
+    });
   return nomnom.parse();
 };
