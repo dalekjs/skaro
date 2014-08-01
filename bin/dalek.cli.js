@@ -10,9 +10,9 @@ if (cliOptions.version) {
   return;
 }
 
-if (cliOptions.command === 'remote') {
-  // TODO: Dalek Remote Proxy
-  console.log('fire up the proxy');
+if (!cliOptions._command) {
+  console.log('no command specified');
+  // TODO: output `dalek --help`
   return;
 }
 
