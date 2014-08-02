@@ -24,6 +24,7 @@
     "glob": "^4.0.5",
     "lodash": "^2.4.1",
     "nomnom": "^1.8.0",
+    "proxy-handlers": "0.0.3",
     "q": "^1.0.1",
     "stack-trace": "0.0.9"
   },
