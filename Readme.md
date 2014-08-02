@@ -11,10 +11,6 @@ running `bin/dalek.cli.js` will show current status…
 
 ## Open Topics
 
-error reporting
-
-*`Object #<Object> has no method 'timeout'` is being shown instead of `no plugin by the name of 'until.timeout' found`
-
 ---
 
 required interfaces and packages [research, implementation]

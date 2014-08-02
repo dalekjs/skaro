@@ -4,6 +4,7 @@
 var Q = require('q');
 var _ = require('lodash');
 var getStack = require('./util/getStack');
+var interceptRegistry = require('./core/Registry.intercept');
 // convenience accessors
 var _DalekError = require('./core/DalekError');
 var _Selector = require('./core/Selector');
@@ -85,7 +86,11 @@ module.exports = (function(){
 
   Dalek.prototype._registerPlugins = function(plugins) {
     Object.keys(plugins).forEach(function(namespace) {
-      this[namespace] = plugins[namespace];
+      if (this[namespace]) {
+        return;
+      }
+
+      this[namespace] = interceptRegistry(this, namespace, plugins[namespace]);
     }.bind(this));
   };
 
