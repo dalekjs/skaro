@@ -6,6 +6,7 @@ var fs = require('fs');
 var _ = require('lodash');
 var Q = require('q');
 
+var defaultConfig = require('../default-config.json');
 var findFileInParents = require('../util/find-file-in-parents');
 
 var readfile = Q.denodeify(fs.readFile);
@@ -19,7 +20,7 @@ function Config(cli, files, cwd) {
   this._files = files;
 
   this._configfile = null;
-  this._config = {};
+  this._config = _.clone(defaultConfig);
 }
 
 Config.CONFIG_NOT_FOUND = 1;
