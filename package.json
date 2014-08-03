@@ -28,6 +28,7 @@
     "q": "^1.0.1",
     "read-package-json": "^1.2.6",
     "stack-trace": "0.0.9",
+    "username": "^0.1.1",
     "wordwrap": "0.0.2"
   },
   "devDependencies": {

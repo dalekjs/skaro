@@ -8,7 +8,7 @@ var Q = require('q');
 
 var findFileInParents = require('../util/find-file-in-parents');
 
-var lstat = Q.denodeify(fs.lstat);
+var readfile = Q.denodeify(fs.readFile);
 
 // matches ${foo} and ${foo:-bar}
 var variablePattern = /\$\{env\.([^\}]+?)(:-([^\}]+))?\}/g;
@@ -17,20 +17,24 @@ function Config(cli, files, cwd) {
   this._cwd = cwd;
   this._cli = cli;
   this._files = files;
+
+  this._configfile = null;
   this._config = {};
 }
 
-Config.FILE_NOT_FOUND = 1;
+Config.CONFIG_NOT_FOUND = 1;
+Config.CONFIG_NOT_READABLE = 2;
+Config.CONFIG_NOT_PARSEABLE = 3;
 
 Config.prototype.load = function() {
-  var loadRest = function() {
+  var initialize = function() {
     this.importCli();
     this.parse();
     this.verify();
   }.bind(this);
 
   return this.importConfig()
-    .then(loadRest)
+    .then(initialize)
     .thenResolve(this);
 };
 
@@ -39,12 +43,38 @@ Config.prototype.importConfig = function() {
     return Q;
   }
 
-  return findFileInParents(this._cli.config, this.cwd).then(function(_config) {
-      // TODO: load configuration file from _config
-  }).catch(function() {
-    return Q.reject(Config.FILE_NOT_FOUND);
-  });
+  var config = this;
 
+  function rejectWith(message, code) {
+    return function(_error) {
+      if (_error.code) {
+        return Q.reject(_error);
+      }
+
+      var error = new Error(message);
+      error.code = code;
+      error.original = _error;
+      return Q.reject(error);
+    };
+  }
+
+  function readConfigFile(_path) {
+    config._configfile = _path;
+    return readfile(_path, {encoding: 'utf8'});
+  }
+
+  function parseConfigJson(data) {
+    var _data = JSON.parse(data);
+    config._config = _data;
+    return _data;
+  }
+
+  return findFileInParents(this._cli.config, this.cwd)
+    .catch(rejectWith('File Not Found', Config.CONFIG_NOT_FOUND))
+    .then(readConfigFile)
+    .catch(rejectWith('File Not Readable', Config.CONFIG_NOT_READABLE))
+    .then(parseConfigJson)
+    .catch(rejectWith('File Not JSON', Config.CONFIG_NOT_PARSEABLE));
 };
 
 Config.prototype.importCli = function() {
