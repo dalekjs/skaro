@@ -61,7 +61,7 @@ config.load().then(function(config) {
 
     default:
       console.error('LOADING THE CONFIGURATION FAILED UNEXPECTEDLY!');
-      console.error(reason);
+      console.error(reason.stack);
   }
 
 }).done();
