@@ -12,9 +12,6 @@ var findFileInParents = require('../util/find-file-in-parents');
 
 var readfile = Q.denodeify(fs.readFile);
 
-// matches ${foo} and ${foo:-bar}
-var variablePattern = /\$\{env\.([^\}]+?)(:-([^\}]+))?\}/g;
-
 function Config(cli, files, cwd) {
   this._base = cwd;
   this._cwd = cwd;
@@ -28,6 +25,7 @@ function Config(cli, files, cwd) {
 Config.CONFIG_NOT_FOUND = 1;
 Config.CONFIG_NOT_READABLE = 2;
 Config.CONFIG_NOT_PARSEABLE = 3;
+Config.CONFIG_VALUE_TEMPLATE = 4;
 
 Config.prototype.load = function() {
   var initialize = function() {
@@ -97,7 +95,7 @@ Config.prototype.importCli = function() {
 };
 
 Config.prototype.parse = function() {
-  this.parseVariables();
+  this.parseTemplates(this._config);
 
   // find plugins to load, unless disabled by CLI
   if (this._config.plugins) {
@@ -122,19 +120,41 @@ Config.prototype.parse = function() {
   }
 };
 
-Config.prototype.parseVariables = function() {
-  Object.keys(this._config).forEach(function(key) {
-    var value = this._config[key];
-    if (typeof value !== 'string') {
+Config.prototype.parseTemplates = function(data) {
+  var _array = Array.isArray(data);
+  var list = _array ? data : Object.keys(data);
+  var templateData = {
+    env: process.env,
+    cwd: this._cwd,
+    cli: this._cli,
+    // if we need access to package.json, we'll have to findFileInParents('package.json')
+    //pkg: this._packageJson,
+  };
+
+  list.forEach(function(key, index) {
+    if (_array) {
+      // access item in original list
+      key = index;
+    }
+
+    // dive into nested structures
+    if (typeof data[key] === 'object' || Array.isArray(data[key])) {
+      this.parseTemplates(data[key]);
+      return;
+    }
+    // only strings can contain variables
+    if (typeof data[key] !== 'string') {
       return;
     }
 
-    // TODO: replace variable syntax with that of grunt
-    // replacing "${env.HOME}" with "/Users/myuser" 
-    this._config[key] = this._config[key].replace(variablePattern, function(match, name, defaultGroup, defaultValue) {
-      return process.env[name] || defaultValue || '';
-    });
-
+    try {
+      data[key] = _.template(data[key], templateData);
+    } catch (_error) {
+      var error = new Error(data[key]);
+      error.code = Config.CONFIG_VALUE_TEMPLATE;
+      error.original = _error;
+      throw error;
+    }
   }.bind(this));
 };
 

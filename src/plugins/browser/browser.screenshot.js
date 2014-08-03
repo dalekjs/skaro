@@ -40,5 +40,5 @@ test.screenshot('my/page/at/:viewport/homepage');
 
 module.exports = function(/*dalek*/) {
   // TODO: implement plugin browser.screenshot
-  // TODO: think about URL microsyntax, maybe use URI Templates instead? If not, go with BASH variables (like config)?
+  // TODO: think about URL microsyntax, maybe use URI Templates instead? If not, go with _.template (like config)?
 };

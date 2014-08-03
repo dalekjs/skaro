@@ -1,6 +1,11 @@
 {
   "_notes": "all paths are resolved relative to this config file",
   "some": "options",
+  "_variable": "my home is <%= env.HOME %>",
+  "_variable.list": ["my home is <%= env.HOME %>"],
+  "_variable.map": {
+    "home": "my home is <%= env.allala || 'asd' %>"
+  },
   "tests": "tests/**/*.js",
   "plugins": "plugins/**/*.js"
 }

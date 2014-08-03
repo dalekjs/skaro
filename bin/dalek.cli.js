@@ -59,6 +59,16 @@ config.load().then(function(config) {
       ));
       break;
 
+      case Config.CONFIG_VALUE_TEMPLATE:
+        cli.error(
+          'Malformed configuration value could not be processed', wrap(
+            /*jshint laxbreak:true */
+            'value: ' + chalk.magenta(reason.message) +
+            '\n Parser said: ' + reason.original.message
+            /*jshint laxbreak:false */
+        ));
+        break;
+
     default:
       console.error('LOADING THE CONFIGURATION FAILED UNEXPECTEDLY!');
       console.error(reason.stack);
