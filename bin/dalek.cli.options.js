@@ -158,8 +158,14 @@ module.exports = function() {
     command: command,
     files: _files,
     indexed: _indexed,
-    error: function(message) {
-      nomnom.print(chalk.bgRed.white(message) + '\n\n' + nomnom.getUsage(), 1);
+    error: function(message, suggestion) {
+      if (suggestion) {
+        suggestion += '\n\n';
+      } else {
+        suggestion = '';
+      }
+
+      nomnom.print(chalk.bgRed.white(message) + '\n\n' + suggestion + nomnom.getUsage(), 1);
     }
   };
 };
