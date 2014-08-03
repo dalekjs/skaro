@@ -69,6 +69,8 @@ config.load().then(function(config) {
         ));
         break;
 
+      // TODO: error output for data files
+
     default:
       console.error('LOADING THE CONFIGURATION FAILED UNEXPECTEDLY!');
       console.error(reason.stack);

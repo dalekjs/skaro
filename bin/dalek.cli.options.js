@@ -147,6 +147,7 @@ module.exports = function() {
       case 'run':
       case 'verify':
         var wrap = wordwrap(80);
+        // TODO: this should probably be put in a man page or something
         return wrap(
           /*jshint laxbreak:true */
           chalk.blue('Loading Files:') + '\n'
@@ -159,6 +160,9 @@ module.exports = function() {
           + '\n\n'
           + 'The same rules apply to the CLI option ' + chalk.grey('--plugins') + ', ' + chalk.grey('--no-plugins')  + ' '
           + 'and the config value ' + chalk.green('plugins') + ' (internal default: ' + chalk.magenta('plugins/**/*.js') + ').'
+          + '\n\n'
+          + 'The same rules apply to the CLI option ' + chalk.grey('--data') + ', ' + chalk.grey('--no-data')  + ' '
+          + 'and the config value ' + chalk.green('data') + ' (internal default: ' + chalk.magenta('null') + ').'
           + '\n\n'
           + 'Any CLI options not attributed to an option are considered files to load independently of '
           + chalk.grey('--tests') + ' and ' + chalk.grey('--plugins') + '. To load specific test files: '

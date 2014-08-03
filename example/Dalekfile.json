@@ -7,5 +7,6 @@
     "home": "my home is <%= env.allala || 'asd' %>"
   },
   "tests": "tests/**/*.js",
-  "plugins": "plugins/**/*.js"
+  "plugins": "plugins/**/*.js",
+  "data": ["test-data.json", "test-data-2.json"]
 }

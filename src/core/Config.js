@@ -10,6 +10,7 @@ var glob = require('glob');
 var defaultConfig = require('../default-config.json');
 var findFileInParents = require('../util/find-file-in-parents');
 
+var lstat = Q.denodeify(fs.lstat);
 var readfile = Q.denodeify(fs.readFile);
 
 function Config(cli, files, cwd) {
@@ -26,10 +27,11 @@ function Config(cli, files, cwd) {
 Config.CONFIG_NOT_FOUND = 1;
 Config.CONFIG_NOT_READABLE = 2;
 Config.CONFIG_NOT_PARSEABLE = 3;
-Config.VALUE_TEMPLATE = 4;
-Config.DATA_NOT_FOUND = 1;
-Config.DATA_NOT_READABLE = 2;
-Config.DATA_NOT_PARSEABLE = 3;
+Config.VALUE_TEMPLATE = 10;
+Config.VALUE_ARRAY = 11;
+Config.DATA_NOT_FOUND = 21;
+Config.DATA_NOT_READABLE = 22;
+Config.DATA_NOT_PARSEABLE = 23;
 
 Config.prototype.load = function() {
 
@@ -92,28 +94,33 @@ Config.prototype.importData = function() {
     return Q.resolve();
   }
 
-  // test mode
-  if (!this._cli.data[0]) {
-    return Q.resolve();
+  if (!Array.isArray(this._config.data)) {
+    var _error = new Error('data');
+    _error.code = Config.VALUE_ARRAY;
+    return Q.reject(_error);
   }
 
-  return this.importDataFile(this._cli.data[0]);
+  var config = this;
+  return Q.all(this._config.data.map(this.importDataFile.bind(this))).then(function(_data) {
+    // preserve the order in which data files were specified
+    _data.forEach(function(data) {
+      _.extend(config._data, data);
+    });
+  });
 };
 
-Config.prototype.importDataFile = function(path) {
-  var config = this;
-
+Config.prototype.importDataFile = function(_path) {
   function readDataFile(_path) {
     return readfile(_path, {encoding: 'utf8'});
   }
 
   function parseDataJson(data) {
     var _data = JSON.parse(data);
-    _.extend(config._data, _data);
     return _data;
   }
-
-  return findFileInParents(path, this.cwdForOption('data'))
+  console.log(this.cwdForOption('data'), _path)
+  return lstat(path.resolve(this.cwdForOption('data'), _path))
+    .thenResolve(_path)
     .catch(rejectWith(path, Config.DATA_NOT_FOUND))
     .then(readDataFile)
     .catch(rejectWith(path, Config.DATA_NOT_READABLE))
