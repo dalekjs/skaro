@@ -1,12 +1,14 @@
 module.exports = function (dalek, assert, action, wait) {
   dalek.config({
     // --- Environment Variable Injection ---
-    "fromEnv": "foo-${DALEK_ENV_TEST}-",
-    "fromEnvDefault": "foo-${DALEK_ENV_TEST:-defaultvalue}-",
+    // using _.template - see http://underscorejs.org/#template
+    // available variables: env, cli, cwd
+    "fromEnv": "foo-<%= env.DALEK_ENV_TEST %>-",
+    "fromEnvDefault": "foo-<%= env.DALEK_ENV_TEST || 'defaultvalue' %>-",
 
     // --- resources ---
-    "test": ["tests/**/*.js"],
-    "plugin": ["plugins/**/*.js"]
+    "tests": ["tests/**/*.js"],
+    "plugins": ["plugins/**/*.js"]
 
 
     // TODO: [config] figure out what any of these options mean
