@@ -83,10 +83,20 @@ function findInstalledPackages(filter, cwd) {
       });
     })
   ]).then(function(data) {
-    // do not make me use .spread()
+    var map = {};
+
+    data[0].forEach(function(item) {
+      map[item.name] = item;
+    });
+
+    data[1].forEach(function(item) {
+      !map[item.name] && (map[item.name] = item);
+    });
+
     return {
       local: data[0],
-      global: data[1]
+      global: data[1],
+      map: map
     };
   });
 }

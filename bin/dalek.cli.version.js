@@ -24,6 +24,12 @@ module.exports = function() {
     packages.global.forEach(function(item) {
       console.log('    ' + chalk.bgBlack.cyan(item.name) + ' ' + chalk.bgBlack.yellow('@' + item.version) + ' in ' + item.__directory);
     });
+
+    console.log('\n  loadable packages');
+    Object.keys(packages.map).sort().forEach(function(key) {
+      var item = packages.map[key];
+      console.log('    ' + chalk.bgBlack.cyan(item.name) + ' ' + chalk.bgBlack.yellow('@' + item.version) + ' in ' + item.__directory);
+    });
   }).done();
 
 };
