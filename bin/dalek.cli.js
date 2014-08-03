@@ -39,7 +39,7 @@ config.load().then(function(config) {
     case Config.CONFIG_NOT_READABLE:
       var username = require('username');
       cli.error(
-        'Configuration file (' + cli.options.config + ') could not be read', wrap(
+        'Configuration file (' + chalk.magenta(cli.options.config) + ') could not be read', wrap(
           /*jshint laxbreak:true */
           'Please check the permissions of this file!\n'
           + 'Make sure the file can be read by the user '
@@ -51,7 +51,7 @@ config.load().then(function(config) {
 
     case Config.CONFIG_NOT_PARSEABLE:
       cli.error(
-        'Configuration file (' + cli.options.config + ') could not be parsed', wrap(
+        'Configuration file (' + chalk.magenta(cli.options.config) + ') could not be parsed', wrap(
           /*jshint laxbreak:true */
           'Make sure the configuration file is valid JSON!\nParser said: '
           + reason.original.message
