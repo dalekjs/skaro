@@ -1,7 +1,9 @@
 module.exports = function() {
   'use strict';
 
+  // TODO: find a wordwrap alternative that can deal with chalk (escape sequence) flavored text
   var chalk = require('chalk');
+  var wordwrap = require('wordwrap');
   var nomnom = require('nomnom').script('dalek');
 
   var command;
@@ -53,10 +55,13 @@ module.exports = function() {
     },
     run: {
       // resources
-      ignore: {
+      tests: {
         type: 'string',
-        list: true,
-        help: 'test file(s) not to load'
+        help: 'glob pattern to find test suites (see note on loading files)'
+      },
+      plugins: {
+        type: 'string',
+        help: 'glob pattern to find plugins (see note on loading files)'
       },
 
       // affecting browsers
@@ -131,6 +136,51 @@ module.exports = function() {
       optionKey = '';
       command = 'integrity';
     });
+
+  function getExtendedUsage(command) {
+    switch (command.name) {
+      case 'run':
+      case 'verify':
+        var wrap = wordwrap(80);
+        return wrap(
+          /*jshint laxbreak:true */
+          chalk.blue('Loading Files:') + '\n'
+          + 'By default Dalek will identify test suites using the glob pattern specified in the config value '
+          + chalk.green('tests') + ' (internal default: ' + chalk.magenta('tests/**/*.js') + ') resolved relative '
+          + 'to the directory of the configuration file (' + chalk.magenta('Dalekfile.json') + ', change with CLI option '
+          + chalk.grey('--config') +'). Should you specify a glob pattern with the CLI option ' + chalk.grey('--tests') + ', '
+          + 'the pattern will be resolved relative to the current working directory (CWD: ' + chalk.magenta(process.cwd()) + '). '
+          + 'You can disable loading files with the CLI option ' + chalk.grey('--no-tests') + '.'
+          + '\n\n'
+          + 'The same rules apply to the CLI option ' + chalk.grey('--plugins') + ', ' + chalk.grey('--no-plugins')  + ' '
+          + 'and the config value ' + chalk.green('plugins') + ' (internal default: ' + chalk.magenta('plugins/**/*.js') + ').'
+          + '\n\n'
+          + 'Any CLI options not attributed to an option are considered files to load independently of '
+          + chalk.grey('--tests') + ' and ' + chalk.grey('--plugins') + '. To load specific test files: '
+          + chalk.grey('dalek run --no-tests my-test-*.js')
+          /*jshint laxbreak:false */
+        );
+
+      default:
+        return '';
+    }
+  }
+
+  // duckpunch nomnom's getUsage so we can add a bit more helpful stuff to the end
+  nomnom.getUsage = (function(getUsage) {
+    return function() {
+      var usage = getUsage.apply(this, arguments);
+
+      // command is an object if, and only if, we're in a command.
+      // it is a function if we're in nocommand.
+      var _extended = getExtendedUsage(typeof this.command !== 'function' ? this.command : this.fallback);
+      if (_extended) {
+        usage += '\n\n' + _extended;
+      }
+
+      return usage;
+    };
+  })(nomnom.getUsage);
 
   var opts = nomnom.parse();
 
