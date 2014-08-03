@@ -116,12 +116,6 @@ module.exports = function() {
     .callback(function() {
       optionKey = 'run';
       command = 'verify';
-      // TODO: implement facility that loads all suites, units, tasks and verifies
-      // that all interfaces are available. This is supposed to give quick feedback
-      // about a missing / malformed plugin, that would otherwise only be thrown
-      // at execution time
-      console.log('NOT IMPLEMENTED YET');
-      process.exit(1);
     });
 
   nomnom.command('remote').options(options.remote)
@@ -129,8 +123,6 @@ module.exports = function() {
     .callback(function() {
       optionKey = 'remote';
       command = 'remote';
-      console.log('NOT IMPLEMENTED YET');
-      process.exit(1);
     });
 
   nomnom.command('integrity')
@@ -138,10 +130,6 @@ module.exports = function() {
     .callback(function() {
       optionKey = '';
       command = 'integrity';
-      // TODO: implement facility that detects installed browser drivers,
-      // initializes them and verifies their status.
-      console.log('NOT IMPLEMENTED YET');
-      process.exit(1);
     });
 
   var opts = nomnom.parse();
