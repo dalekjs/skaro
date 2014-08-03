@@ -1,5 +1,6 @@
 {
+  "_notes": "all paths are resolved relative to this config file",
   "some": "options",
-  "test": ["tests/**/*.js"],
-  "plugin": ["plugins/**/*.js"]
+  "tests": "tests/**/*.js",
+  "plugins": "plugins/**/*.js"
 }
