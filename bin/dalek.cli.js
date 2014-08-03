@@ -59,7 +59,7 @@ config.load().then(function(config) {
       ));
       break;
 
-      case Config.CONFIG_VALUE_TEMPLATE:
+      case Config.VALUE_TEMPLATE:
         cli.error(
           'Malformed configuration value could not be processed', wrap(
             /*jshint laxbreak:true */

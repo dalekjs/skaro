@@ -63,6 +63,11 @@ module.exports = function() {
         type: 'string',
         help: 'glob pattern to find plugins (see note on loading files)'
       },
+      data: {
+        type: 'string',
+        list: true,
+        help: 'JSON data file(s) to provide to tests'
+      },
 
       // affecting browsers
       browser: {
