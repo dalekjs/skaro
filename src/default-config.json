@@ -1,3 +1,5 @@
 {
-  "_notes": "this is the default configuration file"
+  "_notes": "this is the default configuration file",
+  "tests": "tests/**/*.js",
+  "plugins": "plugins/**/*.js"
 }
