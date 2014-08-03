@@ -1,6 +1,14 @@
 'use strict';
 
+var path = require('path');
+var fs = require('fs');
+
 var _ = require('lodash');
+var Q = require('q');
+
+var findFileInParents = require('../util/find-file-in-parents');
+
+var lstat = Q.denodeify(fs.lstat);
 
 // matches ${foo} and ${foo:-bar}
 var variablePattern = /\$\{env\.([^\}]+?)(:-([^\}]+))?\}/g;
@@ -10,18 +18,33 @@ function Config(cli, files, cwd) {
   this._cli = cli;
   this._files = files;
   this._config = {};
-  
-  this.importConfig();
-  this.importCli();
-  this.parse();
 }
 
+Config.FILE_NOT_FOUND = 1;
+
+Config.prototype.load = function() {
+  var loadRest = function() {
+    this.importCli();
+    this.parse();
+    this.verify();
+  }.bind(this);
+
+  return this.importConfig()
+    .then(loadRest)
+    .thenResolve(this);
+};
+
 Config.prototype.importConfig = function() {
-  if (this._cli.config === false) {
-    return;
+  if (!this._cli.config) {
+    return Q;
   }
 
-  // TODO: load configuration file
+  return findFileInParents(this._cli.config, this.cwd).then(function(_config) {
+      // TODO: load configuration file from _config
+  }).catch(function() {
+    return Q.reject(Config.FILE_NOT_FOUND);
+  });
+
 };
 
 Config.prototype.importCli = function() {
