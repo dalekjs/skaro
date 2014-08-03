@@ -19,6 +19,8 @@
 module.exports = function(dalek) {
   'use strict';
 
+  var path = require('path');
+
   var glob = require('glob');
   var _ = dalek._;
 
@@ -319,7 +321,7 @@ module.exports = function(dalek) {
 
   Registry.prototype.initialize = function() {
     // TODO: windows compatible paths
-    glob.sync(__dirname + '/../plugins/**/*.js')
+    glob.sync(path.resolve(__dirname, '../plugins/**/*.js'), {silent: true, strict: true})
       .forEach(this.load.bind(this));
   };
 
