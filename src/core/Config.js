@@ -5,9 +5,10 @@ var _ = require('lodash');
 // matches ${foo} and ${foo:-bar}
 var variablePattern = /\$\{env\.([^\}]+?)(:-([^\}]+))?\}/g;
 
-function Config(cli, cwd) {
+function Config(cli, files, cwd) {
   this._cwd = cwd;
   this._cli = cli;
+  this._files = files;
   this._config = {};
   
   this.importConfig();
@@ -25,19 +26,17 @@ Config.prototype.importConfig = function() {
 
 Config.prototype.importCli = function() {
   var options = {};
+  var cli = _.clone(this._cli);
   // --option foo=bar has higher precedence as --foo=bar
-  if (this._cli.option) {
-    this._cli.option.forEach(function(token) {
+  if (cli.option) {
+    cli.option.forEach(function(token) {
       var tokens = token.split('=');
       options[tokens[0]] = tokens.slice(1).join('=');
     });
-    delete this._cli.option;
+    delete cli.option;
   }
 
-  // TODO: examine if non-option arguments can be used for passing in test-files
-  delete this._cli._;
-
-  _.extend(this._config, this._cli);
+  _.extend(this._config, cli);
   _.extend(this._config, options);
 };
 

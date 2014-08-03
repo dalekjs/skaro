@@ -1,9 +1,11 @@
 module.exports = function() {
   'use strict';
 
+  var chalk = require('chalk');
   var nomnom = require('nomnom').script('dalek');
 
   var command;
+  var optionKey;
   var options = {
     global: {
       // configuration file and options
@@ -51,16 +53,6 @@ module.exports = function() {
     },
     run: {
       // resources
-      plugin: {
-        type: 'string',
-        list: true,
-        help: 'plugin file(s) to load'
-      },
-      test: {
-        type: 'string',
-        list: true,
-        help: 'test file(s) to load'
-      },
       ignore: {
         type: 'string',
         list: true,
@@ -107,17 +99,22 @@ module.exports = function() {
   nomnom.options(options.global);
 
   nomnom.nocommand().options(options.nocommand)
-    .help('Usage: dalek <command>\n\nSee the docs for the CLI at http://dalekjs.com/docs/cli.html');
+    .help('Usage: dalek <command>\n\nSee the docs for the CLI at http://dalekjs.com/docs/cli.html')
+    .callback(function() {
+      optionKey = 'nocommand';
+    });
 
   nomnom.command('run').options(options.run)
     .help('Execute Test Suite')
     .callback(function() {
+      optionKey = 'run';
       command = 'run';
     });
 
   nomnom.command('verify').options(options.run)
     .help('Verfiy Suite, Unit, Task integrity')
     .callback(function() {
+      optionKey = 'run';
       command = 'verify';
       // TODO: implement facility that loads all suites, units, tasks and verifies
       // that all interfaces are available. This is supposed to give quick feedback
@@ -130,6 +127,7 @@ module.exports = function() {
   nomnom.command('remote').options(options.remote)
     .help('Start Dalek as a remote proxy')
     .callback(function() {
+      optionKey = 'remote';
       command = 'remote';
       console.log('NOT IMPLEMENTED YET');
       process.exit(1);
@@ -138,6 +136,7 @@ module.exports = function() {
   nomnom.command('integrity')
     .help('Verfiy Dalek installation integrity')
     .callback(function() {
+      optionKey = '';
       command = 'integrity';
       // TODO: implement facility that detects installed browser drivers,
       // initializes them and verifies their status.
@@ -146,6 +145,33 @@ module.exports = function() {
     });
 
   var opts = nomnom.parse();
-  opts._command = command;
-  return opts;
+
+  // verify input to disallow options we don't know
+  // extract opts[0…] to _indexed
+  // extract opts._ to _files
+  var _commandOptions = options[optionKey] || {};
+  var _indexed = {};
+  var _files = opts._.slice(1);
+  delete opts._;
+  Object.keys(opts).forEach(function(key) {
+    if (key.match(/^(\d+)$/)) {
+      _indexed[key] = opts[key];
+      delete opts[key];
+      return;
+    }
+
+    if (!_commandOptions[key] && !options.global[key]) {
+      nomnom.print(chalk.bgRed.white('unknown option:') + ' ' + chalk.bgBlack.red('-' + key) + '\n\n' + nomnom.getUsage(), 1);
+    }
+  });
+
+  return {
+    options: opts,
+    command: command,
+    files: _files,
+    indexed: _indexed,
+    error: function(message) {
+      nomnom.print(chalk.bgRed.white(message) + '\n\n' + nomnom.getUsage(), 1);
+    }
+  };
 };

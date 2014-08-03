@@ -3,21 +3,20 @@
 
 // https://github.com/harthur/nomnom
 
-var cliOptions = require('./dalek.cli.options.js')();
+var cli = require('./dalek.cli.options.js')();
 
-if (cliOptions.version) {
+if (cli.options.version) {
   require('./dalek.cli.version')();
   return;
 }
 
-if (!cliOptions._command) {
-  console.log('no command specified');
-  // TODO: output `dalek --help`
+if (!cli.command) {
+  cli.error('No command specified');
   return;
 }
 
 var Config = require('../src/core/Config');
-var config = new Config(cliOptions, process.cwd());
+var config = new Config(cli.options, cli.files, process.cwd());
 config.verify();
 
 var Dalek = require('../index.js');
@@ -39,3 +38,5 @@ domain.run(function() {
     console.log('\nDALEK FAILED');
   });
 });
+
+chalk = require('chalk')
