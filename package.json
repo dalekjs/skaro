@@ -26,7 +26,9 @@
     "nomnom": "^1.8.0",
     "proxy-handlers": "0.0.3",
     "q": "^1.0.1",
-    "stack-trace": "0.0.9"
+    "read-package-json": "^1.2.6",
+    "stack-trace": "0.0.9",
+    "wordwrap": "0.0.2"
   },
   "devDependencies": {
     "chai": "^1.9.1",
