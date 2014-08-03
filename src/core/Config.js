@@ -5,6 +5,7 @@ var fs = require('fs');
 
 var _ = require('lodash');
 var Q = require('q');
+var glob = require('glob');
 
 var defaultConfig = require('../default-config.json');
 var findFileInParents = require('../util/find-file-in-parents');
@@ -15,6 +16,7 @@ var readfile = Q.denodeify(fs.readFile);
 var variablePattern = /\$\{env\.([^\}]+?)(:-([^\}]+))?\}/g;
 
 function Config(cli, files, cwd) {
+  this._base = cwd;
   this._cwd = cwd;
   this._cli = cli;
   this._files = files;
@@ -41,7 +43,7 @@ Config.prototype.load = function() {
 
 Config.prototype.importConfig = function() {
   if (!this._cli.config) {
-    return Q;
+    return Q.resolve();
   }
 
   var config = this;
@@ -95,19 +97,46 @@ Config.prototype.importCli = function() {
 };
 
 Config.prototype.parse = function() {
+  this.parseVariables();
+
+  // find plugins to load, unless disabled by CLI
+  if (this._config.plugins) {
+    // if supplied by CLI, use CWD for resolving relative paths,
+    // otherwise use the config file's directory
+    this._plugins = glob.sync(this._config.plugins, {
+      cwd: this._cli.plugins ? this._base : path.dirname(this._configfile),
+      silent: true,
+      strict: true,
+    });
+  }
+
+  // find test suites to load, unless disabled by CLI
+  if (this._config.tests) {
+    // if supplied by CLI, use CWD for resolving relative paths,
+    // otherwise use the config file's directory
+    this._tests = glob.sync(this._config.tests, {
+      cwd: this._cli.tests ? this._base : path.dirname(this._configfile),
+      silent: true,
+      strict: true,
+    });
+  }
+};
+
+Config.prototype.parseVariables = function() {
   Object.keys(this._config).forEach(function(key) {
     var value = this._config[key];
     if (typeof value !== 'string') {
       return;
     }
 
+    // TODO: replace variable syntax with that of grunt
     // replacing "${env.HOME}" with "/Users/myuser" 
     this._config[key] = this._config[key].replace(variablePattern, function(match, name, defaultGroup, defaultValue) {
       return process.env[name] || defaultValue || '';
     });
+
   }.bind(this));
 };
-
 
 Config.prototype.verify = function() {
   // TODO: verify configuration integrity
