@@ -1,8 +1,7 @@
 #!/usr/bin/env node --harmony
 'use strict';
 
-// https://github.com/harthur/nomnom
-
+var chalk = require('chalk');
 var cli = require('./dalek.cli.options.js')();
 
 if (cli.options.version) {
@@ -17,26 +16,20 @@ if (!cli.command) {
 
 var Config = require('../src/core/Config');
 var config = new Config(cli.options, cli.files, process.cwd());
-config.verify();
+config.load().then(function(config) {
+  require('./commands/command.' + cli.command)(config, cli);
+}).catch(function(reason) {
 
-var Dalek = require('../index.js');
-var dalek = new Dalek(config);
+  if (reason === Config.FILE_NOT_FOUND) {
+    cli.error(
+      'Configuration file (' + cli.options.config + ') not found',
+      'Are you running dalek in the correct directory?\n'
+      + 'You can reference a configuration file from anywhere using '
+      + chalk.blue('--config=path/to/Dalekfile.json') + ' or skip the config file with '
+      + chalk.blue('--no-config') + '. In both cases configuration options can be provided using '
+      + chalk.blue('--option option.name=option.value') + '.'
+    );
+    return;
+  }
 
-// TODO: move the domain thing to dalek!
-var domain = require('domain').create();
-domain.on('error', function(error) {
-  dalek.reporter.error(error);
-});
-domain.run(function() {
-  // TODO: glob() from dalek.options('test');
-  require('../example/tests/Dummy')(dalek);
-
-  // TODO: start and stop a test run properly
-  dalek.run().then(function() {
-    console.log('\nEXTERMINATED');
-  }, function(/*failedSuiteHandle*/) {
-    console.log('\nDALEK FAILED');
-  });
-});
-
-chalk = require('chalk')
+}).done();
