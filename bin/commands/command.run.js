@@ -4,20 +4,13 @@ module.exports = function(config/*, cli*/) {
   var Dalek = require('../../index.js');
   var dalek = new Dalek(config);
 
-  // TODO: move the domain thing to dalek!
-  var domain = require('domain').create();
-  domain.on('error', function(error) {
-    dalek.reporter.error(error);
-  });
-  domain.run(function() {
-    // TODO: glob() from dalek.options('test');
-    require('../../example/tests/Dummy')(dalek);
-
-    // TODO: start and stop a test run properly
-    dalek.run().then(function() {
-      console.log('\nEXTERMINATED');
-    }, function(/*failedSuiteHandle*/) {
-      console.log('\nDALEK FAILED');
-    });
-  });
+  return dalek.load()
+    .then(dalek.start.bind(dalek))
+    .then(dalek.run.bind(dalek))
+    .then(dalek.stop.bind(dalek))
+    .catch(function(error) {
+      dalek.reporter.error(error);
+    })
+    .then(dalek.kill.bind(dalek))
+    .then(dalek.endProcess.bind(dalek));
 };
