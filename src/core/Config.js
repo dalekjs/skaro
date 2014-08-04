@@ -22,6 +22,8 @@ function Config(cli, files, cwd) {
   this._configfile = null;
   this._config = _.clone(defaultConfig);
   this._data = {};
+  this._plugins = [];
+  this._tests = [];
 }
 
 Config.CONFIG_NOT_FOUND = 1;
@@ -261,18 +263,20 @@ Config.prototype.getOptions = function() {
   return _.clone(this._config);
 };
 
+Config.prototype.getData = function() {
+  return _.clone(this._data);
+};
 
-function rejectWith(message, code) {
-  return function(_error) {
-    if (_error.code) {
-      return Q.reject(_error);
-    }
+Config.prototype.getPlugins = function() {
+  return _.clone(this._plugins);
+};
 
-    var error = new Error(message);
-    error.code = code;
-    error.original = _error;
-    return Q.reject(error);
-  };
-}
+Config.prototype.getTests = function() {
+  return _.clone(this._tests);
+};
+
+Config.prototype.getFiles = function() {
+  return _.clone(this._files);
+};
 
 module.exports = Config;
