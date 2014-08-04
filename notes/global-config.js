@@ -7,6 +7,8 @@ module.exports = function (dalek, assert, action, wait) {
     "fromEnvDefault": "foo-<%= env.DALEK_ENV_TEST || 'defaultvalue' %>-",
 
     // --- resources ---
+    // link to isaacs/node-glob for docs and valuable hints (!, #, windows)
+    // https://github.com/isaacs/node-glob#comparisons-to-other-fnmatchglob-implementations
     "tests": ["tests/**/*.js"],
     "plugins": ["plugins/**/*.js"]
 
