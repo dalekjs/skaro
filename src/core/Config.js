@@ -46,7 +46,7 @@ Config.prototype.load = function() {
 };
 
 Config.prototype.cwdForOption = function(option) {
-  return this._cli[option] ? this._base : path.dirname(this._configfile)
+  return this._cli[option] ? this._base : path.dirname(this._configfile);
 };
 
 Config.prototype.importConfig = function() {
@@ -93,7 +93,7 @@ Config.prototype.importConfig = function() {
         file: config._configfile,
         error: reason,
       });
-    })
+    });
 };
 
 Config.prototype.importCli = function() {
@@ -117,6 +117,8 @@ Config.prototype.importData = function() {
     return Q.resolve();
   }
 
+  var config = this;
+
   if (!Array.isArray(this._config.data)) {
     return Q.reject({
       _message: 'Wrong data type encountered',
@@ -130,7 +132,6 @@ Config.prototype.importData = function() {
     });
   }
 
-  var config = this;
   return Q.all(this._config.data.map(this.importDataFile.bind(this))).then(function(_data) {
     // preserve the order in which data files were specified
     _data.forEach(function(data) {

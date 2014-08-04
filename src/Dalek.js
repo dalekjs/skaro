@@ -118,7 +118,7 @@ module.exports = (function(){
       this.config.getFiles(),
     ];
 
-    return Q({}).then(function(loaded) {
+    return this.Q({}).then(function(loaded) {
       dalek.reporter.debug('Loading user files');
       groups.forEach(function(files) {
         files.forEach(function(path) {
@@ -171,7 +171,7 @@ module.exports = (function(){
 
   Dalek.prototype.kill = function() {
     // TODO: kill -9 everything that is still alive
-    return Q(true);
+    return this.Q(true);
   };
 
   Dalek.prototype.endProcess = function() {
@@ -179,7 +179,7 @@ module.exports = (function(){
       process.exit(0);
     }, function() {
       process.exit(1);
-    })
+    });
   };
 
   return Dalek;
