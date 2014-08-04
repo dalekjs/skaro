@@ -55,6 +55,10 @@ module.exports = function() {
     },
     run: {
       // resources
+      bare: {
+        flag: true,
+        help: 'shorthand for --no-config --no-data --no-init --no-plugins --no-tests'
+      },
       tests: {
         type: 'string',
         help: 'glob pattern to find test suites (see note on loading files)'
@@ -166,7 +170,9 @@ module.exports = function() {
           + '\n\n'
           + 'Any CLI options not attributed to an option are considered files to load independently of '
           + chalk.grey('--tests') + ' and ' + chalk.grey('--plugins') + '. To load specific test files: '
-          + chalk.grey('dalek run --no-tests my-test-*.js')
+          + chalk.grey('dalek run --no-tests my-test-*.js') + '\n\n'
+          + 'To run only the files specified as CLI arguments use ' + chalk.grey('--bare') + ' as a shorthand for '
+          + chalk.grey('--no-config --no-data --no-init --no-plugins --no-tests')
           /*jshint laxbreak:false */
         );
 
@@ -211,6 +217,12 @@ module.exports = function() {
       nomnom.print(chalk.bgRed.white('unknown option:') + ' ' + chalk.bgBlack.red('-' + key) + '\n\n' + nomnom.getUsage(), 1);
     }
   });
+
+  // expand shorthands
+  if (opts.bare) {
+    // --bare shorthand for --no-config --no-data --no-init --no-plugins --no-tests
+    opts.config = opts.data = opts.init = opts.plugins = opts.tests = false;
+  }
 
   return {
     options: opts,

@@ -15,7 +15,6 @@ running `bin/dalek.cli.js` will show current status…
 
 * `--sort` to sort suites/units prior to execution? alphabetical order? randomized order?
 * `--init` to run as the very first user script?
-* `--bare` as a shorthand for `--no-config --no-plugins --no-tests --no-init`
 * ServicePlugin to hook into `Dalek.start()`, `Dalek.stop()` and `Dalek.kill()` lifecycle-phases to transparently fire up services used by the test (web server, proxy, video capture, …)
 
 ---
