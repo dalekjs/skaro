@@ -97,6 +97,8 @@ module.exports = (function(){
     // TODO: check if we need proper exit codes for different situations
     // e.g. http://docs.openlinksw.com/virtuoso/signalsandexitcodes.html
     this.reporter.log('\n\naborting Dalek because of script error in promise');
+
+    this.kill();
     process.exit(1);
   };
 
@@ -105,6 +107,49 @@ module.exports = (function(){
     var called = this.getStack(this.suite);
     var suite = new this.Suite(label, this.options(), callback, called);
     this._suites.push(suite);
+  };
+
+
+  Dalek.prototype.load = function() {
+    var dalek = this;
+    var groups = [
+      this.config.getPlugins(),
+      this.config.getTests(),
+      this.config.getFiles(),
+    ];
+
+    return Q({}).then(function(loaded) {
+      dalek.reporter.debug('Loading user files');
+      groups.forEach(function(files) {
+        files.forEach(function(path) {
+          if (loaded[path]) {
+            dalek.reporter.debug('Already loaded ' + dalek.format.literal(path));
+            return;
+          }
+
+          var file = require(path);
+          if (typeof file !== 'function') {
+            dalek.reporter.warning('Ignoring ' + dalek.format.literal(path) + ' because it is not a function');
+            return;
+          }
+
+          if (file.length !== 1) {
+            dalek.reporter.warning('Ignoring ' + dalek.format.literal(path) + ' because the function does not expect exactly 1 parameter');
+            return;
+          }
+
+          dalek.reporter.debug('Initializing ' + dalek.format.literal(path));
+          file(dalek);
+          loaded[path] = true;
+        });
+      });
+
+      return loaded;
+    });
+  };
+
+  Dalek.prototype.start = function() {
+    // TODO: start all services required to run
   };
 
   Dalek.prototype.run = function() {
@@ -117,6 +162,24 @@ module.exports = (function(){
     this.runLoop.run();
 
     return this.handle;
+  };
+
+  Dalek.prototype.stop = function() {
+    // TODO: gracefully stop all services
+    // this should be done with a timeout
+  };
+
+  Dalek.prototype.kill = function() {
+    // TODO: kill -9 everything that is still alive
+    return Q(true);
+  };
+
+  Dalek.prototype.endProcess = function() {
+    this.handle.then(function() {
+      process.exit(0);
+    }, function() {
+      process.exit(1);
+    })
   };
 
   return Dalek;
