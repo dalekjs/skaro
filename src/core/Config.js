@@ -134,7 +134,12 @@ Config.prototype.importData = function() {
     });
   }
 
-  return Q.all(this._config.data.map(this.importDataFile.bind(this))).then(function(_data) {
+  var cwd = this.cwdForOption('data');
+  var dataFiles = this._config.data = this._config.data.map(function(_path) {
+    return path.resolve(cwd, _path);
+  });
+
+  return Q.all(dataFiles.map(this.importDataFile.bind(this))).then(function(_data) {
     // preserve the order in which data files were specified
     _data.forEach(function(data) {
       _.extend(config._data, data);
