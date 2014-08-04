@@ -22,58 +22,83 @@ config.load().then(function(config) {
 }).catch(function(reason) {
   var wrap = wordwrap(80);
 
-  switch (reason.code) {
-    case Config.CONFIG_NOT_FOUND:
-      cli.error(
-        'Configuration file (' + cli.options.config + ') not found', wrap(
+  /*
+    {
+      message: <string>,
+      code: <Config.*>,
+      file: <string>,
+      error: original_error,
+      details: {
+        name: <string>,
+        value: <mixed>,
+        message: <string>,
+      },
+    }
+  */
+  if (reason && reason._code) {
+    console.error('\n' + chalk.bgRed.white(reason._message));
+    console.error('       file: ' + chalk.magenta(reason.file));
+
+    switch (reason._code) {
+      case Config.CONFIG_NOT_FOUND:
+        console.error(wrap(
           /*jshint laxbreak:true */
-          'Are you running dalek in the correct directory?\n\n'
+          '\nAre you running dalek in the correct directory?\n\n'
           + 'You can reference a configuration file from anywhere using '
-          + chalk.blue('--config=path/to/Dalekfile.json') + ' or skip the config file with '
-          + chalk.blue('--no-config') + '. In both cases configuration options can be provided using '
-          + chalk.blue('--option option.name=option.value') + '.'
+          + chalk.grey('--config=path/to/Dalekfile.json') + ' or skip the config file with '
+          + chalk.grey('--no-config') + '. In both cases configuration options can be overriden using '
+          + chalk.grey('--option option.name=option.value') + '.'
           /*jshint laxbreak:false */
-      ));
-      break;
-
-    case Config.CONFIG_NOT_READABLE:
-      var username = require('username');
-      cli.error(
-        'Configuration file (' + chalk.magenta(cli.options.config) + ') could not be read', wrap(
-          /*jshint laxbreak:true */
-          'Please check the permissions of this file!\n'
-          + 'Make sure the file can be read by the user '
-          + chalk.blue(username.sync())
-          // TODO: identify user:group the node process is running in
-          /*jshint laxbreak:false */
-      ));
-      break;
-
-    case Config.CONFIG_NOT_PARSEABLE:
-      cli.error(
-        'Configuration file (' + chalk.magenta(cli.options.config) + ') could not be parsed', wrap(
-          /*jshint laxbreak:true */
-          'Make sure the configuration file is valid JSON!\nParser said: '
-          + reason.original.message
-          /*jshint laxbreak:false */
-      ));
-      break;
-
-      case Config.VALUE_TEMPLATE:
-        cli.error(
-          'Malformed configuration value could not be processed', wrap(
-            /*jshint laxbreak:true */
-            'value: ' + chalk.magenta(reason.message) +
-            '\n Parser said: ' + reason.original.message
-            /*jshint laxbreak:false */
         ));
         break;
 
-      // TODO: error output for data files
+      case Config.DATA_NOT_FOUND:
+        console.error(wrap(
+          /*jshint laxbreak:true */
+          '\nAre you running dalek in the correct directory?\n\n'
+          + 'You can reference a data file from anywhere using '
+          + chalk.grey('--data=path/to/data.json') + ' or skip loading any data files with '
+          + chalk.grey('--no-data') + '. Note that ' + chalk.grey('--no-data') + ' files are '
+          + 'resolved against CWD (' + chalk.magenta(process.cwd()) + ') whereas the config value '
+          + chalk.green('data') + ' is resolved against the config file.'
+          /*jshint laxbreak:false */
+        ));
+        break;
 
-    default:
-      console.error('LOADING THE CONFIGURATION FAILED UNEXPECTEDLY!');
-      console.error(reason.stack);
+      case Config.CONFIG_NOT_READABLE:
+      case Config.DATA_NOT_READABLE:
+        var username = require('username');
+        console.error('\nPlease check the permissions of this file!');
+        console.error('Make sure the file can be read by the user ' + chalk.magenta(username.sync()));
+        break;
+
+      case Config.CONFIG_NOT_PARSEABLE:
+      case Config.DATA_NOT_PARSEABLE:
+        console.error('\nMake sure the configuration file is valid JSON!');
+        console.error('Parser said: ' + chalk.magenta(reason.error.message));
+        break;
+
+      case Config.VALUE_TEMPLATE:
+        console.error('     option: ' + chalk.magenta(reason.details.name));
+        console.error('      value: ' + chalk.magenta(reason.details.value));
+        console.error('Parser said: ' + chalk.magenta(reason.details.message));
+        break;
+
+      case Config.VALUE_TYPE:
+        console.error('     option: ' + chalk.magenta(reason.details.name));
+        console.error('      value: ' + chalk.magenta(reason.details.value));
+        console.error('   expected: ' + chalk.magenta('array'));
+        break;
+
+      default:
+        console.error('LOADING THE CONFIGURATION FAILED UNEXPECTEDLY!');
+        console.error(reason);
+        break;
+    }
+  } else {
+    console.error('LOADING THE CONFIGURATION FAILED UNEXPECTEDLY!');
+    console.error(reason.stack);
   }
 
+  process.exit(1);
 }).done();

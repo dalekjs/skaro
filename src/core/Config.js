@@ -28,7 +28,7 @@ Config.CONFIG_NOT_FOUND = 1;
 Config.CONFIG_NOT_READABLE = 2;
 Config.CONFIG_NOT_PARSEABLE = 3;
 Config.VALUE_TEMPLATE = 10;
-Config.VALUE_ARRAY = 11;
+Config.VALUE_TYPE = 11;
 Config.DATA_NOT_FOUND = 21;
 Config.DATA_NOT_READABLE = 22;
 Config.DATA_NOT_PARSEABLE = 23;
@@ -66,11 +66,32 @@ Config.prototype.importConfig = function() {
   }
 
   return findFileInParents(this._cli.config, this.cwd)
-    .catch(rejectWith('File Not Found', Config.CONFIG_NOT_FOUND))
+    .catch(function(reason) {
+      return Q.reject(reason && reason._code ? reason : {
+        _message: 'Configuration file not found',
+        _code: Config.CONFIG_NOT_FOUND,
+        file: config._cli.config,
+        error: reason,
+      });
+    })
     .then(readConfigFile)
-    .catch(rejectWith('File Not Readable', Config.CONFIG_NOT_READABLE))
+    .catch(function(reason) {
+      return Q.reject(reason && reason._code ? reason : {
+        _message: 'Configuration file is not readable',
+        _code: Config.CONFIG_NOT_READABLE,
+        file: config._configfile,
+        error: reason,
+      });
+    })
     .then(parseConfigJson)
-    .catch(rejectWith('File Not JSON', Config.CONFIG_NOT_PARSEABLE));
+    .catch(function(reason) {
+      return Q.reject(reason && reason._code ? reason : {
+        _message: 'Configuration file is not valid JSON',
+        _code: Config.CONFIG_NOT_PARSEABLE,
+        file: config._configfile,
+        error: reason,
+      });
+    })
 };
 
 Config.prototype.importCli = function() {
@@ -95,9 +116,16 @@ Config.prototype.importData = function() {
   }
 
   if (!Array.isArray(this._config.data)) {
-    var _error = new Error('data');
-    _error.code = Config.VALUE_ARRAY;
-    return Q.reject(_error);
+    return Q.reject({
+      _message: 'Wrong data type encountered',
+      _code: Config.VALUE_TYPE,
+      file: config._cli.config,
+      details: {
+        name: 'data',
+        value: this._config.data,
+        expected: 'array',
+      },
+    });
   }
 
   var config = this;
@@ -118,19 +146,42 @@ Config.prototype.importDataFile = function(_path) {
     var _data = JSON.parse(data);
     return _data;
   }
-  console.log(this.cwdForOption('data'), _path)
+
   return lstat(path.resolve(this.cwdForOption('data'), _path))
     .thenResolve(_path)
-    .catch(rejectWith(path, Config.DATA_NOT_FOUND))
+    .catch(function(reason) {
+      return Q.reject(reason && reason._code ? reason : {
+        _message: 'Data file not found',
+        _code: Config.DATA_NOT_FOUND,
+        file: _path,
+        error: reason,
+      });
+    })
     .then(readDataFile)
-    .catch(rejectWith(path, Config.DATA_NOT_READABLE))
+    .catch(function(reason) {
+      return Q.reject(reason && reason._code ? reason : {
+        _message: 'Data file is not readable',
+        _code: Config.DATA_NOT_READABLE,
+        file: _path,
+        error: reason,
+      });
+    })
     .then(parseDataJson)
-    .catch(rejectWith(path, Config.DATA_NOT_PARSEABLE));
+    .catch(function(reason) {
+      return Q.reject(reason && reason._code ? reason : {
+        _message: 'Data file is not valid JSON',
+        _code: Config.DATA_NOT_PARSEABLE,
+        file: _path,
+        error: reason,
+      });
+    });
 };
 
 
 Config.prototype.parse = function() {
-  this.parseTemplates(this._config);
+  this.parseTemplates(this._config, this._configfile);
+
+  // TODO: async globbing
 
   // find plugins to load, unless disabled by CLI
   if (this._config.plugins) {
@@ -155,7 +206,7 @@ Config.prototype.parse = function() {
   }
 };
 
-Config.prototype.parseTemplates = function(data) {
+Config.prototype.parseTemplates = function(data, _path) {
   var _array = Array.isArray(data);
   var list = _array ? data : Object.keys(data);
   var templateData = {
@@ -174,7 +225,7 @@ Config.prototype.parseTemplates = function(data) {
 
     // dive into nested structures
     if (typeof data[key] === 'object' || Array.isArray(data[key])) {
-      this.parseTemplates(data[key]);
+      this.parseTemplates(data[key], _path);
       return;
     }
     // only strings can contain variables
@@ -184,11 +235,18 @@ Config.prototype.parseTemplates = function(data) {
 
     try {
       data[key] = _.template(data[key], templateData);
-    } catch (_error) {
-      var error = new Error(data[key]);
-      error.code = Config.VALUE_TEMPLATE;
-      error.original = _error;
-      throw error;
+    } catch (reason) {
+      throw {
+        _message: 'Malformed value template',
+        _code: Config.VALUE_TEMPLATE,
+        file: _path,
+        error: reason,
+        details: {
+          name: key,
+          value: data[key],
+          message: reason.message,
+        },
+      };
     }
   }.bind(this));
 };
