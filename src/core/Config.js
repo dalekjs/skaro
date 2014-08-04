@@ -257,9 +257,7 @@ Config.prototype.verify = function() {
 };
 
 
-
-// TODO: replace this with proper accessors
-Config.prototype.toJSON = function() {
+Config.prototype.getOptions = function() {
   return _.clone(this._config);
 };
 

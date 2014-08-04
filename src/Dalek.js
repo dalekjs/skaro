@@ -22,17 +22,11 @@ module.exports = (function(){
 
   function Dalek(config) {
     this.config = config;
-    this._options = _.extend({}, Dalek.defaults);
-    _.extend(this._options, config.toJSON());
+    this._options = config.getOptions();
 
     this.initialize();
     this.registry.initialize();
   }
-
-  // TODO: offload Dalek default configuration to src/Dalekfile.json
-  Dalek.defaults = {
-    selectorStrategy: 'css'
-  };
 
   Dalek.prototype.options = function(options, defaultValue) {
     var _options = this._options;
