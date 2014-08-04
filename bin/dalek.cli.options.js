@@ -35,6 +35,11 @@ module.exports = function() {
         flag: true,
         help: 'suppress all output'
       },
+      warnings: {
+        full: 'no-warnings',
+        flag: true,
+        help: 'suppress all warning'
+      },
       noColors: {
         full: 'no-colors',
         flag: true,

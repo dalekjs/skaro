@@ -149,7 +149,7 @@ module.exports = function(dalek) {
   };
 
   Reporter.prototype.warning = function() {
-    if (this.options.silent) {
+    if (this.options.silent || this.options.warnings === false) {
       return;
     }
 
