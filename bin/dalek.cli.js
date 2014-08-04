@@ -19,7 +19,7 @@ var Config = require('../src/core/Config');
 var config = new Config(cli.options, cli.files, process.cwd());
 config.load().then(function(config) {
   require('./commands/command.' + cli.command)(config, cli);
-}).catch(function(reason) {
+}, function(reason) {
   var wrap = wordwrap(80);
 
   /*
