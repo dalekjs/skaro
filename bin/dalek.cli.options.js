@@ -59,6 +59,10 @@ module.exports = function() {
         flag: true,
         help: 'shorthand for --no-config --no-data --no-init --no-plugins --no-tests'
       },
+      init: {
+        type: 'string',
+        help: 'load and execute before loading any user plugins and tests'
+      },
       tests: {
         type: 'string',
         help: 'glob pattern to find test suites (see note on loading files)'
@@ -167,6 +171,9 @@ module.exports = function() {
           + '\n\n'
           + 'The same rules apply to the CLI option ' + chalk.grey('--data') + ', ' + chalk.grey('--no-data')  + ' '
           + 'and the config value ' + chalk.green('data') + ' (internal default: ' + chalk.magenta('null') + ').'
+          + '\n\n'
+          + 'The same rules apply to the CLI option ' + chalk.grey('--init') + ', ' + chalk.grey('--no-init')  + ' '
+          + 'and the config value ' + chalk.green('init') + ' (internal default: ' + chalk.magenta('null') + ').'
           + '\n\n'
           + 'Any CLI options not attributed to an option are considered files to load independently of '
           + chalk.grey('--tests') + ' and ' + chalk.grey('--plugins') + '. To load specific test files: '

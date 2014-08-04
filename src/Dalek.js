@@ -112,11 +112,16 @@ module.exports = (function(){
 
   Dalek.prototype.load = function() {
     var dalek = this;
+    var init = this.config.getInit();
     var groups = [
       this.config.getPlugins(),
       this.config.getTests(),
       this.config.getFiles(),
     ];
+
+    if (init) {
+      groups.unshift([init]);
+    }
 
     return this.Q({}).then(function(loaded) {
       dalek.reporter.debug('Loading user files');

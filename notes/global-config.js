@@ -11,6 +11,10 @@ module.exports = function (dalek, assert, action, wait) {
     // https://github.com/isaacs/node-glob#comparisons-to-other-fnmatchglob-implementations
     "tests": ["tests/**/*.js"],
     "plugins": ["plugins/**/*.js"]
+    // glob pattern(s) to load data for use in tests
+    "data": null
+    // script to load and execute first, before any user plugins, tests and CLI-files
+    "init": null
 
 
     // TODO: [config] figure out what any of these options mean

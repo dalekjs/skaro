@@ -25,6 +25,7 @@ function Config(cli, files, cwd) {
   this._data = {};
   this._plugins = [];
   this._tests = [];
+  this._init = null;
 }
 
 Config.CONFIG_NOT_FOUND = 1;
@@ -35,6 +36,7 @@ Config.VALUE_TYPE = 11;
 Config.DATA_NOT_FOUND = 21;
 Config.DATA_NOT_READABLE = 22;
 Config.DATA_NOT_PARSEABLE = 23;
+Config.INIT_NOT_FOUND = 31;
 
 Config.prototype.load = function() {
   return this.importConfig()
@@ -197,12 +199,23 @@ Config.prototype.parseConfig = function() {
   // find plugins and tests to load, unless disabled by CLI.
   // if option was supplied by CLI, use CWD for resolving relative paths,
   // otherwise use the config file's directory
+
   var globs = Q.all([
     !this._config.plugins ? [] : this.glob(this._config.plugins, this.cwdForOption('plugins')),
-    !this._config.tests ? [] : this.glob(this._config.tests, this.cwdForOption('tests'))
-  ]).spread(function(plugins, tests) {
+    !this._config.tests ? [] : this.glob(this._config.tests, this.cwdForOption('tests')),
+    !this._config.init ? [] : this.glob(this._config.init, this.cwdForOption('init')),
+  ]).spread(function(plugins, tests, init) {
     this._plugins = plugins;
     this._tests = tests;
+    this._init = init[0] || null;
+
+    if (!this._init && this._config.init) {
+      return Q.reject({
+        _message: 'Init file not found',
+        _code: Config.INIT_NOT_FOUND,
+        file: this._config.init
+      });
+    }
   }.bind(this));
 
   // make use of the time the globs are not blocking :)
@@ -281,6 +294,10 @@ Config.prototype.getFiles = function() {
   return this._files.map(function(_path) {
     return path.resolve(this._cwd, _path);
   }.bind(this));
+};
+
+Config.prototype.getInit = function() {
+  return this._init;
 };
 
 module.exports = Config;

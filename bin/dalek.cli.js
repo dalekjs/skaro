@@ -66,6 +66,19 @@ config.load().then(function(config) {
         ));
         break;
 
+        case Config.INIT_NOT_FOUND:
+          console.error(wrap(
+            /*jshint laxbreak:true */
+            '\nAre you running dalek in the correct directory?\n\n'
+            + 'You can reference an init file from anywhere using '
+            + chalk.grey('--init=path/to/init.js') + ' or prevent loading an init file with '
+            + chalk.grey('--no-init') + '. Note that with ' + chalk.grey('--init') + ' the path is '
+            + 'resolved against CWD (' + chalk.magenta(process.cwd()) + ') whereas the config value '
+            + chalk.green('data') + ' is resolved against the config file.'
+            /*jshint laxbreak:false */
+          ));
+          break;
+
       case Config.CONFIG_NOT_READABLE:
       case Config.DATA_NOT_READABLE:
         var username = require('username');
