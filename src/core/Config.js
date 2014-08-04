@@ -10,6 +10,7 @@ var glob = require('glob');
 var defaultConfig = require('../default-config.json');
 var findFileInParents = require('../util/find-file-in-parents');
 
+var globise = Q.denodeify(glob);
 var lstat = Q.denodeify(fs.lstat);
 var readfile = Q.denodeify(fs.readFile);
 
@@ -36,10 +37,9 @@ Config.DATA_NOT_READABLE = 22;
 Config.DATA_NOT_PARSEABLE = 23;
 
 Config.prototype.load = function() {
-
   return this.importConfig()
     .then(this.importCli.bind(this))
-    .then(this.parse.bind(this))
+    .then(this.parseConfig.bind(this))
     .then(this.importData.bind(this))
     .then(this.verify.bind(this))
     .thenResolve(this);
@@ -179,33 +179,35 @@ Config.prototype.importDataFile = function(_path) {
     });
 };
 
+Config.prototype.glob = function(patterns, cwd) {
+  return globise(patterns, {
+    cwd: cwd,
+    root: '/',
+    silent: true,
+    strict: true,
+  }).then(function(matches) {
+    return matches.map(function(_path) {
+      return path.resolve(cwd, _path);
+    });
+  });
+};
 
-Config.prototype.parse = function() {
+Config.prototype.parseConfig = function() {
+  // find plugins and tests to load, unless disabled by CLI.
+  // if option was supplied by CLI, use CWD for resolving relative paths,
+  // otherwise use the config file's directory
+  var globs = Q.all([
+    !this._config.plugins ? [] : this.glob(this._config.plugins, this.cwdForOption('plugins')),
+    !this._config.tests ? [] : this.glob(this._config.tests, this.cwdForOption('tests'))
+  ]).spread(function(plugins, tests) {
+    this._plugins = plugins;
+    this._tests = tests;
+  }.bind(this));
+
+  // make use of the time the globs are not blocking :)
   this.parseTemplates(this._config, this._configfile);
 
-  // TODO: async globbing
-
-  // find plugins to load, unless disabled by CLI
-  if (this._config.plugins) {
-    // if supplied by CLI, use CWD for resolving relative paths,
-    // otherwise use the config file's directory
-    this._plugins = glob.sync(this._config.plugins, {
-      cwd: this.cwdForOption('plugins'),
-      silent: true,
-      strict: true,
-    });
-  }
-
-  // find test suites to load, unless disabled by CLI
-  if (this._config.tests) {
-    // if supplied by CLI, use CWD for resolving relative paths,
-    // otherwise use the config file's directory
-    this._tests = glob.sync(this._config.tests, {
-      cwd: this.cwdForOption('tests'),
-      silent: true,
-      strict: true,
-    });
-  }
+  return globs;
 };
 
 Config.prototype.parseTemplates = function(data, _path) {
@@ -253,7 +255,6 @@ Config.prototype.parseTemplates = function(data, _path) {
   }.bind(this));
 };
 
-
 Config.prototype.verify = function() {
   // TODO: verify configuration integrity
 };
@@ -276,7 +277,9 @@ Config.prototype.getTests = function() {
 };
 
 Config.prototype.getFiles = function() {
-  return _.clone(this._files);
+  return this._files.map(function(_path) {
+    return path.resolve(this._cwd, _path);
+  }.bind(this));
 };
 
 module.exports = Config;
