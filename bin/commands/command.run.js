@@ -8,9 +8,7 @@ module.exports = function(config/*, cli*/) {
     .then(dalek.start.bind(dalek))
     .then(dalek.run.bind(dalek))
     .then(dalek.stop.bind(dalek))
-    .catch(function(error) {
-      dalek.reporter.error(error);
-    })
+    .catch(dalek.reporter.error.bind(dalek))
     .then(dalek.kill.bind(dalek))
     .then(dalek.endProcess.bind(dalek));
 };

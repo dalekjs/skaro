@@ -18,12 +18,12 @@ if (!cli.command) {
 var Config = require('../src/core/Config');
 var config = new Config(cli.options, cli.files, process.cwd());
 config.load().then(function(config) {
-  require('./commands/command.' + cli.command)(config, cli);
+  return require('./commands/command.' + cli.command)(config, cli);
 }, function(reason) {
   var wrap = wordwrap(80);
 
   /*
-    {
+    reason = {
       message: <string>,
       code: <Config.*>,
       file: <string>,
@@ -35,6 +35,7 @@ config.load().then(function(config) {
       },
     }
   */
+
   if (reason && reason._code) {
     console.error('\n' + chalk.bgRed.white(reason._message));
     console.error('       file: ' + chalk.magenta(reason.file));
@@ -58,7 +59,7 @@ config.load().then(function(config) {
           '\nAre you running dalek in the correct directory?\n\n'
           + 'You can reference a data file from anywhere using '
           + chalk.grey('--data=path/to/data.json') + ' or skip loading any data files with '
-          + chalk.grey('--no-data') + '. Note that ' + chalk.grey('--no-data') + ' files are '
+          + chalk.grey('--no-data') + '. Note that ' + chalk.grey('--data') + ' files are '
           + 'resolved against CWD (' + chalk.magenta(process.cwd()) + ') whereas the config value '
           + chalk.green('data') + ' is resolved against the config file.'
           /*jshint laxbreak:false */
@@ -97,7 +98,7 @@ config.load().then(function(config) {
     }
   } else {
     console.error('LOADING THE CONFIGURATION FAILED UNEXPECTEDLY!');
-    console.error(reason.stack);
+    console.error(reason.stack || reason);
   }
 
   process.exit(1);
