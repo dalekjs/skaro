@@ -123,33 +123,37 @@ module.exports = (function(){
       groups.unshift([init]);
     }
 
-    return this.Q({}).then(function(loaded) {
+    return this.Q({loaded: [], skipped: [], seen: {}}).then(function(index) {
       dalek.reporter.debug('Loading user files');
       groups.forEach(function(files) {
         files.forEach(function(path) {
-          if (loaded[path]) {
-            dalek.reporter.debug('Already loaded ' + dalek.format.literal(path));
+          if (index.seen[path]) {
+            dalek.reporter.debug('Already examined ' + dalek.format.literal(path));
             return;
           }
 
+          index.seen[path] = true;
           var file = require(path);
           if (typeof file !== 'function') {
+            index.skipped.push(path);
             dalek.reporter.warning('Ignoring ' + dalek.format.literal(path) + ' because it is not a function');
             return;
           }
 
           if (file.length !== 1) {
+            index.skipped.push(path);
             dalek.reporter.warning('Ignoring ' + dalek.format.literal(path) + ' because the function does not expect exactly 1 parameter');
             return;
           }
 
           dalek.reporter.debug('Initializing ' + dalek.format.literal(path));
           file(dalek);
-          loaded[path] = true;
+          index.loaded.push(path);
         });
       });
 
-      return loaded;
+      dalek.reporter.debug('Finished loading user files');
+      return index;
     });
   };
 
