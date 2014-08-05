@@ -40,13 +40,14 @@ module.exports = function() {
         flag: true,
         help: 'suppress all warning'
       },
-      noColors: {
-        full: 'no-colors',
+      color: {
+        full: 'no-color',
         flag: true,
         help: 'disable colorized output in the console'
       },
-      noSymbols: {
-        full: 'no-symbols',
+      // TODO: what is no-symbol supposed to do?
+      symbols: {
+        full: 'no-symbol',
         flag: true,
         help: 'disable UTF-8 symbols in the console'
       },
