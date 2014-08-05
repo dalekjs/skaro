@@ -33,6 +33,8 @@ convenience [implementation]
 * importing `dalek-*` plugins right off `node_modules`, maybe [matchdep](https://www.npmjs.org/package/matchdep)?
   * we can also look into using `src/util/find-installed-packages.js` and load stuff based off `package.json` meta: `dalek: { "assert.foo": "lib/assert.foo.js" }`
 
+* add a key-map that translates "special keys" `keys.backspace = '\uE003'` (up, down, enter, esc, page-end, …) [primarily for action.sendKey]
+
 ---
 
 plugins [research]
