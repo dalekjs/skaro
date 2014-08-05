@@ -142,6 +142,13 @@ module.exports = function() {
       command = 'verify';
     });
 
+  nomnom.command('list').options(options.run)
+    .help('List loaded resources')
+    .callback(function() {
+      optionKey = 'run';
+      command = 'list';
+    });
+
   nomnom.command('remote').options(options.remote)
     .help('Start Dalek as a remote proxy')
     .callback(function() {
@@ -160,6 +167,7 @@ module.exports = function() {
     switch (command.name) {
       case 'run':
       case 'verify':
+      case 'list':
         var wrap = wordwrap(80);
         // TODO: this should probably be put in a man page or something
         return wrap(
