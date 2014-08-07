@@ -16,6 +16,11 @@ module.exports = function getStack(below, error) {
       line: callSite.getLineNumber(),
     };
 
+    // we don't care about the dalek internals
+    if (site.file.indexOf('src/Dalek.js') === site.file.length -12) {
+      return true;
+    }
+
     // we don't care about anything deeper than this
     if (site.name === 'Module._compile' || site.name === 'listOnTimeout') {
       return true;
