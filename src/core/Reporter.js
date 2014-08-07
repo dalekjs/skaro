@@ -14,6 +14,11 @@ module.exports = function(dalek) {
   function Reporter(options) {
     this.options = options;
     this.reporters = [];
+
+    this.log = this.log.bind(this);
+    this.debug = this.debug.bind(this);
+    this.warning = this.warning.bind(this);
+    this.error = this.error.bind(this);
   }
 
   Reporter.prototype.add = function(reporter) {
