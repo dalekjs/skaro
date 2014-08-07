@@ -4,12 +4,17 @@ var stackTrace = require('stack-trace');
 
 // extract the useful (developer-relevant) parts of the call-stack
 // to present in case of problems during plugin call and exection-time
-module.exports = function getStack(below, error) {
+module.exports = function getStack(below, error, skip) {
   // https://github.com/felixge/node-stack-trace
   var stack = [];
   var trace = error && stackTrace.parse(error) || stackTrace.get(below);
 
   trace.some(function(callSite) {
+    if (skip) {
+      skip--;
+      return false;
+    }
+
     var site = {
       name: callSite.getFunctionName(),
       file: callSite.getFileName(),

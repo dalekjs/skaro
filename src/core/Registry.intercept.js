@@ -34,7 +34,7 @@ function intercept(dalek, namespace, target) {
     throw new dalek.Error(
       dalek.format.keyword(namespace) + ' ' + dalek.format.keyword(name) + ' does not exist',
       dalek.Error.PLUGIN_CALL,
-      dalek.getStack(Interceptor.prototype.get)
+      dalek.getStack(Interceptor.prototype.get, null, 1)
     );
   };
 
