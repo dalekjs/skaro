@@ -184,7 +184,7 @@ module.exports = (function(){
   };
 
   Dalek.prototype.endProcess = function() {
-    this.handle.then(function() {
+    (this.handle || Q.reject()).then(function() {
       process.exit(0);
     }, function() {
       process.exit(1);
