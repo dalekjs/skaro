@@ -146,10 +146,8 @@ module.exports = function(dalek) {
       return;
     }
 
-    var args = serialize(arguments).map(function(item) {
-      return chalk.bgWhite.blue(item);
-    });
-
+    var args = [].slice.call(arguments, 0);
+    args.unshift(chalk.bgWhite.black.bold("Debug:"));
     console.log.apply(console, args);
   };
 
@@ -158,10 +156,8 @@ module.exports = function(dalek) {
       return;
     }
 
-    var args = serialize(arguments).map(function(item) {
-      return chalk.bgYellow.red.bold(item);
-    });
-
+    var args = [].slice.call(arguments, 0);
+    args.unshift(chalk.bgYellow.red.bold("Warning:"));
     console.log.apply(console, args);
   };
 
@@ -191,19 +187,6 @@ module.exports = function(dalek) {
       console.log(' at ' + chalk.red(callSite.name) + ' (' + chalk.yellow(callSite.file) + ':' + chalk.cyan(callSite.line) + ')' );
     });
   };
-
-  function serialize(args) {
-    return [].slice.call(args, 0).map(function(item) {
-      if (typeof item === 'function') {
-        return String(item);
-      }
-      if (typeof item === 'object') {
-        return JSON.stringify(item, null, 2);
-      }
-
-      return item;
-    });
-  }
 
   return Reporter;
 };

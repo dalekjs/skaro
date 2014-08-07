@@ -94,10 +94,6 @@ module.exports = (function(){
     // and halt execution. this is nothing we can recover from
     this.reporter.error(error);
 
-    // TODO: check if we need proper exit codes for different situations
-    // e.g. http://docs.openlinksw.com/virtuoso/signalsandexitcodes.html
-    this.reporter.log('\n\naborting Dalek because of script error in promise');
-
     this.kill();
     process.exit(1);
   };
