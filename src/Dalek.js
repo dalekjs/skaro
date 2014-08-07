@@ -72,10 +72,10 @@ module.exports = (function(){
     this.catch = this.catch.bind(this);
 
     this.runLoop = new this.RunLoop(this.options());
-    this.beforeDalek = this.runLoop.beforeFirst.bind(this.runLoop);
-    this.beforeSuite = this.runLoop.beforeEach.bind(this.runLoop);
-    this.afterSuite = this.runLoop.afterEach.bind(this.runLoop);
-    this.afterDalek = this.runLoop.afterLast.bind(this.runLoop);
+    this.beforeDalek = this.runLoop.beforeFirst.bind(this.runLoop, 'Dalek.beforeDalek');
+    this.beforeSuite = this.runLoop.beforeEach.bind(this.runLoop, 'Dalek.beforeSuite');
+    this.afterSuite = this.runLoop.afterEach.bind(this.runLoop, 'Dalek.afterSuite');
+    this.afterDalek = this.runLoop.afterLast.bind(this.runLoop, 'Dalek.afterDalek');
   };
 
   Dalek.prototype._registerPlugins = function(plugins) {

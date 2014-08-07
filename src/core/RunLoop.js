@@ -37,32 +37,34 @@ module.exports = function(dalek) {
   };
 
 
-  RunLoop.prototype.beforeFirst = function(callback) {
-    // TODO: warning if beforeFirst is being overwritten
-    dalek.reporter.debug('registering unit', 'before:first');
+  RunLoop.prototype._mutedUnit = function(name, unitName, property, callback, called) {
+    dalek.reporter.debug('registering unit', 'before:first', 'as', name);
+    if (this[property]) {
+      dalek.reporter.warning(name, 'has already been registered in');
+      dalek.reporter.printStack(this[property].called, 'warning');
+    }
+
+    this[property] = new dalek.Unit(unitName, this.options(), callback, called);
+  };
+
+  RunLoop.prototype.beforeFirst = function(name, callback) {
     var called = dalek.getStack(this.beforeFirst);
-    this._beforeFirst = new dalek.Unit('before:first', this.options(), callback, called);
+    this._mutedUnit(name, 'before:first', '_beforeFirst', callback, called);
   };
 
-  RunLoop.prototype.beforeEach = function(callback) {
-    // TODO: warning if beforeEach is being overwritten
-    dalek.reporter.debug('registering unit', 'before:each');
+  RunLoop.prototype.beforeEach = function(name, callback) {
     var called = dalek.getStack(this.beforeEach);
-    this._beforeEach = new dalek.Unit('before:each', this.options(), callback, called);
+    this._mutedUnit(name, 'before:each', '_beforeEach', callback, called);
   };
 
-  RunLoop.prototype.afterEach = function(callback) {
-    // TODO: warning if afterEach is being overwritten
-    dalek.reporter.debug('registering unit', 'after:each');
+  RunLoop.prototype.afterEach = function(name, callback) {
     var called = dalek.getStack(this.afterEach);
-    this._afterEach = new dalek.Unit('after:each', this.options(), callback, called);
+    this._mutedUnit(name, 'after:each', '_afterEach', callback, called);
   };
 
-  RunLoop.prototype.afterLast = function(callback) {
-    // TODO: warning if afterLast is being overwritten
-    dalek.reporter.debug('registering unit', 'after:last');
+  RunLoop.prototype.afterLast = function(name, callback) {
     var called = dalek.getStack(this.afterLast);
-    this._afterLast = new dalek.Unit('after:last', this.options(), callback, called);
+    this._mutedUnit(name, 'after:last', '_afterLast', callback, called);
   };
 
 

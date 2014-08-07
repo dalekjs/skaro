@@ -172,7 +172,17 @@ module.exports = function(dalek) {
       error._stack = dalek.getStack(null, error);
     }
 
-    error._stack.forEach(function(callSite) {
+    this.printStack(error._stack);
+  };
+
+  Reporter.prototype.printStack = function(stack, level) {
+    if (level === 'warning' && (this.options.silent || this.options.warnings === false)) {
+      return;
+    } else if (level === 'debug' && (this.options.silent || !this.options.debug)) {
+      return;
+    }
+
+    stack.forEach(function(callSite) {
       console.log(' at ' + chalk.red(callSite.name) + ' (' + chalk.yellow(callSite.file) + ':' + chalk.cyan(callSite.line) + ')' );
     });
   };

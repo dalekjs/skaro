@@ -1,6 +1,11 @@
 module.exports = function(dalek) {
   'use strict';
 
+  dalek.beforeSuite(function() {
+    // this should cause a warning
+    return [];
+  });
+
   dalek.suite('other suite', function(suite) {
 
     suite.unit('lalalal', function(/*options*/) {
