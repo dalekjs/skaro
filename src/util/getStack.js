@@ -17,9 +17,16 @@ module.exports = function getStack(below, error) {
     };
 
     // we don't care about the dalek internals
+    // at registration time
     if (site.file.indexOf('src/Dalek.js') === site.file.length -12) {
       return true;
     }
+    if (site.name === 'Unit.initialize') {
+      // consider renaming the previous item from "Unit._initialize" 
+      // to something meaningful to the user
+      return true;
+    }
+    
 
     // we don't care about anything deeper than this
     if (site.name === 'Module._compile' || site.name === 'listOnTimeout') {
