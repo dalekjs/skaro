@@ -2,5 +2,7 @@
   "_notes": "this is the default configuration file",
   "selectorStrategy": "css",
   "tests": "tests/**/*.js",
-  "plugins": "plugins/**/*.js"
+  "plugins": "plugins/**/*.js",
+  "sort.suites": "none",
+  "sort.units": "none"
 }

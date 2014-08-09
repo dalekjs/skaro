@@ -75,7 +75,25 @@ module.exports = function(dalek) {
       this.options(options);
     }
 
+    this.sort();
+
     setTimeout(this._run);
+  };
+
+  RunLoop.prototype.sort = function() {
+    function alpha(a) {
+      return a.label.toLowerCase();
+    }
+
+    switch (this.options('sort')) {
+      case 'alpha':
+        this._items = _.sortBy(this._items, alpha);
+        break;
+
+      case 'random':
+        this._items = _.shuffle(this._items);
+        break;
+    }
   };
 
   RunLoop.prototype._run = function() {

@@ -83,6 +83,25 @@ module.exports = function() {
         help: 'JSON data file(s) to provide to tests'
       },
 
+      // affecting tests
+      sort: {
+        type: 'string',
+        choices: ['none', 'alpha', 'random'],
+        help: 'order both suites and units before execution (overrules --sort-suites and --sort-units)'
+      },
+      'sort.suites': {
+        full: 'sort-suites',
+        type: 'string',
+        choices: ['none', 'alpha', 'random'],
+        help: 'order suites before execution'
+      },
+      'sort.units': {
+        full: 'sort-units',
+        type: 'string',
+        choices: ['none', 'alpha', 'random'],
+        help: 'order units before execution'
+      },
+
       // affecting browsers
       browser: {
         abbr: 'b',
@@ -243,6 +262,10 @@ module.exports = function() {
   if (opts.bare) {
     // --bare shorthand for --no-config --no-data --no-init --no-plugins --no-tests
     opts.config = opts.data = opts.init = opts.plugins = opts.tests = false;
+  }
+  if (opts.sort) {
+    // --sort <val> shorthand for --sort-suites <val> --sort-units <val>
+    opts['sort.suites'] = opts['sort.units'] = opts.sort;
   }
 
   return {

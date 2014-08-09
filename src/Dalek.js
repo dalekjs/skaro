@@ -164,8 +164,11 @@ module.exports = (function(){
     this.handle.setOperations(this._suites.length);
 
     this.runLoop.initialize(this.options(), this._suites, this.handle);
-    this.runLoop.run();
+    this.runLoop.options({
+      sort: this.options('sort.suites')
+    });
 
+    this.runLoop.run();
     return this.handle;
   };
 

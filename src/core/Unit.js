@@ -55,6 +55,9 @@ module.exports = function(dalek) {
     this.handle.setOperations(this._tasks.length);
 
     this.runLoop.initialize(this.options(), this._tasks, this.handle);
+    this.runLoop.options({
+      sort: 'none'
+    });
 
     return this.handle;
   };
