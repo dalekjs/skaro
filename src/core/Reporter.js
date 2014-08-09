@@ -147,7 +147,7 @@ module.exports = function(dalek) {
     }
 
     var args = [].slice.call(arguments, 0);
-    args.unshift(chalk.bgWhite.black.bold("Debug:"));
+    args.unshift(chalk.bgWhite.black.bold('Debug:'));
     console.log.apply(console, args);
   };
 
@@ -157,7 +157,7 @@ module.exports = function(dalek) {
     }
 
     var args = [].slice.call(arguments, 0);
-    args.unshift(chalk.bgYellow.red.bold("Warning:"));
+    args.unshift(chalk.bgYellow.red.bold('Warning:'));
     console.log.apply(console, args);
   };
 
