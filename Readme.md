@@ -13,8 +13,17 @@ running `bin/dalek.cli.js` will show current status…
 
 ---
 
-* `--sort` to sort suites/units prior to execution? alphabetical order? randomized order?
-* ServicePlugin to hook into `Dalek.start()`, `Dalek.stop()` and `Dalek.kill()` lifecycle-phases to transparently fire up services used by the test (web server, proxy, video capture, …)
+* rethink `config` vs. `options` handling
+
+* allow suite/unit initialization callbacks to return a promise?
+* allow `[]` as array-item in unit declaration, flatten after initialization
+* allow sub-units (much like before/after) that can be registered as macros or something
+
+* exporting the dalek.* objects (e.g. `dalek.is`, `dalek.assert`, …) to [global](http://nodejs.org/api/globals.html#globals_global) scope. *The test-file loader could export to global scope before loading files and revert that after the files were loaded.*
+
+* ServicePlugin to hook into `Dalek.start()`, `Dalek.stop()` and `Dalek.kill()` lifecycle-phases to transparently fire up services used by the test (web server, proxy, video capture, …) Would this also require hooks for suiteStarted, unitEnded, … possibly even `browser url changed`?
+
+* think about `continueOnFailure` on task-level, unit-level and suite-level - this should allow running all the tests to figure out what is failing, rather than aborting execution on first failure dalekjs/dalek#13
 
 ---
 
@@ -28,12 +37,9 @@ required interfaces and packages [research, implementation]
 
 convenience [implementation]
 
-* exporting the dalek.* objects (e.g. `dalek.is`, `dalek.assert`, …) to [global](http://nodejs.org/api/globals.html#globals_global) scope. *The test-file loader could export to global scope before loading files and revert that after the files were loaded.*
 * include web server, so one can simply `--serve directory` (including setting the baseUrl for tests) [might be a service plugin]
 * importing `dalek-*` plugins right off `node_modules`, maybe [matchdep](https://www.npmjs.org/package/matchdep)?
   * we can also look into using `src/util/find-installed-packages.js` and load stuff based off `package.json` meta: `dalek: { "assert.foo": "lib/assert.foo.js" }`
-
-* add a key-map that translates "special keys" `keys.backspace = '\uE003'` (up, down, enter, esc, page-end, …) [primarily for action.sendKey]
 
 ---
 
@@ -43,6 +49,10 @@ plugins [research]
   * simply exclude `src/plugins/helper` from resource glob?
   * exclude on file basis `!*.helper.js`?
   * separate directory `src/plugins-helper/`?
+
+* add a [key-map](http://www.w3.org/TR/2012/WD-webdriver-20120710/#character-types) that translates "special keys" `keys.backspace = '\uE003'` (up, down, enter, esc, page-end, …) [primarily for action.sendKey] - maybe use [unicode-keymap](https://www.npmjs.org/package/unicode-keymap)
+* add `is.url.foo()`  dalekjs/dalek#40
+* add `is.color()` dalekjs/dalek#126 and dalekjs/dalek#50
 
 ---
 
@@ -57,9 +67,7 @@ working with browser scripts [research]
 
 improve scalability [research]
 
-* think about `continueOnFailure` on task-level, unit-level and suite-level - this should allow running all the tests to figure out what is failing, rather than aborting execution on first failure
 * look at [dalek.ui](https://github.com/rodneyrehm/dalek-api/blob/master/breaking-bc-api.md#remembering-ui-elements) to compensate for the dropped .query()
-* think about **macros** (re-usable unit-fragments)
 * look at [semantic phases](https://github.com/rodneyrehm/dalek-api/blob/master/breaking-bc-api.md#semantic-phases)
 
 ---
