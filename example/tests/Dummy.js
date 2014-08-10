@@ -66,7 +66,17 @@ module.exports = function(dalek) {
       ];
     });
 
+    // suite.unit('no array unit', function(/*unit*/) {
+    //   return new Date();
+    // });
+
+    // suite.unit('no valid task unit', function(/*unit*/) {
+    //   return [new Date()];
+    // });
+
   });
+
+  // dalek.suite('empty suite', function(){});
 
   dalek.suite('synchronous suite', function(suite) {
 
