@@ -185,11 +185,11 @@ module.exports = function(dalek) {
 
 
   RunLoop.prototype.runBeforeFirst = function() {
-    return this.runUnit(this._beforeFirst);
+    return this.runUnit(this._beforeFirst, true);
   };
 
   RunLoop.prototype.runBeforeEach = function() {
-    return this.runUnit(this._beforeEach);
+    return this.runUnit(this._beforeEach, true);
   };
 
   RunLoop.prototype.runAfterEach = function(succeeded) {

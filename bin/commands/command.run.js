@@ -7,6 +7,14 @@ module.exports = function(config/*, cli*/) {
   return dalek.load()
     .then(dalek.start.bind(dalek))
     .then(dalek.run.bind(dalek))
+    .catch(function(error) {
+      if (error instanceof dalek.Handle) {
+        // not an error we need to log
+        return;
+      }
+
+      dalek.reporter.error(error);
+    })
     .then(dalek.stop.bind(dalek))
     .catch(dalek.reporter.error.bind(dalek))
     .then(dalek.kill.bind(dalek))
