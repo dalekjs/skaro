@@ -47,6 +47,7 @@ module.exports = function(dalek) {
       .then(this._initialize)
       .catch(dalek.catchStack('_fulfilled'))
       .then(this.sanitizeUnits)
+      .catch(dalek.catchStack('_fulfilled'))
       .then(this.initializeSuite);
   };
 
