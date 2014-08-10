@@ -42,6 +42,8 @@ module.exports = function(dalek) {
     if (this[property]) {
       dalek.reporter.warning(name, 'has already been registered in');
       dalek.reporter.printStack(this[property].called, 'warning');
+      dalek.reporter.warning('and for a second time in');
+      dalek.reporter.printStack(called, 'warning');
     }
 
     this[property] = new dalek.Unit(unitName, this.options(), callback, called);
