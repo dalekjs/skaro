@@ -15,7 +15,6 @@ running `bin/dalek.cli.js` will show current status…
 
 * rethink `config` vs. `options` handling
 
-* allow suite/unit initialization callbacks to return a promise?
 * allow `[]` as array-item in unit declaration, flatten after initialization
 * allow sub-units (much like before/after) that can be registered as macros or something
 

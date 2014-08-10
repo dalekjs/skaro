@@ -13,43 +13,43 @@ module.exports = function(dalek) {
   }
 
   dalek.suite('bravo suite', function(suite) {
-    suite.unit('charlie unit', function(/*options*/) {
+    suite.unit('charlie unit', function(/*unit*/) {
       return [dummy];
     });
 
-    suite.unit('bravo unit', function(/*options*/) {
+    suite.unit('bravo unit', function(/*unit*/) {
       return [dummy];
     });
 
-    suite.unit('alpha unit', function(/*options*/) {
+    suite.unit('alpha unit', function(/*unit*/) {
       return [dummy];
     });
   });
 
   dalek.suite('alpha suite', function(suite) {
-    suite.unit('charlie unit', function(/*options*/) {
+    suite.unit('charlie unit', function(/*unit*/) {
       return [dummy];
     });
 
-    suite.unit('Bravo unit', function(/*options*/) {
+    suite.unit('Bravo unit', function(/*unit*/) {
       return [dummy];
     });
 
-    suite.unit('alpha unit', function(/*options*/) {
+    suite.unit('alpha unit', function(/*unit*/) {
       return [dummy];
     });
   });
 
   dalek.suite('älpha suite', function(suite) {
-    suite.unit('charlie unit', function(/*options*/) {
+    suite.unit('charlie unit', function(/*unit*/) {
       return [dummy];
     });
 
-    suite.unit('Bravo unit', function(/*options*/) {
+    suite.unit('Bravo unit', function(/*unit*/) {
       return [dummy];
     });
 
-    suite.unit('alpha unit', function(/*options*/) {
+    suite.unit('alpha unit', function(/*unit*/) {
       return [dummy];
     });
   });

@@ -16,6 +16,7 @@ module.exports = function(dalek) {
     this.run = this.run.bind(this);
     this._run = this._run.bind(this);
     this._runLoop = this._runLoop.bind(this);
+    this._runQueue = this._runQueue.bind(this);
   }
 
   RunLoop.prototype.initialize = function(options, items, handle) {
@@ -100,8 +101,7 @@ module.exports = function(dalek) {
 
   RunLoop.prototype._run = function() {
     this.runBeforeFirst()
-      .then(this._runLoop)
-      .catch(dalek.catch);
+      .then(this._runLoop);
   };
 
   RunLoop.prototype._runLoop = function() {
@@ -113,6 +113,7 @@ module.exports = function(dalek) {
       return;
     }
 
+    // TODO: move this type-check
     if (typeof item === 'function') {
       this.runTask(item);
     } else {
@@ -156,7 +157,12 @@ module.exports = function(dalek) {
   };
 
   RunLoop.prototype.runQueue = function(item) {
-    var handle = item.initialize(this.options());
+    dalek.Q(item.initialize(this.options()))
+      .then(this._runQueue);
+  };
+
+  RunLoop.prototype._runQueue = function(item) {
+    var handle = item.getHandle();
     this._handle.performOperation();
 
     this.runBeforeEach().then(function() {
@@ -208,13 +214,15 @@ module.exports = function(dalek) {
     var options = this.options();
     options.succeeded = succeeded;
 
-    var handle = unit.initialize(options);
-    unit.run({
-      mute: true
-    });
+    return unit.initialize(options).then(function(unit) {
+      unit.run({
+        mute: true
+      });
 
-    // report only in failure case
-    handle.catch(function(failure) {
+      return unit.getHandle();
+    }).catch(function(failure) {
+      var handle = unit.getHandle();
+      // report only in failure case
       dalek.reporter.started(handle);
       dalek.reporter.started(failure);
       dalek.reporter.failed(failure, failure.message);
@@ -228,8 +236,6 @@ module.exports = function(dalek) {
       this._handle.reject(handle);
       throw failure;
     }.bind(this));
-
-    return handle;
   };
 
 

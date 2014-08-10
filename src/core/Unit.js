@@ -6,7 +6,7 @@ module.exports = function(dalek) {
   function Unit(label, options, callback, called) {
     this.label = label;
     this._options = options;
-    this._initialize = callback;
+    this._initialize = callback.bind(this);
     this.called = called || dalek.getStack(Unit);
 
     if (typeof callback !== 'function') {
@@ -17,10 +17,11 @@ module.exports = function(dalek) {
       );
     }
 
-    this._tasks = [];
-
     this.runLoop = new dalek.RunLoop(this.options());
     this.run = this.runLoop.run.bind(this.runLoop);
+    this.initialize = this.initialize.bind(this);
+    this.sanitizeTasks = this.sanitizeTasks.bind(this);
+    this.initializeUnit = this.initializeUnit.bind(this);
   }
 
   Unit.prototype.options = function(options, defaultValue) {
@@ -35,12 +36,19 @@ module.exports = function(dalek) {
     _.extend(this._options, options);
   };
 
+
   Unit.prototype.initialize = function(options) {
     dalek.reporter.debug('initializing unit', this.label);
     this.options(options || {});
-    this._tasks = this._initialize(this.options());
+    return dalek.Q(this)
+      .then(this._initialize)
+      .catch(dalek.catchStack('_fulfilled'))
+      .then(this.sanitizeTasks)
+      .then(this.initializeUnit);
+  };
 
-    if (!Array.isArray(this._tasks)) {
+  Unit.prototype.sanitizeTasks = function(tasks) {
+    if (!Array.isArray(tasks)) {
       throw new dalek.Error(
         'Unit ' + dalek.format.literal(this.label) + ' does not provide an array of Tasks',
         dalek.Error.PLUGIN_CALL,
@@ -51,14 +59,25 @@ module.exports = function(dalek) {
     // Units may be empty because they were conditional, in such a case
     // they should still be logged and not bring down the entire test
 
-    this.handle = new dalek.Handle(this.label, dalek.Handle.UNIT, 'Unit');
-    this.handle.setOperations(this._tasks.length);
+    // TODO: sanitze tasks, make sure everything is callable, inline arrays, etc.
+    return tasks.slice(0);
+  };
 
-    this.runLoop.initialize(this.options(), this._tasks, this.handle);
+  Unit.prototype.initializeUnit = function(tasks) {
+    this.handle = new dalek.Handle(this.label, dalek.Handle.UNIT, 'Unit');
+    this.handle.setOperations(tasks.length);
+
+    this.runLoop.initialize(this.options(), tasks, this.handle);
     this.runLoop.options({
       sort: 'none'
     });
 
+    // cannot pass a promise because Q would chain that automatically
+    return this;
+  };
+
+
+  Unit.prototype.getHandle = function() {
     return this.handle;
   };
 

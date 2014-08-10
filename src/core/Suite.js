@@ -6,7 +6,7 @@ module.exports = function(dalek) {
   function Suite(label, options, callback, called) {
     this.label = label;
     this._options = options;
-    this._initialize = callback;
+    this._initialize = callback.bind(this);
     this.called = called || dalek.getStack(Suite);
 
     if (typeof callback !== 'function') {
@@ -23,6 +23,8 @@ module.exports = function(dalek) {
     this.run = this.runLoop.run.bind(this.runLoop);
     this.beforeUnit = this.runLoop.beforeEach.bind(this.runLoop, 'Suite.beforeUnit');
     this.afterUnit = this.runLoop.afterEach.bind(this.runLoop, 'Suite.afterUnit');
+    this.sanitizeUnits = this.sanitizeUnits.bind(this);
+    this.initializeSuite = this.initializeSuite.bind(this);
   }
 
   Suite.prototype.options = function(options, defaultValue) {
@@ -37,10 +39,18 @@ module.exports = function(dalek) {
     _.extend(this._options, options);
   };
 
-  Suite.prototype.initialize = function() {
-    dalek.reporter.debug('initializing suite', this.label);
-    this._initialize(this, this.options);
 
+  Suite.prototype.initialize = function(options) {
+    dalek.reporter.debug('initializing suite', this.label);
+    this.options(options || {});
+    return dalek.Q(this)
+      .then(this._initialize)
+      .catch(dalek.catchStack('_fulfilled'))
+      .then(this.sanitizeUnits)
+      .then(this.initializeSuite);
+  };
+
+  Suite.prototype.sanitizeUnits = function() {
     if (!this._units.length) {
       throw new dalek.Error(
         'Suite ' + dalek.format.literal(this.label) + ' does not contain any Units',
@@ -48,7 +58,9 @@ module.exports = function(dalek) {
         this.called
       );
     }
+  };
 
+  Suite.prototype.initializeSuite = function() {
     this.handle = new dalek.Handle(this.label, dalek.Handle.SUITE, 'Suite');
     this.handle.setOperations(this._units.length);
 
@@ -57,6 +69,11 @@ module.exports = function(dalek) {
       sort: this.options('sort.units')
     });
 
+    return this;
+  };
+
+
+  Suite.prototype.getHandle = function() {
     return this.handle;
   };
 

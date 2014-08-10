@@ -1,37 +1,37 @@
 module.exports = function(dalek) {
   'use strict';
 
-  dalek.beforeDalek(function() {
+  dalek.beforeDalek(function(/*unit*/) {
     return [
       dalek.action.click('.before-dalek'),
     ];
   });
 
-  dalek.afterDalek(function() {
+  dalek.afterDalek(function(/*unit*/) {
     return [
       dalek.action.click('.after-dalek'),
     ];
   });
 
-  dalek.beforeSuite(function() {
+  dalek.beforeSuite(function(/*unit*/) {
     return [
       dalek.action.click('.before-suite'),
     ];
   });
 
-  dalek.afterSuite(function() {
+  dalek.afterSuite(function(/*unit*/) {
     return [
       dalek.action.click('.after-suite'),
     ];
   });
 
-  dalek.suite('name of the suite', function(suite/*, options*/) {
+  dalek.suite('name of the suite', function(suite) {
 
     suite.options({
       foo: 'bar'
     });
 
-    suite.beforeUnit(function() {
+    suite.beforeUnit(function(/*unit*/) {
       return [
         //dalek.browser.openUrl('localhost');
         dalek.action.click('.before-unit'),
@@ -39,8 +39,8 @@ module.exports = function(dalek) {
       ];
     });
 
-    suite.afterUnit(function(options) {
-      if (options.succeeded) {
+    suite.afterUnit(function(unit) {
+      if (unit.options('succeeded')) {
         // unit passed
       } else {
         // unit failed
@@ -52,7 +52,7 @@ module.exports = function(dalek) {
       ];
     });
 
-    suite.unit('first unit', function(/*options*/) {
+    suite.unit('first unit', function(/*unit*/) {
       return [
         dalek.action.click('.somewhere'),
         dalek.until.timeout(100),
@@ -60,7 +60,7 @@ module.exports = function(dalek) {
       ];
     });
 
-    suite.unit('second unit', function(/*options*/) {
+    suite.unit('second unit', function(/*unit*/) {
       return [
         dalek.action.click('.kansas'),
       ];
@@ -68,19 +68,28 @@ module.exports = function(dalek) {
 
   });
 
-  dalek.suite('other suite', function(suite) {
+  dalek.suite('synchronous suite', function(suite) {
 
-    suite.unit('lalalal', function(/*options*/) {
-      return [
-        //inline-function-tasks
-        function(/*options*/) {
-          var handle = new dalek.Handle('Explain what you are doing', dalek.Handle.ACTION);
-          setTimeout(function() {
-            handle.resolve('response text');
-          });
-          return handle;
-        }
-      ];
+    suite.unit('asynchnronous unit', function(/*unit*/) {
+      var deferred = dalek.Q.defer();
+
+      setTimeout(function() {
+        deferred.resolve([
+          // TODO: figure out how to capture errors raised in a timeout
+          // dalek.action.foo('.somewhere'),
+          
+          //inline-function-tasks
+          function(/*options*/) {
+            var handle = new dalek.Handle('Explain what you are doing', dalek.Handle.ACTION);
+            setTimeout(function() {
+              handle.resolve('response text');
+            });
+            return handle;
+          }
+        ]);
+      }, 200);
+
+      return deferred.promise;
     });
 
   });
