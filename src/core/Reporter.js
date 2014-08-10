@@ -173,18 +173,23 @@ module.exports = function(dalek) {
       error._stack = dalek.getStack(null, error);
     }
 
-    this.printStack(error._stack);
+    this.printStack(error._stack, null, error.showStackTillName);
   };
 
-  Reporter.prototype.printStack = function(stack, level) {
+  Reporter.prototype.printStack = function(stack, level, showStackTillName) {
     if (level === 'warning' && (this.options.silent || this.options.warnings === false)) {
       return;
     } else if (level === 'debug' && (this.options.silent || !this.options.debug)) {
       return;
     }
 
-    stack.forEach(function(callSite) {
+    stack.some(function(callSite) {
+      if (callSite.name === showStackTillName) {
+        return true;
+      }
+
       console.log(' at ' + chalk.red(callSite.name) + ' (' + chalk.yellow(callSite.file) + ':' + chalk.cyan(callSite.line) + ')' );
+      return false;
     });
   };
 
