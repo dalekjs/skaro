@@ -15,7 +15,7 @@ running `bin/dalek.cli.js` will show current status…
 
 * rethink `config` vs. `options` handling
 
-* allow `[]` as array-item in unit declaration, flatten after initialization
+* provide the `unit` or `suite` a before* after* is performed for in the init callback
 * allow sub-units (much like before/after) that can be registered as macros or something
 
 * exporting the dalek.* objects (e.g. `dalek.is`, `dalek.assert`, …) to [global](http://nodejs.org/api/globals.html#globals_global) scope. *The test-file loader could export to global scope before loading files and revert that after the files were loaded.*

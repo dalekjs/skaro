@@ -60,9 +60,12 @@ module.exports = function(dalek) {
       ];
     });
 
-    suite.unit('second unit', function(/*unit*/) {
+    suite.unit('nested array unit', function(/*unit*/) {
       return [
-        dalek.action.click('.kansas'),
+        [
+          dalek.action.click('.kansas')
+        ],
+        [[[dalek.action.click('.kansas')]]],
       ];
     });
 

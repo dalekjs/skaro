@@ -49,6 +49,9 @@ module.exports = function(dalek) {
   };
 
   Unit.prototype.sanitizeTasks = function(tasks) {
+    // Units may be empty because they were conditional, in such a case
+    // they should still be logged and not bring down the entire test
+
     if (!Array.isArray(tasks)) {
       throw new dalek.Error(
         'Unit ' + dalek.format.literal(this.label) + ' does not provide an array of Tasks',
@@ -57,10 +60,21 @@ module.exports = function(dalek) {
       );
     }
 
-    // Units may be empty because they were conditional, in such a case
-    // they should still be logged and not bring down the entire test
+    // we allow nested arrays for a simpler composition of units
+    tasks = _.flatten(tasks);
 
-    // TODO: sanitze tasks, make sure everything is callable, inline arrays, etc.
+    // a task is a function, nothing else
+    tasks.some(function(task) {
+      if (typeof task !== 'function') {
+        throw new dalek.Error(
+          'Unit ' + dalek.format.literal(this.label) + ' contains the invalid task ' + dalek.format.literal(task),
+          dalek.Error.PLUGIN_CALL,
+          this.called
+        );
+      }
+    }.bind(this));
+
+    // make sure the task list cannot be mutated by some latent async BS beyond this point
     return tasks.slice(0);
   };
 
