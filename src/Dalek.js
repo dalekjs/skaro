@@ -70,6 +70,7 @@ module.exports = (function(){
     this._suites = [];
 
     this.catch = this.catch.bind(this);
+    this.catchStack = this.catchStack.bind(this);
 
     this.runLoop = new this.RunLoop(this.options());
     this.beforeDalek = this.runLoop.beforeFirst.bind(this.runLoop, 'Dalek.beforeDalek');
@@ -96,6 +97,13 @@ module.exports = (function(){
 
     this.kill();
     process.exit(1);
+  };
+
+  Dalek.prototype.catchStack = function(name) {
+    return function catchAndLimitStack(error) {
+      error.showStackTillName = name;
+      this.catch(error);
+    }.bind(this);
   };
 
   Dalek.prototype.suite = function(label, callback) {
