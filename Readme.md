@@ -15,14 +15,13 @@ running `bin/dalek.cli.js` will show current status…
 
 * rethink `config` vs. `options` handling
 
-* provide the `unit` or `suite` a before* after* is performed for in the init callback
 * allow sub-units (much like before/after) that can be registered as macros or something
 
 * exporting the dalek.* objects (e.g. `dalek.is`, `dalek.assert`, …) to [global](http://nodejs.org/api/globals.html#globals_global) scope. *The test-file loader could export to global scope before loading files and revert that after the files were loaded.*
 
 * ServicePlugin to hook into `Dalek.start()`, `Dalek.stop()` and `Dalek.kill()` lifecycle-phases to transparently fire up services used by the test (web server, proxy, video capture, …) Would this also require hooks for suiteStarted, unitEnded, … possibly even `browser url changed`?
 
-* think about `continueOnFailure` on task-level, unit-level and suite-level - this should allow running all the tests to figure out what is failing, rather than aborting execution on first failure dalekjs/dalek#13
+* think about `continueOnFailure` on task-level, unit-level and suite-level - this should allow running all the tests to figure out what is failing, rather than aborting execution on first failure dalekjs/dalek#13 (dalek 0.0.x was continueOnFailure by default)
 
 ---
 
