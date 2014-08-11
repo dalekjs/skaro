@@ -19,12 +19,15 @@ module.exports = function(dalek) {
 
     this._units = [];
 
-    this.runLoop = new dalek.RunLoop(this.options());
-    this.run = this.runLoop.run.bind(this.runLoop);
-    this.beforeUnit = this.runLoop.beforeEach.bind(this.runLoop, 'Suite.beforeUnit');
-    this.afterUnit = this.runLoop.afterEach.bind(this.runLoop, 'Suite.afterUnit');
     this.sanitizeUnits = this.sanitizeUnits.bind(this);
     this.initializeSuite = this.initializeSuite.bind(this);
+
+    this.runLoop = new dalek.RunLoop(this.options());
+    this.run = this.runLoop.run.bind(this.runLoop);
+    this.beforeSuite = this.runLoop.beforeFirst.bind(this.runLoop, 'Suite.beforeSuite');
+    this.beforeUnit = this.runLoop.beforeEach.bind(this.runLoop, 'Suite.beforeUnit');
+    this.afterUnit = this.runLoop.afterEach.bind(this.runLoop, 'Suite.afterUnit');
+    this.afterSuite = this.runLoop.afterLast.bind(this.runLoop, 'Suite.afterSuite');
   }
 
   Suite.prototype.options = function(options, defaultValue) {
