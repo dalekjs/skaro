@@ -25,7 +25,6 @@ module.exports = (function(){
     this._options = config.getOptions();
 
     this.initialize();
-    this.registry.initialize();
   }
 
   Dalek.prototype.options = function(options, defaultValue) {
@@ -127,6 +126,9 @@ module.exports = (function(){
       groups.unshift([init]);
     }
 
+    // load dalek plugins
+    this.registry.initialize();
+    // load user files
     return this.Q({loaded: [], skipped: [], seen: {}}).then(function(index) {
       dalek.reporter.debug('Loading user files');
       groups.forEach(function(files) {

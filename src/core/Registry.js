@@ -41,7 +41,6 @@ module.exports = function(dalek) {
     this.registerExpectation = this.registerExpectation.bind(this);
   }
 
-  // generic plugin registration
   Registry.prototype.registerPlugin = function(meta, handler) {
     dalek.reporter.debug('registering', meta.namespace, meta.name);
 
