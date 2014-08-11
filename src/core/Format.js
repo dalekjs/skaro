@@ -21,7 +21,7 @@ module.exports = function(dalek) {
   Format.prototype.literal = function(token) {
     if (typeof token === 'function') {
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/displayName
-      token = token.displayName || '@function@';
+      token = token.displayName || token.name || '@function@';
     } else if (typeof token === 'object') {
       token = '@object@';
     }
@@ -42,7 +42,7 @@ module.exports = function(dalek) {
   };
 
   Format.prototype.expected = function(expected) {
-    return expected.displayName || '@function@';
+    return expected.displayName || token.name || '@function@';
   };
 
   return Format;
