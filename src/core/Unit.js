@@ -17,11 +17,12 @@ module.exports = function(dalek) {
       );
     }
 
-    this.runLoop = new dalek.RunLoop(this.options());
-    this.run = this.runLoop.run.bind(this.runLoop);
     this.initialize = this.initialize.bind(this);
     this.sanitizeTasks = this.sanitizeTasks.bind(this);
     this.initializeUnit = this.initializeUnit.bind(this);
+
+    this.runLoop = new dalek.RunLoop(this.options());
+    this.run = this.runLoop.run.bind(this.runLoop);
   }
 
   Unit.prototype.options = function(options, defaultValue) {
