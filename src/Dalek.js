@@ -85,7 +85,24 @@ module.exports = (function(){
       }
 
       this[namespace] = interceptRegistry(this, namespace, plugins[namespace]);
+
+      if (this.options('globals') === true) {
+        this._globalizePlugins(namespace, this[namespace]);
+      }
     }.bind(this));
+  };
+
+  Dalek.prototype._globalizePlugins = function(namespace, plugins) {
+    if (global[namespace]) {
+      this.reporter.warning(
+        'The plugin namespace ' + this.format.literal(namespace)
+        + ' cannot be made global because it is already taken, make sure you call '
+        + this.format.literal('dalek.' + namespace) + ' instead'
+      );
+    } else {
+      global[namespace] = plugins;
+    }
+    
   };
 
   Dalek.prototype.catch = function(error) {

@@ -9,6 +9,10 @@ module.exports = function (dalek, assert, action, wait) {
 
     // --- resources ---
 
+    // export plugin namespaces to global scope
+    // (e.g. to call is.foo() rather than dalek.is.foo())
+    "globals": true,
+
     // link to isaacs/node-glob for docs and valuable hints (!, #, windows)
     // https://github.com/isaacs/node-glob#comparisons-to-other-fnmatchglob-implementations
     // glob pattern(s) to load test definitions

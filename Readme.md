@@ -15,9 +15,8 @@ running `bin/dalek.cli.js` will show current status…
 
 * rethink `config` vs. `options` handling
 
+* verify task returns a handle in RunLoop::runTask
 * allow sub-units (much like before/after) that can be registered as macros or something
-
-* exporting the dalek.* objects (e.g. `dalek.is`, `dalek.assert`, …) to [global](http://nodejs.org/api/globals.html#globals_global) scope. *The test-file loader could export to global scope before loading files and revert that after the files were loaded.*
 
 * ServicePlugin to hook into `Dalek.start()`, `Dalek.stop()` and `Dalek.kill()` lifecycle-phases to transparently fire up services used by the test (web server, proxy, video capture, …) Would this also require hooks for suiteStarted, unitEnded, … possibly even `browser url changed`?
 

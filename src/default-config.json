@@ -1,6 +1,7 @@
 {
   "_notes": "this is the default configuration file",
   "selectorStrategy": "css",
+  "globals": true,
   "tests": "tests/**/*.js",
   "plugins": "plugins/**/*.js",
   "sort.suites": "none",
