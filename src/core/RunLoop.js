@@ -228,10 +228,11 @@ module.exports = function(dalek) {
       return dalek.Q();
     }
 
-    var options = this.options();
-    options.succeeded = succeeded;
+    var initOptions = {
+      failed: !succeeded
+    };
 
-    return unit.initialize(options).then(function(unit) {
+    return unit.initialize(this.options(), initOptions).then(function(unit) {
       unit.run({
         mute: true
       });

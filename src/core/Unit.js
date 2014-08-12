@@ -38,11 +38,12 @@ module.exports = function(dalek) {
   };
 
 
-  Unit.prototype.initialize = function(options) {
+  Unit.prototype.initialize = function(options, initOptions) {
     dalek.reporter.debug('initializing unit', this.label);
     this.options(options || {});
-    return dalek.Q(this)
-      .then(this._initialize)
+    return dalek.Q(this).then(function(unit) {
+        return unit._initialize(unit, initOptions || {});
+      })
       .catch(dalek.catchStack('_fulfilled'))
       .then(this.sanitizeTasks)
       .catch(dalek.catchStack('_fulfilled'))

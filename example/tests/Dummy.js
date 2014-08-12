@@ -7,7 +7,7 @@ module.exports = function(dalek) {
     ];
   });
 
-  dalek.afterDalek(function(/*unit*/) {
+  dalek.afterDalek(function(/*unit, initOptions*/) {
     return [
       dalek.action.click('.after-dalek'),
     ];
@@ -19,7 +19,7 @@ module.exports = function(dalek) {
     ];
   });
 
-  dalek.afterSuite(function(/*unit*/) {
+  dalek.afterSuite(function(/*unit, initOptions*/) {
     return [
       dalek.action.click('.after-suite'),
     ];
@@ -39,11 +39,11 @@ module.exports = function(dalek) {
       ];
     });
 
-    suite.afterUnit(function(unit) {
-      if (unit.options('succeeded')) {
-        // unit passed
-      } else {
+    suite.afterUnit(function(unit, initOptions) {
+      if (initOptions.failed) {
         // unit failed
+      } else {
+        // unit passed
       }
 
       return [
