@@ -15,10 +15,6 @@ running `bin/dalek.cli.js` will show current status…
 
 * rethink `config` vs. `options` handling
 
-* allow sub-units (much like before/after) that can be registered as macros or something
-
-* reporting should clearly identify Wrapper-Units (before/after) and Macro-Units (currently identified as "non-handle task")
-* reporting should, in failure case, identify the special-unit of which a task failed
 * core/* should take option objects in constructors
 
 * ServicePlugin to hook into `Dalek.start()`, `Dalek.stop()` and `Dalek.kill()` lifecycle-phases to transparently fire up services used by the test (web server, proxy, video capture, …) Would this also require hooks for suiteStarted, unitEnded, … possibly even `browser url changed`?

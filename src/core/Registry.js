@@ -35,8 +35,10 @@ module.exports = function(dalek) {
       },
       action: {},
       until: {},
+      macro: {},
     };
 
+    this.registerMacro = this.registerMacro.bind(this);
     this.registerPlugin = this.registerPlugin.bind(this);
     this.registerExpectation = this.registerExpectation.bind(this);
   }
@@ -110,6 +112,68 @@ module.exports = function(dalek) {
     if (meta.invertable) {
       this.plugins.is.not[meta.name] = this.decorateCallTime(meta, unitHandler, true);
     }
+
+    // export plugin to dalek
+    dalek._registerPlugins(this.plugins);
+  };
+
+  Registry.prototype.registerMacro = function(name, callback) {
+    dalek.reporter.debug('registering', 'macro', name);
+
+    // there can only be one
+    if (this.plugins.macro[name]) {
+      throw new dalek.Error(
+        dalek.format.keyword('Macro') + ' ' + dalek.format.keyword(name) + ' already registered!',
+        dalek.Error.PLUGIN_REGISTRATION
+      );
+    }
+
+    var called = dalek.getStack(this.registerMacro);
+    var unit = new dalek.Unit(name, {}, callback, called);
+    unit.setHandleType(dalek.Handle.UNIT_MACRO);
+
+    var unitHandler = function(calltimeOptions) {
+      var runUnitMacro = function macroUnitWrapper(runtimeOptions) {
+        dalek.reporter.debug('executing', 'macro', name);
+        // this kinda sucks, but we don't get a handle before the unit is initialized,
+        // and this context is executed synchronously - whatever…
+        var handle = new dalek.Handle(name, dalek.Handle.UNIT_MACRO, 'Macro');
+        var importHandleData = function() {
+          var _handle = unit.getHandle();
+          handle.setOperations(_handle.operationsPlanned);
+          handle.setOperationsPerformed(_handle.operationsPerformed);
+        };
+        var success = function(reason) {
+          importHandleData();
+          handle.resolve(reason);
+        };
+        var failure = function(reason) {
+          importHandleData();
+          handle.reject(reason);
+        };
+
+        unit.initialize(runtimeOptions, calltimeOptions).then(function() {
+          unit.run({
+            mute: true
+          });
+
+          return unit.getHandle();
+        }).catch(function(failure) {
+          var handle = unit.getHandle();
+          // report only in failure case, unit is reported by the task
+          dalek.reporter.started(failure);
+          dalek.reporter.failed(failure, failure.message);
+
+          throw handle;
+        }).then(success, failure).catch(dalek.catch);
+
+        return handle;
+      };
+
+      return runUnitMacro;
+    };
+
+    this.plugins.macro[name] = unitHandler;
 
     // export plugin to dalek
     dalek._registerPlugins(this.plugins);

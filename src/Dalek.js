@@ -62,6 +62,7 @@ module.exports = (function(){
     this.registry = new (_Registry(this))(this._options);
 
     // convenience runtime accessors
+    this.registerMacro = this.registry.registerMacro;
     this.registerPlugin = this.registry.registerPlugin;
     this.registerExpectation = this.registry.registerExpectation;
 
