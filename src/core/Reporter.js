@@ -37,13 +37,6 @@ module.exports = function(dalek) {
         console.log(chalk.bgBlue.white('Suite'), label, 'with', handle.operationsPlanned, 'units');
         break;
 
-      case Handle.UNIT_BEFORE_FIRST:
-      case Handle.UNIT_BEFORE_EACH:
-      case Handle.UNIT_AFTER_EACH:
-      case Handle.UNIT_AFTER_LAST:
-      case Handle.UNIT_MACRO:
-        // TODO: reporting for special unit types
-        console.log('special unit type', handle.type);
       case Handle.UNIT:
         console.log('\n');
         console.log('', chalk.bgBlue.white('Unit'), label, 'with', handle.operationsPlanned, 'tasks');
@@ -55,6 +48,17 @@ module.exports = function(dalek) {
 
       case Handle.UNTIL:
         console.log('  ', chalk.bgCyan.black('Wait'), label);
+        break;
+
+      case Handle.UNIT_BEFORE_FIRST:
+      case Handle.UNIT_BEFORE_EACH:
+      case Handle.UNIT_AFTER_EACH:
+      case Handle.UNIT_AFTER_LAST:
+        console.log(' ', chalk.bgBlue.grey('Unit'), label, 'with', handle.operationsPlanned, 'tasks');
+        break;
+
+      case Handle.UNIT_MACRO:
+        console.log('  ', chalk.bgBlue.white('Macro'), label, 'with', handle.operationsPlanned, 'tasks');
         break;
 
       //case Handle.ACTION:
@@ -86,13 +90,6 @@ module.exports = function(dalek) {
         console.log(_success, chalk.bgBlack.white('Suite passed'), chalk.bgBlack.yellow(handle.operationsPerformed), 'Units');
         break;
 
-      case Handle.UNIT_BEFORE_FIRST:
-      case Handle.UNIT_BEFORE_EACH:
-      case Handle.UNIT_AFTER_EACH:
-      case Handle.UNIT_AFTER_LAST:
-      case Handle.UNIT_MACRO:
-        // TODO: reporting for special unit types
-        console.log('special unit type', handle.type);
       case Handle.UNIT:
         console.log('', _success, chalk.bgBlack.white('Unit passed'), chalk.bgBlack.yellow(handle.operationsPerformed), 'Tasks');
         break;
@@ -103,6 +100,17 @@ module.exports = function(dalek) {
 
       case Handle.UNTIL:
         console.log('  ', _success, _message);
+        break;
+
+      case Handle.UNIT_BEFORE_FIRST:
+      case Handle.UNIT_BEFORE_EACH:
+      case Handle.UNIT_AFTER_EACH:
+      case Handle.UNIT_AFTER_LAST:
+        console.log(' ', _success, chalk.bgBlue.grey('Unit passed'), chalk.bgBlack.yellow(handle.operationsPerformed), 'Tasks');
+        break;
+
+      case Handle.UNIT_MACRO:
+        console.log('  ', _success, chalk.bgBlue.white('Macro passed'), chalk.bgBlack.yellow(handle.operationsPerformed), 'Tasks');
         break;
 
       //case Handle.ACTION:
@@ -126,13 +134,6 @@ module.exports = function(dalek) {
         console.log(_error, chalk.bgRed.white('Suite failed'), 'in Unit', chalk.bgBlack.yellow(handle.operationsPerformed), 'of', chalk.bgBlack.yellow(handle.operationsPlanned));
         break;
 
-      case Handle.UNIT_BEFORE_FIRST:
-      case Handle.UNIT_BEFORE_EACH:
-      case Handle.UNIT_AFTER_EACH:
-      case Handle.UNIT_AFTER_LAST:
-      case Handle.UNIT_MACRO:
-        // TODO: reporting for special unit types
-        console.log('special unit type', handle.type);
       case Handle.UNIT:
         console.log('', _error, chalk.bgRed.white('Unit failed'), 'in Task', chalk.bgBlack.yellow(handle.operationsPerformed), 'of', chalk.bgBlack.yellow(handle.operationsPlanned));
         break;
@@ -143,6 +144,17 @@ module.exports = function(dalek) {
 
       case Handle.UNTIL:
         console.log('  ', _error, _message);
+        break;
+
+      case Handle.UNIT_BEFORE_FIRST:
+      case Handle.UNIT_BEFORE_EACH:
+      case Handle.UNIT_AFTER_EACH:
+      case Handle.UNIT_AFTER_LAST:
+        console.log(' ', _error, chalk.bgRed.grey('Unit failed'), 'in Task', chalk.bgBlack.yellow(handle.operationsPerformed), 'of', chalk.bgBlack.yellow(handle.operationsPlanned));
+        break;
+
+      case Handle.UNIT_MACRO:
+        console.log('  ', _error, chalk.bgRed.white('Macro failed'), 'in Task', chalk.bgBlack.yellow(handle.operationsPerformed), 'of', chalk.bgBlack.yellow(handle.operationsPlanned));
         break;
 
       //case Handle.ACTION:
