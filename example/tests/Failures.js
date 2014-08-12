@@ -1,3 +1,4 @@
+/*global unknown */
 module.exports = function(dalek) {
   'use strict';
 

@@ -1,3 +1,4 @@
+/*global action, until, assert, is */
 module.exports = function(dalek) {
   'use strict';
 

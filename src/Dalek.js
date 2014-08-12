@@ -95,9 +95,11 @@ module.exports = (function(){
   Dalek.prototype._globalizePlugins = function(namespace, plugins) {
     if (global[namespace]) {
       this.reporter.warning(
+        /*jshint laxbreak:true */
         'The plugin namespace ' + this.format.literal(namespace)
         + ' cannot be made global because it is already taken, make sure you call '
         + this.format.literal('dalek.' + namespace) + ' instead'
+        /*jshint laxbreak:false */
       );
     } else {
       global[namespace] = plugins;

@@ -42,7 +42,7 @@ module.exports = function(dalek) {
   };
 
   Format.prototype.expected = function(expected) {
-    return expected.displayName || token.name || '@function@';
+    return expected.displayName || expected.name || '@function@';
   };
 
   return Format;
