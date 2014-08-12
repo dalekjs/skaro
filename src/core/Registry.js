@@ -91,7 +91,7 @@ module.exports = function(dalek) {
 
     var unitHandler = function(options) {
       var expectation = function(value) {
-        dalek.reporter.debug('executing expectation', meta.name);
+        dalek.reporter.debug('executing', 'expectation', meta.name);
         options.value = value;
         return handler(options);
       };
