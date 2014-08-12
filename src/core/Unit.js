@@ -8,6 +8,7 @@ module.exports = function(dalek) {
     this._options = options;
     this._initialize = callback.bind(this);
     this.called = called || dalek.getStack(Unit);
+    this.handleType = dalek.Handle.UNIT;
 
     if (typeof callback !== 'function') {
       throw new dalek.Error(
@@ -37,6 +38,9 @@ module.exports = function(dalek) {
     _.extend(this._options, options);
   };
 
+  Unit.prototype.setHandleType = function(type) {
+    this.handleType = type;
+  };
 
   Unit.prototype.initialize = function(options, initOptions) {
     dalek.reporter.debug('initializing unit', this.label);
@@ -81,7 +85,7 @@ module.exports = function(dalek) {
   };
 
   Unit.prototype.initializeUnit = function(tasks) {
-    this.handle = new dalek.Handle(this.label, dalek.Handle.UNIT, 'Unit');
+    this.handle = new dalek.Handle(this.label, this.handleType, 'Unit');
     this.handle.setOperations(tasks.length);
 
     this.runLoop.initialize(this.options(), tasks, this.handle);

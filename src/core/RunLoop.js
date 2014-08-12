@@ -38,7 +38,7 @@ module.exports = function(dalek) {
   };
 
 
-  RunLoop.prototype._mutedUnit = function(name, unitName, property, callback, called) {
+  RunLoop.prototype._mutedUnit = function(name, unitName, property, handleType, callback, called) {
     dalek.reporter.debug('registering unit', 'before:first', 'as', name);
     if (this[property]) {
       dalek.reporter.warning(name, 'has already been registered in');
@@ -48,26 +48,27 @@ module.exports = function(dalek) {
     }
 
     this[property] = new dalek.Unit(unitName, this.options(), callback, called);
+    this[property].setHandleType(handleType);
   };
 
   RunLoop.prototype.beforeFirst = function(name, callback) {
     var called = dalek.getStack(this.beforeFirst);
-    this._mutedUnit(name, 'before:first', '_beforeFirst', callback, called);
+    this._mutedUnit(name, 'before:first', '_beforeFirst', dalek.Handle.UNIT_BEFORE_FIRST, callback, called);
   };
 
   RunLoop.prototype.beforeEach = function(name, callback) {
     var called = dalek.getStack(this.beforeEach);
-    this._mutedUnit(name, 'before:each', '_beforeEach', callback, called);
+    this._mutedUnit(name, 'before:each', '_beforeEach', dalek.Handle.UNIT_BEFORE_EACH, callback, called);
   };
 
   RunLoop.prototype.afterEach = function(name, callback) {
     var called = dalek.getStack(this.afterEach);
-    this._mutedUnit(name, 'after:each', '_afterEach', callback, called);
+    this._mutedUnit(name, 'after:each', '_afterEach', dalek.Handle.UNIT_AFTER_EACH, callback, called);
   };
 
   RunLoop.prototype.afterLast = function(name, callback) {
     var called = dalek.getStack(this.afterLast);
-    this._mutedUnit(name, 'after:last', '_afterLast', callback, called);
+    this._mutedUnit(name, 'after:last', '_afterLast', dalek.Handle.UNIT_AFTER_LAST, callback, called);
   };
 
 
