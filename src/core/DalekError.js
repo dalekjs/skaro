@@ -20,6 +20,7 @@ module.exports = function(/*dalek*/) {
   DalekError.DRIVER = 3;
   DalekError.PLUGIN_CALL = 4;
   DalekError.PLUGIN_REGISTRATION = 5;
+  DalekError.PLUGIN_EXECUTION = 6;
 
 
   DalekError.prototype = Object.create(Error.prototype);

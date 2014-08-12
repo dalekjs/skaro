@@ -122,8 +122,25 @@ module.exports = function(dalek) {
   };
 
   RunLoop.prototype.runTask = function(item) {
-    var handle = item(this.options());
     this._handle.performOperation();
+    var handle;
+
+    try {
+      handle = item(this.options());
+    } catch (_error) {
+      var error = new dalek.Error(
+        String(_error),
+        dalek.Error.PLUGIN_EXECUTION,
+        dalek.getStack(null, _error)
+      );
+      return dalek.catchStack('RunLoop.runTask')(error);
+    }
+
+    if (!(handle instanceof dalek.Handle)) {
+      var _handle = new dalek.Handle('non-handle task ' + dalek.format.literal(item), dalek.Handle.ACTION, 'anonymous');
+      dalek.Q(handle).then(_handle.resolve, _handle.reject);
+      handle = _handle;
+    }
 
     if (!this.options('mute')) {
       dalek.reporter.started(handle);
