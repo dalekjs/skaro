@@ -46,6 +46,15 @@ module.exports = function(dalek) {
       ];
     });
 
+  suite.unit('callback plugin', function(/*unit*/) {
+    return [
+      function myTask(/*options*/) {
+        // simple script error
+        unknown();
+      }
+    ];
+  });
+
     // Same problems need to be tested for async suites/units
   });
 
