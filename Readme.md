@@ -14,7 +14,7 @@ running `bin/dalek.cli.js` will show current status…
 ---
 
 * rethink `config` vs. `options` handling
-
+* config uses `{{ foo }}` syntax, path-placeholders (screenshot et al) use `foo/:bar/:baz` (can they use the same? if not, use URITemplates?)
 * core/* should take option objects in constructors
 
 * ServicePlugin to hook into `Dalek.start()`, `Dalek.stop()` and `Dalek.kill()` lifecycle-phases to transparently fire up services used by the test (web server, proxy, video capture, …) Would this also require hooks for suiteStarted, unitEnded, … possibly even `browser url changed`?
@@ -25,6 +25,8 @@ running `bin/dalek.cli.js` will show current status…
 
 required interfaces and packages [research, implementation]
 
+* integrate WD.js, add API additions (like dalek's generic element query)
+  * what are ondemand.saucelabs.com and hub.browserstack.com
 * integration of Reporters ([junit](https://github.com/dalekjs/dalek-reporter-junit), [html](https://github.com/dalekjs/dalek-reporter-html), [json](https://github.com/dalekjs/dalek-reporter-json), [console ?](https://github.com/dalekjs/dalek-reporter-console))
 * ~~implement driver facade~~ we'll expose [WD.js](https://github.com/admc/wd) to plugins directly. We're not sure about how to handle "additional features" (like HTTP Auth or SSL certificate validation pages) at this point.
 * Dalek Remote Proxy
@@ -45,6 +47,9 @@ plugins [research]
   * simply exclude `src/plugins/helper` from resource glob?
   * exclude on file basis `!*.helper.js`?
   * separate directory `src/plugins-helper/`?
+
+* use [RemoteDebug](http://remotedebug.org/integrations/) to get access to the browsers' DevTools Console in order to provide `assert.console` and `log.console` (`dump.console`?) actions (as a first step, even if only chrome supported this, it would help) is this something for ServicePlugin?
+* use [Telemetry](https://www.npmjs.org/browse/keyword/telemetry) to gain access to Chrome's rendering data (ServicePlugin?)
 
 * add a [key-map](http://www.w3.org/TR/2012/WD-webdriver-20120710/#character-types) that translates "special keys" `keys.backspace = '\uE003'` (up, down, enter, esc, page-end, …) [primarily for action.sendKey] - maybe use [unicode-keymap](https://www.npmjs.org/package/unicode-keymap)
 * add `is.url.foo()`  dalekjs/dalek#40
@@ -84,6 +89,7 @@ documentation
   * convert to HTML and man?
   * like npm [here](https://github.com/npm/npm/blob/master/Makefile#L11-L14) and [here](https://github.com/npm/npm/blob/master/Makefile#L97-L117), or use [cli-manpage](https://www.npmjs.org/package/cli-manpage)
 * some diagrams (flow-charts, components) of Dalek works internally would be nice
+* use [estraverse](https://github.com/Constellation/estraverse) to extract `meta` from plugin files
 
 ---
 
