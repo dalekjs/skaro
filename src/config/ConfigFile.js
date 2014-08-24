@@ -32,6 +32,7 @@ function ConfigFile(_path, env, data) {
   this._pwd = path.dirname(_path);
   this._data = data || {};
   this._env = env || {};
+  this._parents = [];
 }
 
 ConfigFile.find = function(_path, _cwd, env) {
@@ -101,6 +102,7 @@ ConfigFile.prototype._parse = function(data) {
 
 ConfigFile.prototype._loadParents = function() {
   var parents = this.get('parent.config');
+  delete this._data['parent.config'];
   if (!parents) {
     return Q.resolve([]);
   }
@@ -130,6 +132,16 @@ ConfigFile.prototype._loadParent = function(_path) {
     }.bind());
 };
 
+
+ConfigFile.prototype.flatten = function() {
+  var data = {};
+  this._parents.forEach(function(parent) {
+    _.extend(data, parent.flatten());
+  });
+
+  _.extend(data, this._data);
+  return data;
+};
 
 ConfigFile.prototype.get = function(key) {
   var data = _.extend(_.clone(this._env), {

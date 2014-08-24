@@ -10,12 +10,16 @@ var ConfigFile = require('../../src/config/ConfigFile');
 
 console.log("\n\n --------------------------- \n\n")
 
-var conf = new ConfigFile('/Users/rrehm/Projekte/test.dev/htdocs/dalekjs/skaro/example/Dalekfile.json');
+var conf = new ConfigFile('/Users/rrehm/Projekte/test.dev/htdocs/dalekjs/skaro/example/Dalekfile.json', {
+  cli: {}
+});
 console.log(conf);
 console.log('---------------------------------------');
 
 conf.load().then(function(_conf) {
   console.log(_conf);
+  console.log('---------------------------------------');
+  console.log(JSON.stringify(_conf.flatten(), null, 2));
   console.log('---------------------------------------');
 }).catch(function(e) {
   console.log(e);
