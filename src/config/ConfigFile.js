@@ -28,11 +28,22 @@ var readfile = Q.denodeify(fs.readFile);
 var globise = Q.denodeify(glob);
 
 function ConfigFile(_path, env, data) {
+  // fully qualified path to configuration file
   this._path = _path;
+  // directory of the configuration file
   this._pwd = path.dirname(_path);
+  // data loaded from the file
   this._data = data || {};
+  // used for processing variable templates
   this._env = env || {};
+  // list of parent configuration files
   this._parents = [];
+  this._resources = {
+    init: null,
+    tests: null,
+    plugins: null,
+    data: null,
+  };
 }
 
 ConfigFile.find = function(_path, _cwd, env) {
@@ -49,10 +60,6 @@ ConfigFile.find = function(_path, _cwd, env) {
 };
 
 ConfigFile.glob = function(patterns, _cwd) {
-  if (typeof patterns === 'string') {
-    patterns = [patterns];
-  }
-
   return globise(patterns, {
     cwd: _cwd,
     root: '/',
@@ -66,11 +73,16 @@ ConfigFile.glob = function(patterns, _cwd) {
   });
 };
 
+ConfigFile.prototype.glob = function(patterns) {
+  return ConfigFile.glob(patterns, this._pwd);
+};
 
 ConfigFile.prototype.load = function() {
   return this._read()
     .then(this._parse.bind(this))
     .then(this._loadParents.bind(this))
+    .then(this._identifyDataFiles.bind(this))
+    .then(this._identifyResources.bind(this))
     .thenResolve(this);
 };
 
@@ -132,14 +144,76 @@ ConfigFile.prototype._loadParent = function(_path) {
     }.bind());
 };
 
+ConfigFile.prototype._identifyResources = function() {
+  return Q.all([
+    !this._data.plugins ? [] : this.glob(this._data.plugins),
+    !this._data.tests ? [] : this.glob(this._data.tests),
+    !this._data.init ? [] : this.glob(this._data.init),
+  ]).spread(function(plugins, tests, init) {
+    this._resources.plugins = plugins;
+    this._resources.tests = tests;
+    this._resources.init = init[0] || null;
 
-ConfigFile.prototype.flatten = function() {
+    if (!this._resources.init && this._data.init) {
+      // existance check has to be performed in Config,
+      // because various init declarations may be encountered
+      // but only the last one is the valid import
+      this._resources.init = {
+        _message: 'Init file not found',
+        _code: Config.INIT_NOT_FOUND,
+        file: this._data.init
+      };
+    }
+
+    delete this._data.init;
+    delete this._data.tests;
+    delete this._data.plugins;
+  }.bind(this)).thenResolve(this);
+};
+
+ConfigFile.prototype._identifyDataFiles = function() {
+  var _data = this.get('data');
+
+  if (_data && !Array.isArray(_data)) {
+    return Q.reject({
+      _message: 'Wrong data type encountered',
+      _code: Config.VALUE_TYPE,
+      file: this._path,
+      details: {
+        name: 'data',
+        value: this._data.data,
+        expected: 'array',
+      },
+    });
+  }
+
+  if (!_data || !_data.length) {
+    return Q.resolve();
+  }
+
+  delete this._data['data'];
+  this._resources.data = _data.map(function(_path) {
+    return path.resolve(this._pwd, _path);
+  }.bind(this));
+};
+
+ConfigFile.prototype.data = function() {
   var data = {};
   this._parents.forEach(function(parent) {
-    _.extend(data, parent.flatten());
+    _.extend(data, parent.data());
   });
 
   _.extend(data, this._data);
+  return data;
+};
+
+ConfigFile.prototype.resources = function() {
+  var data = {};
+  this._parents.forEach(function(parent) {
+    _.extend(data, parent.resources());
+  });
+
+  _.extend(data, this._resources);
   return data;
 };
 

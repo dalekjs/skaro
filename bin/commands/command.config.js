@@ -19,8 +19,11 @@ console.log('---------------------------------------');
 conf.load().then(function(_conf) {
   console.log(_conf);
   console.log('---------------------------------------');
-  console.log(JSON.stringify(_conf.flatten(), null, 2));
+  console.log(JSON.stringify(_conf.data(), null, 2));
   console.log('---------------------------------------');
+  console.log(JSON.stringify(_conf.resources(), null, 2));
+  console.log('---------------------------------------');
+
 }).catch(function(e) {
   console.log(e);
 });
