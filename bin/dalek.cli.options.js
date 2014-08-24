@@ -161,6 +161,13 @@ module.exports = function() {
       command = 'verify';
     });
 
+  nomnom.command('config').options(options.run)
+    .help('Output parsed configuration')
+    .callback(function() {
+      optionKey = 'run';
+      command = 'config';
+    });
+
   nomnom.command('list').options(options.run)
     .help('List loaded resources')
     .callback(function() {
