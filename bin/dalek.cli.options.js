@@ -2,6 +2,7 @@ module.exports = function() {
   'use strict';
 
   // TODO: find a wordwrap alternative that can deal with chalk (escape sequence) flavored text
+  var _ = require('lodash');
   var chalk = require('chalk');
   var wordwrap = require('wordwrap');
   var nomnom = require('nomnom').script('dalek');
@@ -273,6 +274,17 @@ module.exports = function() {
   if (opts.sort) {
     // --sort <val> shorthand for --sort-suites <val> --sort-units <val>
     opts['sort.suites'] = opts['sort.units'] = opts.sort;
+  }
+
+  // merge --option values
+  if (opts.option) {
+    var _options = {};
+    opts.option.forEach(function(token) {
+      var tokens = token.split('=');
+      _options[tokens[0]] = tokens.slice(1).join('=');
+    });
+    delete opts.option;
+    opts = _.extend(_options, opts);
   }
 
   return {
