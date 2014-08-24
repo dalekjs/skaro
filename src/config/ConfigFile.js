@@ -21,18 +21,20 @@ var Q = require('q');
 var glob = require('glob');
 // internals
 var findFileInParents = require('../util/find-file-in-parents');
+var processTemplates = require('./process-templates');
 // promises
 var lstat = Q.denodeify(fs.lstat);
 var readfile = Q.denodeify(fs.readFile);
 var globise = Q.denodeify(glob);
 
-function ConfigFile(_path, data) {
+function ConfigFile(_path, env, data) {
   this._path = _path;
   this._pwd = path.dirname(_path);
   this._data = data || {};
+  this._env = env || {};
 }
 
-ConfigFile.find = function(_path, _cwd) {
+ConfigFile.find = function(_path, _cwd, env) {
   return findFileInParents(_path, _cwd).catch(function(reason) {
     return Q.reject(reason && reason._code ? reason : {
       _message: 'Configuration file not found',
@@ -41,7 +43,7 @@ ConfigFile.find = function(_path, _cwd) {
       error: reason,
     });
   }).then(function(_path) {
-    return new ConfigFile(_path);
+    return new ConfigFile(_path, env);
   });
 };
 
@@ -86,8 +88,7 @@ ConfigFile.prototype._read = function() {
 ConfigFile.prototype._parse = function(data) {
   var _path = this._path;
   return Q.resolve(data).then(function() {
-    this._data = JSON.parse(data);
-    return this._data;
+    return this._data = JSON.parse(data);
   }.bind(this)).catch(function(reason) {
     return Q.reject(reason && reason._code ? reason : {
       _message: 'Configuration file is not valid JSON',
@@ -99,7 +100,7 @@ ConfigFile.prototype._parse = function(data) {
 };
 
 ConfigFile.prototype._loadParents = function() {
-  var parents = this._data['parent.config'];
+  var parents = this.get('parent.config');
   if (!parents) {
     return Q.resolve([]);
   }
@@ -114,6 +115,7 @@ ConfigFile.prototype._loadParents = function() {
 
 ConfigFile.prototype._loadParent = function(_path) {
   var _resolvedPath = path.resolve(this._pwd, _path);
+  var env = this._env;
   return lstat(_resolvedPath)
     .thenResolve(_resolvedPath)
     .catch(function(reason) {
@@ -124,15 +126,20 @@ ConfigFile.prototype._loadParent = function(_path) {
         error: reason,
       });
     }).then(function(_path) {
-      return new ConfigFile(_path);
+      return new ConfigFile(_path, env);
     }.bind());
 };
 
 
 ConfigFile.prototype.get = function(key) {
-  var value = this._data[key];
-  // TODO: process templates
-  return value;
+  var data = _.extend(_.clone(this._env), {
+    env: process.env,
+    cwd: process.cwd(),
+    path: this._pwd,
+    file: this._path,
+  });
+
+  return processTemplates(key, this._data[key], data, this._path);
 };
 
 

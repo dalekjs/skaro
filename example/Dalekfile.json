@@ -10,7 +10,7 @@
   "plugins": "plugins/**/*.js",
   "data": ["test-data.json", "test-data-2.json"],
   "parent.config": [
-    "./config/parent-1.json",
+    "<%= path %>/config/parent-1.json",
     "./config/parent-2.json"
   ]
 }

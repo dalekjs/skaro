@@ -2,7 +2,7 @@ module.exports = function (dalek, assert, action, wait) {
   dalek.config({
     // --- Environment Variable Injection ---
     // using _.template - see http://underscorejs.org/#template
-    // available variables: env, cli, cwd
+    // available variables: env, cli, cwd, path, file
     "fromEnv": "foo-<%= env.DALEK_ENV_TEST %>-",
     "fromEnvDefault": "foo-<%= env.DALEK_ENV_TEST || 'defaultvalue' %>-",
 
