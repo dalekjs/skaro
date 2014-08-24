@@ -1,0 +1,7 @@
+{
+  "_notes": "this file is loaded via config/parent-1.json via Dalekfile.json",
+  "some": "already set",
+  "parent-1": "already set",
+  "parent-2": "already set",
+  "parent-grand": "I am grandparent.json"
+}
