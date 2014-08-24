@@ -157,6 +157,7 @@ Config.prototype.importDataFile = function(_path) {
     return _data;
   }
 
+  // TODO: path.resolve() not necessary anymore, as it is done in importData() already
   return lstat(path.resolve(this.cwdForOption('data'), _path))
     .thenResolve(_path)
     .catch(function(reason) {
