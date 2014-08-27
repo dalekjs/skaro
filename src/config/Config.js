@@ -28,7 +28,7 @@ Config.prototype.load = function() {
 };
 
 Config.prototype._loadConfigFiles = function() {
-  var config = this._options.config
+  var config = this._options.config;
   if (config === false) {
     config = [];
   }
@@ -38,7 +38,7 @@ Config.prototype._loadConfigFiles = function() {
   }
 
   return Q.all(config.map(function(_path) {
-    return ConfigFile.find(_path, this._cwd, this._options)
+    return ConfigFile.find(_path, this._cwd, this._options);
   }.bind(this))).then(function(configs) {
     this._configFiles = configs;
     // prepend dalek default config, use cwd of first config file for resources or CWD if no config given
@@ -157,7 +157,7 @@ Config.prototype.getConfigFiles = function() {
 Config.prototype.dataOrigin = function(key) {
   var found = null;
   this._configFiles.slice(1, -1).reverse().some(function(configFile) {
-    return found = configFile.dataOrigin(key);
+    return (found = configFile.dataOrigin(key));
   });
   
   return found;
@@ -166,7 +166,7 @@ Config.prototype.dataOrigin = function(key) {
 Config.prototype.resourceOrigin = function(key) {
   var found = null;
   this._configFiles.slice(1, -1).reverse().some(function(configFile) {
-    return found = configFile.resourceOrigin(key);
+    return (found = configFile.resourceOrigin(key));
   });
   
   return found;

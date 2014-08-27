@@ -2,7 +2,6 @@
 
 // node
 var path = require('path');
-var fs = require('fs');
 // modules
 var _ = require('lodash');
 var Q = require('q');
@@ -98,7 +97,7 @@ ConfigFile.prototype._identifyParents = function(data) {
 
   return Q.all(parents.map(this._identifyParent.bind(this))).then(function(_parents) {
     this._parents = _parents;
-    return _parents
+    return _parents;
   }.bind(this));
 };
 
@@ -181,7 +180,7 @@ ConfigFile.prototype.data = function() {
 };
 
 ConfigFile.prototype.resources = function() {
-  var data = _.extend({}, this._resources);;
+  var data = _.extend({}, this._resources);
   this._parents.forEach(function(parent) {
     var _data = parent.resources();
     Object.keys(_data).forEach(function(key) {
@@ -201,7 +200,7 @@ ConfigFile.prototype.dataOrigin = function(key) {
 
   var found = null;
   this._parents.reverse().some(function(parent) {
-    return found = parent.dataOrigin(key);
+    return (found = parent.dataOrigin(key));
   });
 
   return found;
@@ -214,7 +213,7 @@ ConfigFile.prototype.resourceOrigin = function(key) {
 
   var found = null;
   this._parents.reverse().some(function(parent) {
-    return found = parent.resourceOrigin(key);
+    return (found = parent.resourceOrigin(key));
   });
 
   return found;

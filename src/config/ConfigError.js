@@ -1,6 +1,7 @@
 'use strict';
 
 var Q = require('q');
+var copyOwnFrom = require('../util/copy-from-own');
 
 /*
     ConfigError is a specialization of the Error object so that we
@@ -39,7 +40,7 @@ ConfigError.decorateCatch = function decorateCatch(type, code, path) {
     }
 
     return Q.reject(new ConfigError(type, code, path, original));
-  }
+  };
 };
 
 ConfigError.catchFileStack = function(path) {
@@ -49,23 +50,10 @@ ConfigError.catchFileStack = function(path) {
     }
 
     return Q.reject(error);
-  }
-}
+  };
+};
 
 ConfigError.prototype = Object.create(Error.prototype);
 ConfigError.prototype.constructor = ConfigError;
-
-// see http://www.2ality.com/2011/12/subtyping-builtins.html
-function copyOwnFrom(target, source) {
-  Object.getOwnPropertyNames(source).forEach(function(propName) {
-    Object.defineProperty(
-      target,
-      propName,
-      Object.getOwnPropertyDescriptor(source, propName)
-    );
-  });
-
-  return target;
-}
 
 module.exports = ConfigError;

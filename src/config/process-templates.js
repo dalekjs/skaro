@@ -1,7 +1,18 @@
 'use strict';
 
 var _ = require('lodash');
-var ConfigError = require('./ConfigError');
+
+function processValue(name, value, data) {
+  try {
+    return _.template(value, data);
+  } catch (reason) {
+    throw {
+      name: name,
+      value: value,
+      reason: reason
+    };
+  }
+}
 
 function processTemplates(name, value, data, _path) {
   if (!value) {
@@ -27,19 +38,7 @@ function processTemplates(name, value, data, _path) {
     return value;
   }
 
-  return processValue(name, value, data, _path);
-}
-
-function processValue(name, value, data, _path) {
-  try {
-    return _.template(value, data);
-  } catch (reason) {
-    throw {
-      name: name,
-      value: value,
-      reason: reason
-    };
-  }
+  return processValue(name, value, data);
 }
 
 module.exports = processTemplates;

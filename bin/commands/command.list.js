@@ -1,7 +1,6 @@
 module.exports = function(config) {
   'use strict';
 
-  var path = require('path');
   var chalk = require('chalk');
   var Dalek = require('../../index.js');
   var dalek = new Dalek(config);

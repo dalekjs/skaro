@@ -1,3 +1,6 @@
+
+var copyOwnFrom = require('../util/copy-from-own');
+
 /*
     DalekError is a specialization of the Error object so that we
     can properly differentiate what went wrong. It is to be used
@@ -25,19 +28,6 @@ module.exports = function(/*dalek*/) {
 
   DalekError.prototype = Object.create(Error.prototype);
   DalekError.prototype.constructor = DalekError;
-
-  // see http://www.2ality.com/2011/12/subtyping-builtins.html
-  function copyOwnFrom(target, source) {
-    Object.getOwnPropertyNames(source).forEach(function(propName) {
-      Object.defineProperty(
-        target,
-        propName,
-        Object.getOwnPropertyDescriptor(source, propName)
-      );
-    });
-
-    return target;
-  }
 
   return DalekError;
 };
