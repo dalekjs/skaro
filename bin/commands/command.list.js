@@ -1,4 +1,4 @@
-module.exports = function(config/*, cli*/) {
+module.exports = function(config) {
   'use strict';
 
   var path = require('path');
@@ -11,7 +11,7 @@ module.exports = function(config/*, cli*/) {
   return dalek.load().then(function(index) {
     console.log('Listing Loaded Resources');
 
-    var _configBase = path.dirname(config._configfile);
+    var _configBase = config.getConfigFileContext();
     var _cwd = config._cwd;
     /*jshint laxbreak:true */
     var _significantPath = (_configBase === _cwd ? 'equal' : '')
@@ -80,21 +80,36 @@ module.exports = function(config/*, cli*/) {
     }
 
     function via(key, _cli) {
-      return 'via ' + (config._cli[key] ? ('cli ' + chalk.grey(_cli)) : ('config ' + chalk.green(key)));
+      if (config._options[key]) {
+        return 'via ' + 'cli ' + chalk.grey(_cli);
+      }
+
+      return 'via config ' + chalk.green(key) + ' from ' + hiliteCwd(config.resourceOrigin(key)._path);
     }
 
+    function logConfigFile(configFile, level) {
+      var prefix = new Array(level).join('  ') + (level ? '⌞ ' : '');
+      logFile(prefix + configFile._path);
+      configFile._parents.forEach(function(parent) {
+        logConfigFile(parent, level + 1);
+      });
+    }
+
+
     console.log('\n' + chalk.blue('# Context'));
-    console.log(' config:', config._configfile ? chalk.magenta(_configBase) : chalk.red('none'));
+    console.log(' config:', _configBase ? chalk.magenta(_configBase) : chalk.red('none'));
     console.log('    CWD:', chalk.cyan(_cwd));
 
     console.log('\n' + chalk.blue('# Configuration'), via('config', '--config'));
-    logFile(config._configfile);
+    config.getConfigFiles().slice(1, -1).forEach(function(configFile) {
+      logConfigFile(configFile, 0);
+    });
 
     console.log('\n' + chalk.blue('# Data'), via('data', '--data'));
-    logList(config._config.data);
+    logList(config._resources.data);
 
     console.log('\n' + chalk.blue('# Init'), via('init', '--init'));
-    logFile(config.getInit(), true);
+    logFile(config.getInit() || '', true);
 
     console.log('\n' + chalk.blue('# Plugins'), via('plugins', '--plugins'));
     logList(config.getPlugins(), true);

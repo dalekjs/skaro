@@ -1,16 +1,4 @@
 'use strict';
-// -------------
-var Config = {};
-Config.CONFIG_NOT_FOUND = 1;
-Config.CONFIG_NOT_READABLE = 2;
-Config.CONFIG_NOT_PARSEABLE = 3;
-Config.VALUE_TEMPLATE = 10;
-Config.VALUE_TYPE = 11;
-Config.DATA_NOT_FOUND = 21;
-Config.DATA_NOT_READABLE = 22;
-Config.DATA_NOT_PARSEABLE = 23;
-Config.INIT_NOT_FOUND = 31;
-// -------------
 
 // node
 var path = require('path');
@@ -20,26 +8,33 @@ var _ = require('lodash');
 var Q = require('q');
 var glob = require('glob');
 // internals
+var ConfigError = require('./ConfigError.js');
 var findFileInParents = require('../util/find-file-in-parents');
-var processTemplates = require('./process-templates');
+var fileExists = require('./file-exists');
+var processJsonFile = require('./process-json-file');
 // promises
-var lstat = Q.denodeify(fs.lstat);
-var readfile = Q.denodeify(fs.readFile);
 var globise = Q.denodeify(glob);
 
-function ConfigFile(_path, env, data) {
+function ConfigFile(_path, cwd, env) {
   // fully qualified path to configuration file
   this._path = _path;
-  // directory of the configuration file
-  this._pwd = path.dirname(_path);
+  // directory of the configuration file used for resolving resource files
+  this._pwd = cwd || path.dirname(_path);
   // data loaded from the file
-  this._data = data || {};
+  this._data = {};
   // used for processing variable templates
-  this._env = env || {};
+  this._env = _.extend(_.clone(env || {}), {
+    env: process.env,
+    cwd: process.cwd(),
+    path: this._pwd,
+    file: this._path,
+  });
   // list of parent configuration files
   this._parents = [];
+  // identified resource files
   this._resources = {
     init: null,
+    files: null,
     tests: null,
     plugins: null,
     data: null,
@@ -47,16 +42,11 @@ function ConfigFile(_path, env, data) {
 }
 
 ConfigFile.find = function(_path, _cwd, env) {
-  return findFileInParents(_path, _cwd).catch(function(reason) {
-    return Q.reject(reason && reason._code ? reason : {
-      _message: 'Configuration file not found',
-      _code: Config.CONFIG_NOT_FOUND,
-      file: _path,
-      error: reason,
+  return findFileInParents(_path, _cwd)
+    .catch(ConfigError.decorateCatch('Configuration', ConfigError.NOT_FOUND, _path))
+    .then(function(_path) {
+      return new ConfigFile(_path, null, env);
     });
-  }).then(function(_path) {
-    return new ConfigFile(_path, env);
-  });
 };
 
 ConfigFile.glob = function(patterns, _cwd) {
@@ -78,91 +68,70 @@ ConfigFile.prototype.glob = function(patterns) {
 };
 
 ConfigFile.prototype.load = function() {
-  return this._read()
-    .then(this._parse.bind(this))
+  return processJsonFile(this._path, 'Configuration', this._env)
+    .then(this._identifyParents.bind(this))
+    .then(this._loadParents.bind(this))
+    .then(this._identifyDataFiles.bind(this))
+    .then(this._identifyResources.bind(this))
+    .thenResolve(this);
+    // TODO: .catch(decorateWithCurrentPathForConfigStackTrace)
+};
+
+ConfigFile.prototype.process = function(data) {
+  this._data = data;
+  return Q.resolve(this)
     .then(this._loadParents.bind(this))
     .then(this._identifyDataFiles.bind(this))
     .then(this._identifyResources.bind(this))
     .thenResolve(this);
 };
 
-ConfigFile.prototype._read = function() {
-  var _path = this._path;
-  return readfile(_path, {encoding: 'utf8'}).catch(function(reason) {
-    return Q.reject(reason && reason._code ? reason : {
-      _message: 'Configuration file is not readable',
-      _code: Config.CONFIG_NOT_READABLE,
-      file: _path,
-      error: reason,
-    });
-  });
-};
 
-ConfigFile.prototype._parse = function(data) {
-  var _path = this._path;
-  return Q.resolve(data).then(function() {
-    return this._data = JSON.parse(data);
-  }.bind(this)).catch(function(reason) {
-    return Q.reject(reason && reason._code ? reason : {
-      _message: 'Configuration file is not valid JSON',
-      _code: Config.CONFIG_NOT_PARSEABLE,
-      file: _path,
-      error: reason,
-    });
-  });
-};
-
-ConfigFile.prototype._loadParents = function() {
-  var parents = this.get('parent.config');
+ConfigFile.prototype._identifyParents = function(data) {
+  this._data = data;
+  var parents = this._data['parent.config'];
   delete this._data['parent.config'];
   if (!parents) {
-    return Q.resolve([]);
+    return [];
   }
 
-  return Q.all(parents.map(this._loadParent.bind(this))).then(function(_parents) {
+  return Q.all(parents.map(this._identifyParent.bind(this))).then(function(_parents) {
     this._parents = _parents;
-    return Q.all(_parents.map(function(configFile) {
-      return configFile.load();
-    })).thenResolve(_parents);
+    return _parents
   }.bind(this));
 };
 
-ConfigFile.prototype._loadParent = function(_path) {
+ConfigFile.prototype._identifyParent = function(_path) {
   var _resolvedPath = path.resolve(this._pwd, _path);
   var env = this._env;
-  return lstat(_resolvedPath)
-    .thenResolve(_resolvedPath)
-    .catch(function(reason) {
-      return Q.reject(reason && reason._code ? reason : {
-        _message: 'Configuration file not found',
-        _code: Config.CONFIG_NOT_FOUND,
-        file: _path,
-        error: reason,
-      });
-    }).then(function(_path) {
-      return new ConfigFile(_path, env);
-    }.bind());
+  
+  return fileExists(_resolvedPath, 'Configuration')
+    .then(function(_path) {
+      return new ConfigFile(_path, null, env);
+    });
+};
+
+ConfigFile.prototype._loadParents = function() {
+  return Q.all(this._parents.map(function(configFile) {
+    return configFile.load();
+  })).thenResolve(this._parents);
 };
 
 ConfigFile.prototype._identifyResources = function() {
   return Q.all([
-    !this._data.plugins ? [] : this.glob(this._data.plugins),
-    !this._data.tests ? [] : this.glob(this._data.tests),
-    !this._data.init ? [] : this.glob(this._data.init),
+    !this._data.plugins ? null : this.glob(this._data.plugins),
+    !this._data.tests ? null : this.glob(this._data.tests),
+    !this._data.init ? null : this.glob(this._data.init),
   ]).spread(function(plugins, tests, init) {
     this._resources.plugins = plugins;
     this._resources.tests = tests;
-    this._resources.init = init[0] || null;
+    this._resources.init = init && init[0] || null;
 
     if (!this._resources.init && this._data.init) {
       // existance check has to be performed in Config,
       // because various init declarations may be encountered
       // but only the last one is the valid import
-      this._resources.init = {
-        _message: 'Init file not found',
-        _code: Config.INIT_NOT_FOUND,
-        file: this._data.init
-      };
+      this._resources.init = new ConfigError('Init', ConfigError.NOT_FOUND, this._data.init);
     }
 
     delete this._data.init;
@@ -172,61 +141,82 @@ ConfigFile.prototype._identifyResources = function() {
 };
 
 ConfigFile.prototype._identifyDataFiles = function() {
-  var _data = this.get('data');
+  var _data = this._data.data;
 
   if (_data && !Array.isArray(_data)) {
-    return Q.reject({
-      _message: 'Wrong data type encountered',
-      _code: Config.VALUE_TYPE,
-      file: this._path,
-      details: {
-        name: 'data',
-        value: this._data.data,
-        expected: 'array',
-      },
-    });
+    return Q.reject(new ConfigError('Configuration', ConfigError.VALUE_TYPE, this._path, {
+      name: 'data',
+      value: this._data.data,
+      expected: 'array',
+    }));
   }
 
   if (!_data || !_data.length) {
-    return Q.resolve();
+    return null;
   }
 
-  delete this._data['data'];
+  delete this._data.data;
   this._resources.data = _data.map(function(_path) {
     return path.resolve(this._pwd, _path);
   }.bind(this));
+
+  return null;
 };
 
+
 ConfigFile.prototype.data = function() {
-  var data = {};
+  var data = _.extend({}, this._data);
+
   this._parents.forEach(function(parent) {
-    _.extend(data, parent.data());
+    var _data = parent.data();
+    Object.keys(_data).forEach(function(key) {
+      if (data[key] === undefined) {
+        data[key] = _data[key];
+      }
+    });
   });
 
-  _.extend(data, this._data);
   return data;
 };
 
 ConfigFile.prototype.resources = function() {
-  var data = {};
+  var data = _.extend({}, this._resources);;
   this._parents.forEach(function(parent) {
-    _.extend(data, parent.resources());
+    var _data = parent.resources();
+    Object.keys(_data).forEach(function(key) {
+      if (data[key] === null) {
+        data[key] = _data[key];
+      }
+    });
   });
 
-  _.extend(data, this._resources);
   return data;
 };
 
-ConfigFile.prototype.get = function(key) {
-  var data = _.extend(_.clone(this._env), {
-    env: process.env,
-    cwd: process.cwd(),
-    path: this._pwd,
-    file: this._path,
+ConfigFile.prototype.dataOrigin = function(key) {
+  if (this._data[key] !== undefined) {
+    return this;
+  }
+
+  var found = null;
+  this._parents.reverse().some(function(parent) {
+    return found = parent.dataOrigin(key);
   });
 
-  return processTemplates(key, this._data[key], data, this._path);
+  return found;
 };
 
+ConfigFile.prototype.resourceOrigin = function(key) {
+  if (this._resources[key] && this._resources[key].length) {
+    return this;
+  }
+
+  var found = null;
+  this._parents.reverse().some(function(parent) {
+    return found = parent.resourceOrigin(key);
+  });
+
+  return found;
+};
 
 module.exports = ConfigFile;

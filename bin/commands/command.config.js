@@ -1,31 +1,18 @@
-module.exports = function(config/*, cli*/) {
+module.exports = function(config) {
   'use strict';
 
-console.log(JSON.stringify(config._config, null, 2));
-
-// parent-1, parent-2, parent-grand
-// some: options 
-
-var ConfigFile = require('../../src/config/ConfigFile');
-
-console.log("\n\n --------------------------- \n\n")
-
-var conf = new ConfigFile('/Users/rrehm/Projekte/test.dev/htdocs/dalekjs/skaro/example/Dalekfile.json', {
-  cli: {}
-});
-console.log(conf);
-console.log('---------------------------------------');
-
-conf.load().then(function(_conf) {
-  console.log(_conf);
-  console.log('---------------------------------------');
-  console.log(JSON.stringify(_conf.data(), null, 2));
-  console.log('---------------------------------------');
-  console.log(JSON.stringify(_conf.resources(), null, 2));
-  console.log('---------------------------------------');
-
-}).catch(function(e) {
-  console.log(e);
-});
+  console.log('--------------------------------');
+  console.log('CLI Options: ');
+  console.log(JSON.stringify(config._options, null, 2));
+  console.log('--------------------------------');
+  console.log('Configuration: ');
+  console.log(JSON.stringify(config._config, null, 2));
+  console.log('--------------------------------');
+  console.log('Data: ');
+  console.log(JSON.stringify(config._data, null, 2));
+  console.log('--------------------------------');
+  console.log('Resources: ');
+  console.log(JSON.stringify(config._resources, null, 2));
+  console.log('--------------------------------');
 
 };

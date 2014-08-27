@@ -1,4 +1,4 @@
-module.exports = function(/*config, cli*/) {
+module.exports = function(/*config*/) {
   'use strict';
 
   // TODO: implement remote proxy to forward WebDriver calls to another host

@@ -1,4 +1,5 @@
 {
   "_notes": "this file is loaded via CLI and overrides previous config",
-  "some": "from cli"
+  "some": "from cli",
+  "plugins": "../plugins/**/*.js"
 }

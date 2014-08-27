@@ -1,4 +1,4 @@
-module.exports = function(/*config, cli*/) {
+module.exports = function(/*config*/) {
   'use strict';
 
   // TODO: implement facility that detects installed browser drivers,

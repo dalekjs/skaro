@@ -15,6 +15,7 @@ module.exports = function() {
       config: {
         abbr: 'c',
         metavar: 'FILE',
+        list: true,
         // TODO: windows compatible path
         default: 'Dalekfile.json',
         help: 'path to configuration file (disable with --no-config)'
@@ -286,6 +287,18 @@ module.exports = function() {
     delete opts.option;
     opts = _.extend(_options, opts);
   }
+
+  // nomnom can't handle flags and lists properly
+  // , 'plugins', 'tests', 'init'
+  ['config', 'data'].forEach(function(key) {
+    var falsy = Array.isArray(opts[key]) && opts[key].some(function(value) {
+      return value === false;
+    });
+
+    if (falsy) {
+      opts[key] = false;
+    }
+  });
 
   return {
     options: opts,

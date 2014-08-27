@@ -1,4 +1,4 @@
-module.exports = function(config/*, cli*/) {
+module.exports = function(config) {
   'use strict';
 
   var Dalek = require('../../index.js');

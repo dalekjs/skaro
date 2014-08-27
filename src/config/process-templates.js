@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
+var ConfigError = require('./ConfigError');
 
 function processTemplates(name, value, data, _path) {
   if (!value) {
@@ -34,15 +35,9 @@ function processValue(name, value, data, _path) {
     return _.template(value, data);
   } catch (reason) {
     throw {
-      _message: 'Malformed value template',
-      _code: 10, // Config.VALUE_TEMPLATE
-      file: _path,
-      error: reason,
-      details: {
-        name: name,
-        value: value,
-        message: reason.message,
-      }
+      name: name,
+      value: value,
+      reason: reason
     };
   }
 }
