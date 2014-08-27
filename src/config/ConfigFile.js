@@ -73,8 +73,8 @@ ConfigFile.prototype.load = function() {
     .then(this._loadParents.bind(this))
     .then(this._identifyDataFiles.bind(this))
     .then(this._identifyResources.bind(this))
+    .catch(ConfigError.catchFileStack(this._path))
     .thenResolve(this);
-    // TODO: .catch(decorateWithCurrentPathForConfigStackTrace)
 };
 
 ConfigFile.prototype.process = function(data) {
@@ -83,6 +83,7 @@ ConfigFile.prototype.process = function(data) {
     .then(this._loadParents.bind(this))
     .then(this._identifyDataFiles.bind(this))
     .then(this._identifyResources.bind(this))
+    .catch(ConfigError.catchFileStack(this._path))
     .thenResolve(this);
 };
 

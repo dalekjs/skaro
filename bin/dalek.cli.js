@@ -41,6 +41,12 @@ config.load().then(function(config) {
     console.error('\n' + chalk.bgRed.white(reason.message));
     console.error('       file: ' + chalk.magenta(reason.path));
 
+    if (reason.fileStack.length) {
+      reason.fileStack.reverse().forEach(function(path) {
+        console.error('             ' + chalk.magenta(path));
+      });
+    }
+
     switch (reason.code) {
       case ConfigError.NOT_FOUND:
         switch (reason.type) {

@@ -15,6 +15,7 @@ function ConfigError(type, code, path, original) {
   this.type = type;
   this.path = path;
   this.original = original;
+  this.fileStack = [];
 }
 
 ConfigError.NOT_FOUND = 1;
@@ -40,6 +41,16 @@ ConfigError.decorateCatch = function decorateCatch(type, code, path) {
     return Q.reject(new ConfigError(type, code, path, original));
   }
 };
+
+ConfigError.catchFileStack = function(path) {
+  return function decorateFileStack(error) {
+    if (error.path !== path && error.fileStack[0] !== path) {
+      error.fileStack.unshift(path);
+    }
+
+    return Q.reject(error);
+  }
+}
 
 ConfigError.prototype = Object.create(Error.prototype);
 ConfigError.prototype.constructor = ConfigError;

@@ -5,5 +5,5 @@
   "parent-2": "I am grandparent.json",
   "parent-grand": "I am grandparent.json",
   "tests": "hello-world.js",
-    "plugins": "../plugins/**/*.js"
+  "plugins": "../plugins/**/*.js"
 }
