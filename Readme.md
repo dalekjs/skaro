@@ -17,10 +17,6 @@ running `bin/dalek.cli.js` will show current status…
 * config uses `{{ foo }}` syntax, path-placeholders (screenshot et al) use `foo/:bar/:baz` (can they use the same? if not, use URITemplates?)
 * core/* should take option objects in constructors
 
-* add config option to load other config files
-  * take care of load order when mixed with CLI
-  * are config files children or parens?
-
 * ServicePlugin to hook into `Dalek.start()`, `Dalek.stop()` and `Dalek.kill()` lifecycle-phases to transparently fire up services used by the test (web server, proxy, video capture, …) Would this also require hooks for suiteStarted, unitEnded, … possibly even `browser url changed`?
 
 * think about `continueOnFailure` on task-level, unit-level and suite-level - this should allow running all the tests to figure out what is failing, rather than aborting execution on first failure dalekjs/dalek#13 (dalek 0.0.x was continueOnFailure by default)
