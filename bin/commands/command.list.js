@@ -83,7 +83,13 @@ module.exports = function(config) {
         return 'via ' + 'cli ' + chalk.grey(_cli);
       }
 
-      return 'via config ' + chalk.green(key) + ' from ' + hiliteCwd(config.resourceOrigin(key)._path);
+      var origin = config.resourceOrigin(key);
+      var from = '';
+      if (origin) {
+        from = ' from ' + hiliteCwd(origin._path);
+      }
+
+      return 'via config ' + chalk.green(key) + from;
     }
 
     function logConfigFile(configFile, level) {
