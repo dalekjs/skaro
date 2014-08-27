@@ -79,8 +79,8 @@ module.exports = function(config) {
     }
 
     function via(key, _cli) {
-      if (config._options[key]) {
-        return 'via ' + 'cli ' + chalk.grey(_cli);
+      if (config._options[key] !== undefined) {
+        return 'via ' + 'cli ' + chalk.grey(config._options[key] ? _cli : _cli.replace('--', '--no-'));
       }
 
       var origin = config.resourceOrigin(key);

@@ -73,11 +73,15 @@ Config.prototype._merge = function() {
     });
   });
 
-  ['data', 'init', 'plugins', 'tests'].forEach(function(key) {
+  ['data', 'plugins', 'tests'].forEach(function(key) {
     if (this._options[key] === false) {
       resources[key] = [];
     }
   }.bind(this));
+
+  if (this._options.init === false) {
+    resources.init = null;
+  }
 
   this._config = config;
   this._resources = resources;
