@@ -62,13 +62,16 @@ module.exports = function(dalek) {
         this.called
       );
     }
+
+    // make sure the unit list cannot be mutated by some latent async BS beyond this point
+    return this._units.slice(0);
   };
 
-  Suite.prototype.initializeSuite = function() {
+  Suite.prototype.initializeSuite = function(units) {
     this.handle = new dalek.Handle(this.label, dalek.Handle.SUITE, 'Suite');
-    this.handle.setOperations(this._units.length);
+    this.handle.setOperations(units.length);
 
-    this.runLoop.initialize(this.options(), this._units, this.handle);
+    this.runLoop.initialize(this.options(), units, this.handle);
     this.runLoop.options({
       sort: this.options('sort.units')
     });
