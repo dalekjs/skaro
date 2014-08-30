@@ -29,7 +29,7 @@ Config.prototype.load = function() {
 
 Config.prototype._loadConfigFiles = function() {
   var config = this._options.config;
-  if (config === false) {
+  if (!config) {
     config = [];
   }
 
