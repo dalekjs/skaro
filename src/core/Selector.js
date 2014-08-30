@@ -43,6 +43,11 @@ module.exports = function(dalek) {
   // allow: "foo".xpath
   // equivalend to: new Selector("foo", "xpath")
   Selector.strategies.forEach(function(strategy) {
+    if (String.prototype[strategy]) {
+      // FIXME: core/Selector needs to lose dalek dependency as it binds itself to the global String!
+      return;
+    }
+
     Object.defineProperty(String.prototype, strategy, {
       enumerable: false,
       configurable: false,
