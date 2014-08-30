@@ -22,6 +22,7 @@ running `bin/dalek.cli.js` will show current status…
 * think about `continueOnFailure` on task-level, unit-level and suite-level - this should allow running all the tests to figure out what is failing, rather than aborting execution on first failure dalekjs/dalek#13 (dalek 0.0.x was continueOnFailure by default)
 
 * maybe use [json5](http://json5.org/) for parsing config and data files?
+* steal mocha's `.skip` modifier to mark "pending tests"?
 
 ---
 
