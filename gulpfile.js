@@ -10,7 +10,7 @@ gulp.task('test', function () {
     fs.mkdirSync('./report')
   } catch (e) {}
 
-  return gulp.src('test/*js', {read: false})
+  return gulp.src('./test/**/*.test.js', {read: false})
     .pipe(cover.instrument({
       pattern: ['./src/**'],
       debugDirectory: 'debug'
