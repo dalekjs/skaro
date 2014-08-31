@@ -126,11 +126,11 @@ Config.prototype.getData = function() {
 };
 
 Config.prototype.getPlugins = function() {
-  return _.clone(this._resources.plugins);
+  return _.clone(this._resources.plugins) || [];
 };
 
 Config.prototype.getTests = function() {
-  return _.clone(this._resources.tests);
+  return _.clone(this._resources.tests) || [];
 };
 
 Config.prototype.getFiles = function() {
