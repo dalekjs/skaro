@@ -17,6 +17,8 @@ describe('Dalek', function() {
   });
 
   describe('test-instance', function() {
+
+    this.timeout(10000); // 10 seconds
     var dalekPromise = require('./dalek-test-instance')();
 
     it('should be an object', function(done) {
@@ -40,12 +42,12 @@ describe('Dalek', function() {
       });
     });
 
-    it.skip('should load resources', function(done) {
+    it('should load resources', function(done) {
       dalekPromise.then(function(dalek) {
         dalek.load().then(function() {
           expect(dalek).to.be.an('object');
           done();
-        });
+        }, done);
       });
     });
 
