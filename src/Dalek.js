@@ -185,6 +185,7 @@ module.exports = (function(){
 
   Dalek.prototype.start = function() {
     // TODO: start all services required to run
+    return this.Q(true);
   };
 
   Dalek.prototype.run = function() {
@@ -205,6 +206,7 @@ module.exports = (function(){
   Dalek.prototype.stop = function() {
     // TODO: gracefully stop all services
     // this should be done with a timeout
+    return this.Q(true);
   };
 
   Dalek.prototype.kill = function() {
