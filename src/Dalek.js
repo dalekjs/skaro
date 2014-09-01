@@ -88,7 +88,16 @@ module.exports = (function(){
       this[namespace] = interceptRegistry(this, namespace, plugins[namespace]);
 
       if (this.options('globals') === true) {
+        // TODO: move this to start() so it can be reverted in stop()
         this._globalizePlugins(namespace, this[namespace]);
+      }
+    }.bind(this));
+  };
+
+  Dalek.prototype._unregisterPlugins = function() {
+    Object.keys(this.registry.plugins).forEach(function(namespace) {
+      if (global[namespace] === this[namespace]) {
+        delete global[namespace];
       }
     }.bind(this));
   };
@@ -204,6 +213,7 @@ module.exports = (function(){
   };
 
   Dalek.prototype.stop = function() {
+    this._unregisterPlugins();
     // TODO: gracefully stop all services
     // this should be done with a timeout
     return this.Q(true);
