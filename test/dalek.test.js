@@ -51,13 +51,13 @@ describe('Dalek', function() {
       });
     });
 
-    it.skip('should start service', function(done) {
+    it('should start service', function(done) {
       dalekPromise.then(function(dalek) {
         dalek.start().then(function() {
           expect(dalek).to.be.an('object');
           done();
         });
-      });
+      }, done);
     });
 
     it.skip('should run tests', function(done) {
@@ -66,16 +66,16 @@ describe('Dalek', function() {
           expect(dalek).to.be.an('object');
           done();
         });
-      });
+      }, done);
     });
 
-    it.skip('should stop service', function(done) {
+    it('should stop service', function(done) {
       dalekPromise.then(function(dalek) {
         dalek.stop().then(function() {
           expect(dalek).to.be.an('object');
           done();
         });
-      });
+      }, done);
     });
 
   });
