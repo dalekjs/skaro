@@ -195,10 +195,12 @@ module.exports = function(dalek) {
   };
 
   Reporter.prototype.error = function(error) {
-    if (this.options.silent) {
-      return;
-    }
+    // you should not be able to silence errors.
+    // if (this.options.silent) {
+    //   return;
+    // }
 
+    // TODO: should Reporter#error() print to STDERR?
     console.log('\n');
     console.log(chalk.bgRed.white.bold(error.message));
 
