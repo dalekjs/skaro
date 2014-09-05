@@ -60,7 +60,7 @@ describe('Dalek', function() {
       }, done);
     });
 
-    it.skip('should run tests', function(done) {
+    it('should run tests', function(done) {
       dalekPromise.then(function(dalek) {
         dalek.run().then(function() {
           expect(dalek).to.be.an('object');
