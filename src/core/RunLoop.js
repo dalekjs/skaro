@@ -175,6 +175,8 @@ module.exports = function(dalek) {
   };
 
   RunLoop.prototype.runQueue = function(item) {
+    // Error in initialization leads to dalek.catch() and ends
+    // the process, before we could handle the error here.
     dalek.Q(item.initialize(this.options()))
       .then(this._runQueue);
   };
