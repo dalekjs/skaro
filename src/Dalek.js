@@ -114,7 +114,7 @@ module.exports = (function(){
     } else {
       global[namespace] = plugins;
     }
-    
+
   };
 
   Dalek.prototype.catch = function(error) {
@@ -194,7 +194,7 @@ module.exports = (function(){
 
   Dalek.prototype.start = function() {
     // TODO: start all services required to run
-    return this.Q(true);
+    return this.driver.initializeWebdriverConnection();
   };
 
   Dalek.prototype.run = function() {

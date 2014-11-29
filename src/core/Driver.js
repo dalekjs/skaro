@@ -1,10 +1,47 @@
 module.exports = function(dalek) {
   'use strict';
 
+  var WD = require('wd');
+
   // TODO: create driver interface
   function Driver(options) {
     this.options = options;
-  }
+  };
+
+  // initialize WD.js
+  Driver.prototype.initializeWebdriverConnection = function () {
+    // TODO: Webdriver endpoint must be provided by the browser binding (can be configured though)
+    this.wd = WD.promiseChainRemote('http://localhost:7020/');
+
+    // TODO: I don't like this, assigning the WD instance to every "category"
+    this.browser.wd = this.wd;
+    this.navigation.wd = this.wd;
+    this.element.wd = this.wd;
+
+    // initializa (aka. get the session id)
+    // TODO: Browser name must be provided by the browser binding
+    return this.wd.init({browserName:'phantomjs'});
+  };
+
+  Driver.prototype.browser = {
+    open: function (options) {
+      return this.wd.get(options.url);
+    }
+  };
+
+
+  // Assign navigation methods
+  Driver.prototype.navigation = {};
+  ['url', 'forward', 'back', 'refresh'].forEach(function namespaceWdMethods (methodName) {
+    Object.defineProperty(Driver.prototype.navigation, methodName, {
+      enumerable: false,
+      configurable: false,
+      get: function() {
+        return this.wd[methodName].bind(this.wd);
+      }
+    });
+  });
+
 
   Driver.prototype.element = {
     attribute: function(/*options*/) {
