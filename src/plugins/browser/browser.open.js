@@ -35,6 +35,55 @@ test.open('http://dalekjs.com');
 
 */
 
-module.exports = function(/*dalek*/) {
-  // TODO: implement plugin browser.open
+module.exports = function(dalek) {
+  var format = dalek.format;
+  var driver = dalek.driver;
+
+  // plugin meta data
+  var meta = {
+    // group to sort the plugin into
+    namespace: 'browser',
+    // name of the plugin
+    name: 'open',
+    // allow calls like assert.click('.some-thing')
+    signature: ['url'],
+    // list of properties that must be specified at the very least
+    required: ['url']
+  };
+
+  var handler = function(options) {
+    // the name invocations of this plugin will show up as
+    var label = format.keyword(meta.name) + ' url ' + format.literal(options.url);
+
+    // we're creating an action, give dalek that context
+    var handle = new dalek.Handle(label, dalek.Handle.BROWSER, meta.name);
+
+    // data we need to pass to WebDriver
+    var data = {
+      url: options.url
+    };
+
+    var handleResults = function(err) {
+      if (!!err) {
+          handle.rejectWithMessage(err, options.message, result);
+          return true;
+      }
+
+      handle.resolveNavigation(options.url);
+    };
+
+    // talk to WebDriver
+    driver.browser.open(data).then(
+      // process WebDriver results
+      handleResults,
+      // WebDriver rejects on empty selector-result with string
+      // any errors (including malformed selector) with DalekError
+      handle.reject
+    ).catch(dalek.catch);
+
+    return handle;
+  };
+
+  // register plugin
+  dalek.registerPlugin(meta, handler);
 };

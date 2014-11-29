@@ -109,5 +109,11 @@ module.exports = function(dalek) {
     this.resolve(this.message);
   };
 
+  Handle.prototype.resolveNavigation = function(value) {
+    this.message = dalek.format.index(value) + ' is current URL';
+    this.operationsPerformed = value;
+    this.resolve(this.message);
+  };
+
   return Handle;
 };
