@@ -1,0 +1,5 @@
+{
+  "browser.phantomjs": {
+    "interface": "skaro-browser-phantomjs"
+  }
+}

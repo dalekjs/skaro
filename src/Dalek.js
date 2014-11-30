@@ -11,6 +11,7 @@ var _Selector = require('./core/Selector');
 var _Handle = require('./core/Handle');
 var _RunLoop = require('./core/RunLoop');
 // runtime interfaces
+var _Endpoint = require('./core/Endpoint');
 var _Driver = require('./core/Driver');
 var _Format = require('./core/Format');
 var _Reporter = require('./core/Reporter');
@@ -56,6 +57,7 @@ module.exports = (function(){
 
     // runtime interfaces
     // (inherit global config)
+    this.endpoint = new (_Endpoint(this))(this._options);
     this.driver = new (_Driver(this))(this._options);
     this.format = new (_Format(this))(this._options);
     this.reporter = new (_Reporter(this))(this._options);
@@ -193,8 +195,16 @@ module.exports = (function(){
   };
 
   Dalek.prototype.start = function() {
+    var deferred = Q.defer();
+
     // TODO: start all services required to run
-    return this.driver.initializeWebdriverConnection();
+    this.endpoint.initialize('phantomjs').then(function (port) {
+      this.driver.initializeWebdriverConnection(port).then(function () {
+        deferred.resolve(true);
+      });
+    }.bind(this));
+
+    return deferred.promise;
   };
 
   Dalek.prototype.run = function() {
@@ -214,6 +224,7 @@ module.exports = (function(){
 
   Dalek.prototype.stop = function() {
     this._unregisterPlugins();
+    this.endpoint.stop();
     // TODO: gracefully stop all services
     // this should be done with a timeout
     return this.Q(true);
