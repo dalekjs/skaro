@@ -9,15 +9,13 @@ module.exports = function(dalek) {
   };
 
   // initialize WD.js
-  Driver.prototype.initializeWebdriverConnection = function (port) {
-    // TODO: Webdriver endpoint must be provided by the browser binding (can be configured though)
-    this.wd = WD.promiseChainRemote('http://localhost:' + port + '/');
+  Driver.prototype.initializeWebdriverConnection = function (options) {
+    this.wd = WD.promiseChainRemote('http://' + options.host + ':' + options.port + '/');
     // TODO: I don't like this, assigning the WD instance to every "category"
     this.element.wd = this.wd;
 
     // initializa (aka. get the session id)
-    // TODO: Browser name must be provided by the browser binding
-    return this.wd.init({browserName:'phantomjs'});
+    return this.wd.init({browserName: options.id});
   };
 
 

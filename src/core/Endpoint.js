@@ -58,8 +58,8 @@ module.exports = function(dalek) {
         }
 
         this.browserInstance = browserInstance;
-        this.browserInstance.start().then(function (port) {
-          deferred.resolve(port);
+        this.browserInstance.start().then(function (options) {
+          deferred.resolve(options);
         });
       }.bind(this));
 

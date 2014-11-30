@@ -198,8 +198,8 @@ module.exports = (function(){
     var deferred = Q.defer();
 
     // TODO: start all services required to run
-    this.endpoint.initialize('phantomjs').then(function (port) {
-      this.driver.initializeWebdriverConnection(port).then(function () {
+    this.endpoint.initialize('phantomjs').then(function (options) {
+      this.driver.initializeWebdriverConnection(options).then(function () {
         deferred.resolve(true);
       });
     }.bind(this));

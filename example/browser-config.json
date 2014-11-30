@@ -1,5 +1,7 @@
 {
   "browser.phantomjs": {
-    "interface": "skaro-browser-phantomjs"
+    "interface": "skaro-browser-phantomjs",
+    "path": "/usr/local/bin/phantomjs",
+    "port": [1010, 1090]
   }
 }
