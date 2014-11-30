@@ -28,10 +28,13 @@ function processTemplates(name, value, data, _path) {
   var _type = typeof value;
 
   if (_type === 'object') {
-    return Object.keys(value).map(function(key) {
+    var _data = {};
+    Object.keys(value).forEach(function(key) {
       var _value = value[key];
-      return processTemplates(name, _value, data, _path);
+      var processedValue = processTemplates(name, _value, data, _path);
+      _data[key] = processedValue;
     });
+    return _data;
   }
 
   if (_type !== 'string') {
