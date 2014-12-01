@@ -99,7 +99,7 @@ module.exports = function(dalek) {
     };
 
     // talk to WebDriver
-    driver.element.click(data).then(
+    driver.wd.click(data).then(
       // process WebDriver results
       handleResults,
       // WebDriver rejects on empty selector-result with string
