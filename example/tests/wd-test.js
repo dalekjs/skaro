@@ -8,7 +8,8 @@ module.exports = function(dalek) {
         dalek.browser.open('http://dalekjs.com/guineapig/'),
         dalek.assert.url('http://dalekjs.com/guineapig/'),
         dalek.action.click('a'),
-        dalek.assert.attribute('#a-frame', 'src', 'iframecont.html')
+        dalek.assert.attribute({selector: '#unchecked_checkbox', match: 'first', expected: 'unchecked_checkbox', name: 'name'}),
+        //dalek.assert.attribute('input', 'name', 'unchecked_checkbox', {match: 'all'})
       ];
     });
 

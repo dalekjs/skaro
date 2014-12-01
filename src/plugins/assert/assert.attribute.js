@@ -109,10 +109,28 @@ module.exports = function(dalek) {
       handle.resolveItems(values.length);
     };
 
-    // talk to WebDriver
-    driver.wd.getAttribute(data).then(
-      // process WebDriver results
-      handleResults,
+    var performAttributeAssertion = function (elements) {
+      // talk to WebDriver
+      // collect the attribute information from all matched elements
+      var deferreds = [];
+      elements.forEach(function (element) {
+        deferreds.push(driver.wd.getAttribute(element, data.attribute));
+      });
+
+      // process results when all element attribute values have been collected
+      dalek.Q.all(deferreds).then(
+        // process WebDriver results
+        handleResults,
+        // WebDriver rejects on empty selector-result with string
+        // any errors (including malformed selector) with DalekError
+        handle.reject
+      ).catch(dalek.catch);
+
+    };
+
+    // load all elements
+    driver.elements(options).then(
+      performAttributeAssertion,
       // WebDriver rejects on empty selector-result with string
       // any errors (including malformed selector) with DalekError
       handle.reject
