@@ -16,6 +16,7 @@ module.exports = function(dalek) {
     this.browsers = this.getInstalledBrowserBindings(this.patterns);
   };
 
+  // TODO: Match (and replace) this with the modules that have been already loaded by the configuration
   Endpoint.prototype.getInstalledBrowserBindings = function (patterns) {
     var bindings = [];
     var modules = [];
