@@ -10,7 +10,11 @@ module.exports = function(dalek) {
         dalek.action.click('a'),
         dalek.assert.attribute({selector: '#unchecked_checkbox', match: 'first', expected: 'unchecked_checkbox', name: 'name'}),
         dalek.action.setValue('input[type="text"]', 'Foo', {match: 'all'}),
-        dalek.assert.attribute('input[type="text"]', 'value', 'Foo', {match: 'all'})
+        dalek.assert.attribute('input[type="text"]', 'value', 'Foo', {
+          match: function (element, index, list) {
+            return index === 1 ? false : true;
+          }
+        })
       ];
     });
 
