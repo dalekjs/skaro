@@ -6,7 +6,9 @@ module.exports = function(dalek) {
     suite.unit('basic shit', function(unit) {
       return [
         dalek.browser.open('http://dalekjs.com/guineapig/'),
-        dalek.assert.url('http://dalekjs.com/guineapig/')
+        dalek.assert.url('http://dalekjs.com/guineapig/'),
+        dalek.action.click('a'),
+        dalek.assert.attribute('#a-frame', 'src', 'iframecont.html')
       ];
     });
 
