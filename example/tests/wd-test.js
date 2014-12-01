@@ -9,7 +9,8 @@ module.exports = function(dalek) {
         dalek.assert.url('http://dalekjs.com/guineapig/'),
         dalek.action.click('a'),
         dalek.assert.attribute({selector: '#unchecked_checkbox', match: 'first', expected: 'unchecked_checkbox', name: 'name'}),
-        //dalek.assert.attribute('input', 'name', 'unchecked_checkbox', {match: 'all'})
+        dalek.action.setValue('input[type="text"]', 'Foo', {match: 'all'}),
+        dalek.assert.attribute('input[type="text"]', 'value', 'Foo', {match: 'all'})
       ];
     });
 
