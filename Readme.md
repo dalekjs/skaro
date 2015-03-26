@@ -57,6 +57,7 @@ plugins [research]
 * add a [key-map](http://www.w3.org/TR/2012/WD-webdriver-20120710/#character-types) that translates "special keys" `keys.backspace = '\uE003'` (up, down, enter, esc, page-end, …) [primarily for action.sendKey] - maybe use [unicode-keymap](https://www.npmjs.org/package/unicode-keymap)
 * add `is.url.foo()`  dalekjs/dalek#40
 * add `is.color()` dalekjs/dalek#126 and dalekjs/dalek#50
+* think about how results of QUnit, mocha, et al could be extracted from a dalek-triggerd run and merged into accounts of the skaro reporter infrastructure
 
 ---
 
