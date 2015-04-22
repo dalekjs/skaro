@@ -13,7 +13,7 @@ var _RunLoop = require('./core/RunLoop');
 // runtime interfaces
 var _Endpoint = require('./core/Endpoint');
 var _Driver = require('./core/Driver');
-var _Proxy = require('./core/Proxy');
+// var _Proxy = require('./core/Proxy');
 var _Format = require('./core/Format');
 var _Reporter = require('./core/Reporter');
 var _Registry = require('./core/Registry');
@@ -60,7 +60,7 @@ module.exports = (function(){
     // (inherit global config)
     this.endpoint = new (_Endpoint(this))(this._options);
     this.driver = new (_Driver(this))(this._options);
-    this.proxy = new (_Proxy(this))(this._options);
+    // this.proxy = new (_Proxy(this))(this._options);
     this.format = new (_Format(this))(this._options);
     this.reporter = new (_Reporter(this))(this._options);
     this.registry = new (_Registry(this))(this._options);
@@ -200,7 +200,7 @@ module.exports = (function(){
     var deferred = Q.defer();
 
     // TODO: start all services required to run
-    this.proxy.start();
+    // this.proxy.start();
     this.endpoint.initialize('phantomjs').then(function (options) {
       this.driver.initializeWebdriverConnection(options).then(function () {
         deferred.resolve(true);
