@@ -1,6 +1,9 @@
 # Skaro - DalekJS
 
-This repository is a work-in-progress playground for figuring out how to proceed with the new DalekJS API. 
+> HINT: Run a first "real" UI test with:
+`bin/dalek.cli.js run --config=example/browser-config.json
+
+This repository is a work-in-progress playground for figuring out how to proceed with the new DalekJS API.
 
 Docs that lead up to this can be found [here](https://github.com/rodneyrehm/dalek-api/). The new API is trying to bring in ideas expressed in [breaking backward-compatibility](https://github.com/rodneyrehm/dalek-api/blob/master/breaking-bc-api.md)
 

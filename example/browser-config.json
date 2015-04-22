@@ -1,4 +1,5 @@
 {
+  "tests": "tests/wd-test.js",
   "browser.phantomjs": {
     "interface": "skaro-browser-phantomjs",
     "port": 4020,
