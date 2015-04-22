@@ -1,8 +1,7 @@
 {
   "browser.phantomjs": {
     "interface": "skaro-browser-phantomjs",
-    "path": "/usr/local/bin/phantomjs",
     "port": 4020,
-    "args": ["--local-to-remote-url-access=true", "--proxy=127.0.0.1:4129"]
+    "args": ["--local-to-remote-url-access=true"]
   }
 }
