@@ -11,6 +11,12 @@ Docs that lead up to this can be found [here](https://github.com/rodneyrehm/dale
 
 running `bin/dalek.cli.js` will show current status…
 
+```sh
+# run a simple test using phantomjs
+bin/dalek.cli.js run --config=example/browser-config.json
+# run a simple test using a custom browser (still phantomjs…)
+bin/dalek.cli.js run --config=example/browser-config.json --browser gustav
+```
 
 ## Open Topics
 

@@ -1,8 +1,15 @@
 {
   "tests": "tests/wd-test.js",
+  "browser": "phantomjs",
   "browser.phantomjs": {
+    "args": [
+      "--local-to-remote-url-access=true"
+    ]
+  },
+  "browser.gustav": {
     "interface": "skaro-browser-phantomjs",
-    "port": 4020,
-    "args": ["--local-to-remote-url-access=true"]
+    "args": [
+      "--local-to-remote-url-access=true"
+    ]
   }
 }

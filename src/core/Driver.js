@@ -3,7 +3,7 @@ module.exports = function(dalek) {
 
   var WD = require('wd');
 
-  function Driver (options) {
+  function Driver(options) {
     this.options = options;
   };
 
@@ -11,11 +11,13 @@ module.exports = function(dalek) {
    * Initialize WD.js && get SessionId
    */
 
-  Driver.prototype.initializeWebdriverConnection = function (options) {
+  Driver.prototype.initializeWebdriverConnection = function(options) {
     this.wd = WD.promiseChainRemote('http://' + options.host + ':' + options.port + '/');
 
-    // initializa (aka. get the session id)
-    return this.wd.init({browserName: options.id});
+    // initialize (aka. get the session id)
+    return this.wd.init({
+      browserName: options.id || 'hello-world'
+    });
   };
 
   /**
