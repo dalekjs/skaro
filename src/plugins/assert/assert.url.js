@@ -62,42 +62,32 @@ module.exports = function(dalek) {
 
   var handler = function(options) {
     // the name invocations of this plugin will show up as
-    /*jshint laxbreak:true */
     var label = 'URL ' + format.expected(options.expected);
-    /*jshint laxbreak:false */
-
     // we're creating an assertion, give dalek that context
     var handle = new dalek.Handle(label, dalek.Handle.ASSERTION, meta.name);
 
-    // data we need to pass to WebDriver
-    var data = {
-      match: options.match
-    };
-
-    var handleResults = function(value) {
+    var handleResponse = function(url) {
       // type of comparison is handed to us by plugin registration
-      var result = options.expected(value);
+      var result = options.expected(url);
       if (result) {
         // we caught an assertion failure. pass all the possible messages
         // to the assertion instance and have *it* figure out what to show
-        handle.rejectWithMessage(value, options.message, result);
-        // end the loop, one failure is all we needed
-        return true;
+        handle.rejectWithMessage(null, options.message, result);
+        return;
       }
 
       // all tests passed, if handle was rejected,
       // this call is ignored by the Promise
-      handle.resolveNavigation(value);
+      handle.resolve(format.link(url));
     };
 
-    // talk to WebDriver
-    dalek.wd.url().then(
-      // process WebDriver results
-      handleResults,
-      // WebDriver rejects on empty selector-result with string
-      // any errors (including malformed selector) with DalekError
-      handle.reject
-    ).catch(dalek.catch);
+    dalek.wd
+      // query current URL
+      .url()
+      // verify we're somewhere
+      .then(handleResponse, handle.reject)
+      // instead of .done() we inform dalek when something went terribly wrong
+      .catch(dalek.catch);
 
     return handle;
   };

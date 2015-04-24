@@ -6,6 +6,7 @@ var _ = require('lodash');
 var getStack = require('./util/getStack');
 var interceptRegistry = require('./core/Registry.intercept');
 var findInstalledPackages = require('./util/find-installed-packages');
+var listAvailableBrowsers = require('./util/list-available-browsers');
 // convenience accessors
 var _DalekError = require('./core/DalekError');
 var _Selector = require('./core/Selector');
@@ -227,8 +228,16 @@ module.exports = (function(){
     }
 
     if (!name) {
-      throw new Error('Cannot run without a browser specified!\nsee http://dalekjs.com/docs/config.html#browser'
-        + '\ninstalled:\n  ' + Object.keys(this.packages).join('\n  '));
+      throw new this.Error({
+        message: 'Cannot run without a browser specified!',
+        code: 'USAGE',
+        stack: false,
+        extra: {
+          title: 'Browser Documentation',
+          url: 'http://dalekjs.com/docs/config.html#browser',
+          extended: listAvailableBrowsers(this),
+        }
+      });
     }
 
     this.reporter.debug('Loading browser Driver');
@@ -246,9 +255,16 @@ module.exports = (function(){
     }
     // we need a browser-driver, if we can't find one, we're dead in the water
     if (!this.packages[packageName]) {
-      // TODO: warn about "package is not installed"
-      throw new Error('Unknown browser "' + name + '"\nsee http://dalekjs.com/docs/config.html#browser'
-        + '\ninstalled:\n  ' + Object.keys(this.packages).join('\n  '));
+      throw new this.Error({
+        message: 'Unknown browser "' + this.format.literal(name) + '"',
+        code: 'USAGE',
+        stack: false,
+        extra: {
+          title: 'Browser Documentation',
+          url: 'http://dalekjs.com/docs/config.html#browser',
+          extended: listAvailableBrowsers(this),
+        }
+      });
     }
 
     var Driver = require(packageName);

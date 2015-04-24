@@ -23,7 +23,7 @@ module.exports = function getStack(below, error, skip) {
 
     // we don't care about the dalek internals
     // at registration time
-    if (site.file.indexOf('src/Dalek.js') === site.file.length -12) {
+    if (site.file && site.file.indexOf('src/Dalek.js') === site.file.length -12) {
       return true;
     }
     if (site.name === 'Unit.initialize') {

@@ -10,17 +10,20 @@ module.exports = function(dalek, wd) {
     })
 
     selector: (instance of src/core/Selector.js)
-      provides a simple interface to the various selector strategies,
-      css, xpath, sizzle
-      
+      provides a simple interface to the various selector strategies
+    match:
+      'first', 'last', 'all', 'any': keyword to limit the selection
+      number: index to limit the selection
+      function: filter callback executed in the browser
   */
 
   var _ = dalek._;
   var Q = dalek.Q;
+  var format = dalek.format;
 
   function matchElementsFilter(options, elements) {
     if (!elements.length) {
-      return Q.reject(new Error('No elements found'));
+      return Q.reject('No elements found');
     }
 
     // we have to work with WD element references
@@ -31,7 +34,7 @@ module.exports = function(dalek, wd) {
       if (_elements[options.match]) {
         return [_elements[options.match]];
       } else {
-        return Q.reject(new Error('Match index "' + options.match + '" not found'));
+        return Q.reject('Index ' + format.index(options.match) + ' not found');
       }
     }
 
@@ -48,7 +51,15 @@ module.exports = function(dalek, wd) {
         return _elements;
 
       default:
-        return Q.reject(new Error('unkown match strategy "' + options.match + '"'));
+        return Q.reject(new dalek.Error({
+          message: 'unkown match strategy ' + format.literal(options.match),
+          code: 'USAGE',
+          extra: {
+            extended: 'match can be "first", "last", "all", "any", Number, Function - depending on the plugin',
+            title: 'Selector Documentation',
+            url: 'http://dalekjs.com/docs/config.html#selector',
+          }
+        }));
     }
   }
 
@@ -81,7 +92,6 @@ module.exports = function(dalek, wd) {
   }
 
   function matchElements(options) {
-
     if (options.selector.strategy === 'sizzle') {
       // TODO: implement selector strategy "sizzle"
       throw new Error('selector strategy "sizzle" not yet supported!');

@@ -52,24 +52,24 @@ module.exports = function(dalek) {
 
   var handler = function(options) {
     // human readable name of what is supposed to happen
-    var label = 'open url ' + format.literal(options.url);
+    var label = 'open URL ' + format.link(options.url);
     // we're creating an action, give dalek that context
     var handle = new dalek.Handle(label, dalek.Handle.ACTION, meta.name);
 
     var handleResponse = function(url) {
       // if a domain could not be resolved, browser's default to about:blank
       if (!url || (url === 'about:blank' && url !== options.url)) {
-        handle.reject('could not open url, saw ' + format.literal(url) + ' instead');
+        handle.reject('could not open url, saw ' + format.link(url) + ' instead');
         return;
       }
 
-      handle.resolve('opened ' + format.literal(url));
+      handle.resolve('opened ' + format.link(url));
     };
 
     dalek.wd
       // open URL
       .get(options.url)
-      // query open URL
+      // query current URL
       .url()
       // verify we're somewhere
       .then(handleResponse, handle.reject)
