@@ -318,7 +318,12 @@ module.exports = (function(){
       clearTimeout(timeout);
     });
 
-    this.driver.stop(deferred.resolve);
+    this.wd.quit().then(function() {
+      this.driver.stop(function() {
+        deferred.resolve()
+      });
+    }.bind(this));
+
     return deferred.promise;
   };
 
