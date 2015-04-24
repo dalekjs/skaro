@@ -92,7 +92,7 @@ module.exports = function(dalek) {
     };
 
     // talk to WebDriver
-    driver.wd.url().then(
+    dalek.wd.url().then(
       // process WebDriver results
       handleResults,
       // WebDriver rejects on empty selector-result with string

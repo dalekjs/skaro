@@ -92,7 +92,7 @@ module.exports = function(dalek) {
       // collect the attribute information from all matched elements
       var deferreds = [];
       elements.forEach(function (element) {
-        deferreds.push(driver.wd.execute(setValueInBrowserScope, [{ELEMENT: element}, data.value]));
+        deferreds.push(dalek.wd.execute(setValueInBrowserScope, [{ELEMENT: element}, data.value]));
       });
 
       // process results when all element attribute values have been collected
@@ -105,7 +105,7 @@ module.exports = function(dalek) {
       ).catch(dalek.catch);
     };
 
-    driver.elements(options).then(
+    dalek.wd.matchElements(options).then(
       performSetValue,
       // WebDriver rejects on empty selector-result with string
       // any errors (including malformed selector) with DalekError

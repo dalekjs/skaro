@@ -114,7 +114,7 @@ module.exports = function(dalek) {
       // collect the attribute information from all matched elements
       var deferreds = [];
       elements.forEach(function (element) {
-        deferreds.push(driver.wd.getAttribute(element, data.attribute));
+        deferreds.push(dalek.wd.getAttribute(element, data.attribute));
       });
 
       // process results when all element attribute values have been collected
@@ -129,7 +129,7 @@ module.exports = function(dalek) {
     };
 
     // load all elements
-    driver.elements(options).then(
+    dalek.wd.matchElements(options).then(
       performAttributeAssertion,
       // WebDriver rejects on empty selector-result with string
       // any errors (including malformed selector) with DalekError

@@ -10,12 +10,31 @@ module.exports = function(dalek) {
     this.text = text;
     this.strategy = strategy || 'css';
 
-    if (Selector.strategies.indexOf(this.strategy) === -1) {
+    if (Selector.strategies[this.strategy]) {
+      this.strategy = Selector.strategies[this.strategy]
+    }
+
+    if (Selector._strategies.indexOf(this.strategy) === -1) {
       throw new dalek.Error('Unknown strategy »' + this.strategy + '« for selector »' + this.text + '«');
     }
   }
 
-  Selector.strategies = ['css', 'xpath', 'sizzle'];
+  Selector.strategies = {
+    'css': 'css',
+    'xpath': 'xpath',
+    'id': 'id',
+    'name': 'name',
+    'tagName': 'tag name',
+    'className': 'class name',
+    'linkText': 'link text',
+    'partialLinkText': 'partial link text',
+    // custom Dalek thing
+    'sizzle': 'sizzle'
+  };
+
+  Selector._strategies = Object.keys(Selector.strategies).map(function(key) {
+    return Selector.strategies[key];
+  });
 
   // MicroSyntax to allow a more convenient property/event specification
   // "property .selector" as used by Backbone
@@ -40,9 +59,10 @@ module.exports = function(dalek) {
     return this.text;
   };
 
+  // TODO: reconsider if modifying String.prototype is such a good idea
   // allow: "foo".xpath
   // equivalend to: new Selector("foo", "xpath")
-  Selector.strategies.forEach(function(strategy) {
+  Object.keys(Selector.strategies).forEach(function(strategy) {
     if (String.prototype[strategy]) {
       // FIXME: core/Selector needs to lose dalek dependency as it binds itself to the global String!
       return;
@@ -52,7 +72,7 @@ module.exports = function(dalek) {
       enumerable: false,
       configurable: false,
       get: function() {
-        return new Selector(strategy, this + '');
+        return new Selector(String(this), Selector.strategies[strategy]);
       }
     });
   });

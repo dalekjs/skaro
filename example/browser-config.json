@@ -8,6 +8,7 @@
   },
   "browser.gustav": {
     "interface": "skaro-browser-phantomjs",
+    "browserName": "PhantomJS",
     "args": [
       "--local-to-remote-url-access=true"
     ]

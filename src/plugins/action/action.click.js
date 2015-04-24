@@ -87,7 +87,7 @@ module.exports = function(dalek) {
 
     var performClick = function (elements) {
       // talk to WebDriver
-      driver.wd.click(elements[0]).then(
+      dalek.wd.click(elements[0]).then(
         // process WebDriver results
         handleResults,
         // WebDriver rejects on empty selector-result with string
@@ -97,7 +97,7 @@ module.exports = function(dalek) {
 
     };
 
-    driver.elements(options).then(
+    dalek.wd.matchElements(options).then(
       performClick,
       // WebDriver rejects on empty selector-result with string
       // any errors (including malformed selector) with DalekError

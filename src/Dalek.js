@@ -12,7 +12,7 @@ var _Selector = require('./core/Selector');
 var _Handle = require('./core/Handle');
 var _RunLoop = require('./core/RunLoop');
 // runtime interfaces
-var _Driver = require('./core/Driver');
+var wd = require('./core/wd');
 // var _Proxy = require('./core/Proxy');
 var _Format = require('./core/Format');
 var _Reporter = require('./core/Reporter');
@@ -58,7 +58,6 @@ module.exports = (function(){
 
     // runtime interfaces
     // (inherit global config)
-    this.driver = new (_Driver(this))(this._options);
     // this.proxy = new (_Proxy(this))(this._options);
     this.format = new (_Format(this))(this._options);
     this.reporter = new (_Reporter(this))(this._options);
@@ -235,21 +234,24 @@ module.exports = (function(){
     // the given browser could be a valid skaro-browser binding
     var packageName = 'skaro-browser-' + name;
     // there may be custom config for running the binding
-    var options = this._options['browser.' + name];
-    if (options && options['interface']) {
-      // the custom config explicitly identifies the skaro-browser binding to use
+    var options = _.clone(this._options['browser.' + name] || {});
+    // the custom config may explicitly identify the skaro-browser binding to use
+    if (options['interface']) {
       packageName = options['interface'];
     }
-
+    // the custom config may explicitly name the browser
+    if (!options['browserName']) {
+      options['interface'] = name;
+    }
+    // we need a skaro-browser binding, if we can't find one, we're dead in the water
     if (!this.packages[packageName]) {
       // TODO: warn about "package is not installed"
       throw new Error('Unknown browser "' + name + '"\nsee http://dalekjs.com/docs/config.html#browser');
     }
 
-    // load the binding
     var Browser = require(packageName);
     // initialize the binding (not starting anything yet)
-    this.browserProcess = new Browser(options || {}, name);
+    this.browserProcess = new Browser(options);
     this.reporter.debug('Finished loading Browser');
   };
 
@@ -259,10 +261,8 @@ module.exports = (function(){
     // this.proxy.start();
 
     this.browserProcess.start(function(options) {
-      // options.wd.host, options.wd.port
-
-      this.driver.initializeWebdriverConnection(options.wd).then(deferred.resolve);
-
+      this.wd = wd(this).promiseChainRemote(options.wd);
+      this.wd.init(options.wd).then(deferred.resolve, deferred.reject);
     }.bind(this), deferred.reject, this.catch);
 
     return deferred.promise;
