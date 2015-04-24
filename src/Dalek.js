@@ -75,7 +75,7 @@ module.exports = (function(){
     this.catch = this.catch.bind(this);
     this.catchStack = this.catchStack.bind(this);
     this._loadPackages = this._loadPackages.bind(this);
-    this._loadBrowser = this._loadBrowser.bind(this);
+    this._loadDriver = this._loadDriver.bind(this);
 
     this.runLoop = new this.RunLoop(this.options());
     this.beforeDalek = this.runLoop.beforeFirst.bind(this.runLoop, 'Dalek.beforeDalek');
@@ -165,8 +165,8 @@ module.exports = (function(){
     var userFiles = this._loadUserFiles(groups);
     // load installed bundles
     return this._loadPackages()
-      // identify browser binding bundle
-      .then(this._loadBrowser)
+      // identify browser driver bundle
+      .then(this._loadDriver)
       // return the user files, because that mapping is not easily acessible
       .thenResolve(userFiles);
   };
@@ -211,48 +211,50 @@ module.exports = (function(){
   };
 
   Dalek.prototype._loadPackages = function() {
-    this.reporter.debug('Loading list of installed Dalek/Skaro packages');
+    this.reporter.debug('Loading list of installed Dalek packages');
     return findInstalledPackages(function(packageName) {
-      return packageName.slice(0, 5) === 'skaro' || packageName.slice(0, 5) === 'dalek';
+      return packageName.slice(0, 5) === 'dalek';
     }).then(function(packages) {
       this.packages = packages.map;
-      this.reporter.debug('Finished loading list of installed Dalek/Skaro packages');
+      this.reporter.debug('Finished loading list of installed Dalek packages');
     }.bind(this));
   };
 
-  Dalek.prototype._loadBrowser = function() {
+  Dalek.prototype._loadDriver = function() {
     var name = this._options.browser;
     if (Array.isArray(name)) {
       name = name[0];
     }
 
     if (!name) {
-      throw new Error('Cannot run without a browser specified!\nsee http://dalekjs.com/docs/config.html#browser');
+      throw new Error('Cannot run without a browser specified!\nsee http://dalekjs.com/docs/config.html#browser'
+        + '\ninstalled:\n  ' + Object.keys(this.packages).join('\n  '));
     }
 
-    this.reporter.debug('Loading Browser');
-    // the given browser could be a valid skaro-browser binding
-    var packageName = 'skaro-browser-' + name;
+    this.reporter.debug('Loading browser Driver');
+    // the given browser could be a valid browser-driver
+    var packageName = 'dalek-driver-' + name;
     // there may be custom config for running the binding
     var options = _.clone(this._options['browser.' + name] || {});
-    // the custom config may explicitly identify the skaro-browser binding to use
+    // the custom config may explicitly identify the browser-driver to use
     if (options['interface']) {
       packageName = options['interface'];
     }
-    // the custom config may explicitly name the browser
+    // the custom config may explicitly name the browser instance
     if (!options['browserName']) {
       options['interface'] = name;
     }
-    // we need a skaro-browser binding, if we can't find one, we're dead in the water
+    // we need a browser-driver, if we can't find one, we're dead in the water
     if (!this.packages[packageName]) {
       // TODO: warn about "package is not installed"
-      throw new Error('Unknown browser "' + name + '"\nsee http://dalekjs.com/docs/config.html#browser');
+      throw new Error('Unknown browser "' + name + '"\nsee http://dalekjs.com/docs/config.html#browser'
+        + '\ninstalled:\n  ' + Object.keys(this.packages).join('\n  '));
     }
 
-    var Browser = require(packageName);
+    var Driver = require(packageName);
     // initialize the binding (not starting anything yet)
-    this.browserProcess = new Browser(options);
-    this.reporter.debug('Finished loading Browser');
+    this.driver = new Driver(options);
+    this.reporter.debug('Finished loading browser Driver');
   };
 
   Dalek.prototype.start = function() {
@@ -260,7 +262,7 @@ module.exports = (function(){
 
     // this.proxy.start();
 
-    this.browserProcess.start(function(options) {
+    this.driver.start(function(options) {
       this.wd = wd(this).promiseChainRemote(options.wd);
       this.wd.init(options.wd).then(deferred.resolve, deferred.reject);
     }.bind(this), deferred.reject, this.catch);
@@ -289,29 +291,29 @@ module.exports = (function(){
 
     // this.proxy.stop();
 
-    if (!this.browserProcess) {
+    if (!this.driver) {
       return this.Q(true);
     }
 
-    // a browser may not stop in time,
+    // a browser driver may not stop in time,
     // in which case we want to kill the process
     var timeout = setTimeout(deferred.reject, 5000);
     deferred.promise.then(function() {
       clearTimeout(timeout);
     });
 
-    this.browserProcess.stop(deferred.resolve);
+    this.driver.stop(deferred.resolve);
     return deferred.promise;
   };
 
   Dalek.prototype.kill = function() {
     // this.proxy.kill();
 
-    if (!this.browserProcess) {
+    if (!this.driver) {
       return this.Q(true);
     }
 
-    this.browserProcess.kill();
+    this.driver.kill();
   };
 
   Dalek.prototype.endProcess = function() {

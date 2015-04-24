@@ -51,7 +51,6 @@ test.assert.attr('.jumpButton', 'type', 'submit');
 
 module.exports = function(dalek) {
   var format = dalek.format;
-  var driver = dalek.driver;
 
   // plugin meta data
   var meta = {

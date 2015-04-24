@@ -7,7 +7,7 @@
     ]
   },
   "browser.gustav": {
-    "interface": "skaro-browser-phantomjs",
+    "interface": "dalek-driver-phantomjs",
     "browserName": "PhantomJS",
     "args": [
       "--local-to-remote-url-access=true"

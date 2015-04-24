@@ -46,8 +46,7 @@ test.setValue('#ijustwannahaveavalue', 'a value');
 */
 
 module.exports = function(dalek) {
-  var format = dalek.format;
-  var driver = dalek.driver;
+  var format = dalek.format;;
 
   // plugin meta data
   var meta = {

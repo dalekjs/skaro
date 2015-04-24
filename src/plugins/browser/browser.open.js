@@ -37,7 +37,6 @@ test.open('http://dalekjs.com');
 
 module.exports = function(dalek) {
   var format = dalek.format;
-  var driver = dalek.driver;
 
   // plugin meta data
   var meta = {

@@ -43,6 +43,6 @@
     "gulp-jshint": "~1.9.0",
     "gulp-mocha": "~2.0.0",
     "jshint-stylish": "~1.0.0",
-    "skaro-browser-phantomjs": "git://github.com/dalekjs/skaro-browser-phantomjs.git#0.0.4"
+    "dalek-driver-phantomjs": "git://github.com/dalekjs/skaro-browser-phantomjs.git#0.0.5"
   }
 }

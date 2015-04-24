@@ -43,7 +43,6 @@ test.assert.url('http://doctorwhotv.co.uk/', 'URL is as expected');
 
 module.exports = function(dalek) {
   var format = dalek.format;
-  var driver = dalek.driver;
 
   // plugin meta data
   var meta = {

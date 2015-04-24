@@ -98,8 +98,5 @@ module.exports = function(dalek, wd) {
     ).then(matcher.bind(this, options));
   };
 
-  // FIXME: should return {ELEMENT: <id>} for API parity with WD
-
-  // TODO: figure out if this should be addElementPromiseMethod() instead?
   wd.addPromiseMethod('matchElements', matchElements);
 };
