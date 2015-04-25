@@ -70,38 +70,32 @@ module.exports = function(dalek) {
   var handler = function(options) {
     // the name invocations of this plugin will show up as
     var label = 'Click on ' + format.selector(options.selector);
-
     // we're creating an action, give dalek that context
     var handle = new dalek.Handle(label, dalek.Handle.ACTION, meta.name);
-    // data we need to pass to WebDriver
-    var data = {
-      selector: options.selector
-    };
 
-    var handleResults = function() {
-      // all elements were clicked on, if handle was rejected,
-      // this call is ignored by the Promise
+    var handleSuccess = function(data) {
       handle.resolveItems(1);
     };
 
-    var performClick = function (elements) {
-      // talk to WebDriver
-      dalek.wd.click(elements[0]).then(
-        // process WebDriver results
-        handleResults,
-        // WebDriver rejects on empty selector-result with string
-        // any errors (including malformed selector) with DalekError
-        handle.reject
-      ).catch(dalek.catch);
-
+    var handleError = function(data) {
+      // data['jsonwire-error'] = {
+      //   status: 11,
+      //   summary: 'ElementNotVisible',
+      //   detail: 'An element command could not be completed because the element is not visible on the page.'
+      // }
+      // TODO: think about proper presentation of JsonWire errors
+      handle.reject(data['jsonwire-error'].summary);
     };
 
-    dalek.wd.matchElements(options).then(
-      performClick,
-      // WebDriver rejects on empty selector-result with string
-      // any errors (including malformed selector) with DalekError
-      handle.reject
-    ).catch(dalek.catch);
+    var clickElement = function (elements) {
+      return dalek.wd.clickElement(elements[0]);
+    };
+
+    dalek.wd
+      .matchElements(options)
+      .then(clickElement, handle.reject)
+      .then(handleSuccess, handleError)
+      .catch(dalek.catch);
 
     return handle;
   };
