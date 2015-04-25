@@ -24,6 +24,8 @@ running `bin/dalek.cli.js` will show current status…
 bin/dalek.cli.js run --config=example/browser-config.json
 # run a simple test using a custom browser (still phantomjs…)
 bin/dalek.cli.js run --config=example/browser-config.json --browser gustav
+# run a simple test using chrome
+bin/dalek.cli.js run --config=example/browser-config.json --browser chrome
 ```
 
 ## Tools that may be handy for special-purpose plugins
