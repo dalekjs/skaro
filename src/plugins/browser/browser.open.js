@@ -86,7 +86,7 @@ module.exports = function(dalek) {
       return resolved === notFoundUrl;
     };
 
-    var handleResponse = function(url) {
+    var verify = function(url) {
       if (hostNotFound(options.url, url)) {
         handle.reject('could not open url, saw ' + format.link(url) + ' instead');
         return;
@@ -101,7 +101,7 @@ module.exports = function(dalek) {
       // so query current URL
       .url()
       // to verify we're somewhere
-      .then(handleResponse, handle.reject)
+      .then(verify, handle.reject)
       // instead of .done() we inform dalek when something went terribly wrong
       .catch(dalek.catch);
 

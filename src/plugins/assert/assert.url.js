@@ -57,7 +57,7 @@ module.exports = function(dalek) {
     // mark this plugin as capable of handling .not.attribute()
     // this should be done only for assertions that have a boolean result (such as "visible", "hidden")
     // for assertions that take a value for comparison, this should be handled via the expected function callback
-    invertable: true,
+    invertable: false,
   };
 
   var handler = function(options) {
@@ -66,7 +66,7 @@ module.exports = function(dalek) {
     // we're creating an assertion, give dalek that context
     var handle = new dalek.Handle(label, dalek.Handle.ASSERTION, meta.name);
 
-    var handleResponse = function(url) {
+    var verify = function(url) {
       // type of comparison is handed to us by plugin registration
       var result = options.expected(url);
       if (result) {
@@ -85,7 +85,7 @@ module.exports = function(dalek) {
       // query current URL
       .url()
       // verify we're somewhere
-      .then(handleResponse, handle.reject)
+      .then(verify, handle.reject)
       // instead of .done() we inform dalek when something went terribly wrong
       .catch(dalek.catch);
 

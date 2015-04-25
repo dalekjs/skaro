@@ -67,13 +67,13 @@ module.exports = function(dalek) {
     // we're creating an assertion, give dalek that context
     var handle = new dalek.Handle(label, dalek.Handle.ASSERTION, meta.name);
 
-    var isSelectedElements = function (elements) {
+    var trigger = function (elements) {
       return dalek.Q.all(elements.map(function(element) {
         return dalek.wd.isSelected(element);
       }));
     };
 
-    var verifySelectedStates = function(values) {
+    var verify = function(values) {
       // walk results, abort with the first failure
       // we always get an array returned, even if a single element was requested
       values.some(function(value, index) {
@@ -95,8 +95,8 @@ module.exports = function(dalek) {
       // using dalek's simplified element matcher
       .matchElements(options)
       // we dispatch our real test
-      .then(isSelectedElements, handle.reject)
-      .then(verifySelectedStates, handle.reject)
+      .then(trigger, handle.reject)
+      .then(verify, handle.reject)
       // instead of .done() we inform dalek when something went terribly wrong
       .catch(dalek.catch);
 

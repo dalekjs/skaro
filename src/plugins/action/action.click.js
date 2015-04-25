@@ -87,13 +87,13 @@ module.exports = function(dalek) {
       handle.reject(data['jsonwire-error'].summary);
     };
 
-    var clickElement = function (elements) {
+    var trigger = function (elements) {
       return dalek.wd.clickElement(elements[0]);
     };
 
     dalek.wd
       .matchElements(options)
-      .then(clickElement, handle.reject)
+      .then(trigger, handle.reject)
       .then(handleSuccess, handleError)
       .catch(dalek.catch);
 

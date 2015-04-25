@@ -74,17 +74,17 @@ module.exports = function(dalek) {
       return element;
     };
 
-    var verify = function(values) {
-      handle.resolveItems(values.length);
-    };
-
     var trigger = function(elements) {
       return dalek.Q.all(elements.map(function(element) {
-        return dalek.wd.execute(setValueInBrowser, [
-          element,
-          options.value
-        ]);
+        return dalek.wd.execute(
+          setValueInBrowser,
+          [element, options.value]
+        );
       }));
+    };
+
+    var verify = function(values) {
+      handle.resolveItems(values.length);
     };
 
     dalek.wd

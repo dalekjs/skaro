@@ -81,6 +81,12 @@ module.exports = function(dalek) {
     // we're creating an assertion, give dalek that context
     var handle = new dalek.Handle(label, dalek.Handle.ASSERTION, meta.name);
 
+    var trigger = function (elements) {
+      return dalek.Q.all(elements.map(function(element) {
+        return dalek.wd.getAttribute(element, options.name);
+      }));
+    };
+
     var verify = function(values) {
       // walk results, abort with the first failure
       // we always get an array returned, even if a single element was requested
@@ -99,12 +105,6 @@ module.exports = function(dalek) {
       // all tests passed, if handle was rejected,
       // this call is ignored by the Promise
       handle.resolveItems(values.length);
-    };
-
-    var trigger = function (elements) {
-      return dalek.Q.all(elements.map(function(element) {
-        return dalek.wd.getAttribute(element, options.name);
-      }));
     };
 
     // load all elements
