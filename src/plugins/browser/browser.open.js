@@ -56,9 +56,23 @@ module.exports = function(dalek) {
     // we're creating an action, give dalek that context
     var handle = new dalek.Handle(label, dalek.Handle.ACTION, meta.name);
 
+    var hostNotFound = function(requested, resolved) {
+      if (!resolved) {
+        return true;
+      }
+      if (requested === resolved) {
+        return false;
+      }
+      // FIXME: bad url resolution should be covered by the drivers
+      return false
+        // PhantomJS
+        || resolved === 'about:blank'
+        // Chrome
+        || resolved === 'data:text/html,chromewebdata';
+    }
+
     var handleResponse = function(url) {
-      // if a domain could not be resolved, browser's default to about:blank
-      if (!url || (url === 'about:blank' && url !== options.url)) {
+      if (hostNotFound(options.url, url)) {
         handle.reject('could not open url, saw ' + format.link(url) + ' instead');
         return;
       }
