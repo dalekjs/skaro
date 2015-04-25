@@ -67,7 +67,7 @@ module.exports = function(dalek) {
     // mark this plugin as capable of handling .not.attribute()
     // this should be done only for assertions that have a boolean result (such as "visible", "hidden")
     // for assertions that take a value for comparison, this should be handled via the expected function callback
-    invertable: true,
+    invertable: false,
   };
 
   var handler = function(options) {
@@ -81,14 +81,7 @@ module.exports = function(dalek) {
     // we're creating an assertion, give dalek that context
     var handle = new dalek.Handle(label, dalek.Handle.ASSERTION, meta.name);
 
-    // data we need to pass to WebDriver
-    var data = {
-      selector: options.selector,
-      match: options.match,
-      attribute: options.name
-    };
-
-    var handleResults = function(values) {
+    var verify = function(values) {
       // walk results, abort with the first failure
       // we always get an array returned, even if a single element was requested
       values.some(function(value, index) {
@@ -108,32 +101,18 @@ module.exports = function(dalek) {
       handle.resolveItems(values.length);
     };
 
-    var performAttributeAssertion = function (elements) {
-      // talk to WebDriver
-      // collect the attribute information from all matched elements
-      var deferreds = [];
-      elements.forEach(function (element) {
-        deferreds.push(dalek.wd.getAttribute(element, data.attribute));
-      });
-
-      // process results when all element attribute values have been collected
-      dalek.Q.all(deferreds).then(
-        // process WebDriver results
-        handleResults,
-        // WebDriver rejects on empty selector-result with string
-        // any errors (including malformed selector) with DalekError
-        handle.reject
-      ).catch(dalek.catch);
-
+    var trigger = function (elements) {
+      return dalek.Q.all(elements.map(function(element) {
+        return dalek.wd.getAttribute(element, options.name);
+      }));
     };
 
     // load all elements
-    dalek.wd.matchElements(options).then(
-      performAttributeAssertion,
-      // WebDriver rejects on empty selector-result with string
-      // any errors (including malformed selector) with DalekError
-      handle.reject
-    ).catch(dalek.catch);
+    dalek.wd
+      .matchElements(options)
+      .then(trigger, handle.reject)
+      .then(verify, handle.reject)
+      .catch(dalek.catch);
 
     return handle;
   };
