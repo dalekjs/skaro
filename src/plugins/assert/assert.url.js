@@ -4,19 +4,19 @@
   category: 'navigation'
 }
 
-# Name Of Plugin
+# Assert URL
 
-Description Of Plugin
+Assert the current document's URL.
 
 
 ## Examples
 
 ```js
 // compact notation
-assert.url('expected text')
+assert.url('http://dalekjs.com')
 // option notation
 assert.url({
-  expected: 'expected text'
+  expected: 'http://dalekjs.com'
 })
 ```
 
