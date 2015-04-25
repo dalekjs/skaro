@@ -43,7 +43,7 @@
     "gulp-jshint": "~1.9.0",
     "gulp-mocha": "~2.0.0",
     "jshint-stylish": "~1.0.0",
-    "dalek-driver-phantomjs": "git://github.com/dalekjs/dalek-driver-phantomjs.git#0.0.5",
-    "dalek-driver-chrome": "git://github.com/dalekjs/dalek-driver-chrome.git#0.0.2"
+    "dalek-driver-phantomjs": "git://github.com/dalekjs/dalek-driver-phantomjs.git#0.0.8",
+    "dalek-driver-chrome": "git://github.com/dalekjs/dalek-driver-chrome.git#0.0.4"
   }
 }

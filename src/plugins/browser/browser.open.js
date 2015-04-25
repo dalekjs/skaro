@@ -77,15 +77,13 @@ module.exports = function(dalek) {
       if (!resolved) {
         return true;
       }
-      if (requested === resolved) {
+
+      var notFoundUrl = dalek.driver.capability && dalek.driver.capability['POST :sessionId/url hostNotFoundUrl']
+      if (requested === resolved || !notFoundUrl) {
         return false;
       }
-      // FIXME: bad url resolution should be covered by the drivers
-      return false
-        // PhantomJS
-        || resolved === 'about:blank'
-        // Chrome
-        || resolved === 'data:text/html,chromewebdata';
+
+      return resolved === notFoundUrl;
     };
 
     var handleResponse = function(url) {
@@ -98,11 +96,11 @@ module.exports = function(dalek) {
     };
 
     dalek.wd
-      // open URL
+      // opening URL never fails
       .get(options.url)
-      // query current URL
+      // so query current URL
       .url()
-      // verify we're somewhere
+      // to verify we're somewhere
       .then(handleResponse, handle.reject)
       // instead of .done() we inform dalek when something went terribly wrong
       .catch(dalek.catch);
