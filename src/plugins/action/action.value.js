@@ -81,7 +81,7 @@ module.exports = function(dalek) {
     var trigger = function(elements) {
       return dalek.Q.all(elements.map(function(element) {
         return dalek.wd.execute(setValueInBrowser, [
-          { ELEMENT: element },
+          element,
           options.value
         ]);
       }));

@@ -26,13 +26,10 @@ module.exports = function(dalek, wd) {
       return Q.reject('No elements found');
     }
 
-    // we have to work with WD element references
-    var _elements = _.pluck(elements, 'value');
-
     // check if an `index` is given, try to pull that element
     if (_.isNumber(options.match)) {
-      if (_elements[options.match]) {
-        return [_elements[options.match]];
+      if (elements[options.match]) {
+        return [elements[options.match]];
       } else {
         return Q.reject('Index ' + format.index(options.match) + ' not found');
       }
@@ -41,14 +38,14 @@ module.exports = function(dalek, wd) {
     // filter first, last, all
     switch (options.match) {
       case 'first':
-        return _elements.slice(0, 1);
+        return elements.slice(0, 1);
 
       case 'last':
-        return _elements.slice(-1);
+        return elements.slice(-1);
 
       case 'any':
       case 'all':
-        return _elements;
+        return elements;
 
       default:
         return Q.reject(new dalek.Error({
@@ -64,13 +61,6 @@ module.exports = function(dalek, wd) {
   }
 
   function matchElementsCallback(options, elements) {
-    // WebDriver is inconsistent in the way it provides and receives nodes
-    // while {value: <wdID>} is what comes out, {ELEMENT: <wdID>} is what goes in
-    // see https://code.google.com/p/selenium/wiki/JsonWireProtocol#WebElement_JSON_Object
-    var _elements = elements.map(function(element) {
-      return { ELEMENT: element.value };
-    });
-
     var executeMatchInBrowser = function(element, index, array) {
       // execute the match callback function for every element
       // see https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/execute
@@ -80,13 +70,10 @@ module.exports = function(dalek, wd) {
       });
     }.bind(this);
 
-    return Q.all(_elements.map(executeMatchInBrowser)).then(function(matches) {
+    return Q.all(elements.map(executeMatchInBrowser)).then(function(matches) {
       return matches.filter(function(element) {
         // remove whatever did not match
         return element.valid;
-      }).map(function(element) {
-        // we're dealing in references only
-        return element.ELEMENT;
       });
     });
   }
