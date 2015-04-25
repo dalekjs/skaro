@@ -315,7 +315,7 @@ module.exports = function(dalek) {
       );
     }
 
-    if (typeof args[0] === 'object') {
+    if (typeof args[0] === 'object' && !(args[0] instanceof dalek.Selector)) {
       // e.g. assert.foo({ selector: '.selector', timeout: 123 })
       _.extend(options, args[0]);
     } else {
@@ -325,7 +325,7 @@ module.exports = function(dalek) {
       });
       // e.g. assert.foo('.selector', { timeout: 123 })
       var trailingOptions = args[args.length -1];
-      if (meta.signature.length === args.length -1 && typeof trailingOptions === 'object') {
+      if (meta.signature.length === args.length -1 && typeof trailingOptions === 'object' && !(trailingOptions instanceof dalek.Selector)) {
         Object.keys(trailingOptions).forEach(function(key) {
           // warn when option was specified twice
           if (meta.signature.indexOf(key) !== -1) {

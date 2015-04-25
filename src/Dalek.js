@@ -5,13 +5,16 @@ var Q = require('q');
 var _ = require('lodash');
 var getStack = require('./util/getStack');
 var interceptRegistry = require('./core/Registry.intercept');
+var findInstalledPackages = require('./util/find-installed-packages');
+var listAvailableBrowsers = require('./util/list-available-browsers');
 // convenience accessors
 var _DalekError = require('./core/DalekError');
 var _Selector = require('./core/Selector');
 var _Handle = require('./core/Handle');
 var _RunLoop = require('./core/RunLoop');
 // runtime interfaces
-var _Driver = require('./core/Driver');
+var wd = require('./core/wd');
+// var _Proxy = require('./core/Proxy');
 var _Format = require('./core/Format');
 var _Reporter = require('./core/Reporter');
 var _Registry = require('./core/Registry');
@@ -56,7 +59,7 @@ module.exports = (function(){
 
     // runtime interfaces
     // (inherit global config)
-    this.driver = new (_Driver(this))(this._options);
+    // this.proxy = new (_Proxy(this))(this._options);
     this.format = new (_Format(this))(this._options);
     this.reporter = new (_Reporter(this))(this._options);
     this.registry = new (_Registry(this))(this._options);
@@ -68,9 +71,12 @@ module.exports = (function(){
 
     // runtime data
     this._suites = [];
+    this.packages = {};
 
     this.catch = this.catch.bind(this);
     this.catchStack = this.catchStack.bind(this);
+    this._loadPackages = this._loadPackages.bind(this);
+    this._loadDriver = this._loadDriver.bind(this);
 
     this.runLoop = new this.RunLoop(this.options());
     this.beforeDalek = this.runLoop.beforeFirst.bind(this.runLoop, 'Dalek.beforeDalek');
@@ -91,7 +97,7 @@ module.exports = (function(){
         // TODO: move this to start() so it can be reverted in stop()
         this._globalizePlugins(namespace, this[namespace]);
       }
-    }.bind(this));
+    }, this);
   };
 
   Dalek.prototype._unregisterPlugins = function() {
@@ -114,7 +120,7 @@ module.exports = (function(){
     } else {
       global[namespace] = plugins;
     }
-    
+
   };
 
   Dalek.prototype.catch = function(error) {
@@ -141,7 +147,6 @@ module.exports = (function(){
     this._suites.push(suite);
   };
 
-
   Dalek.prototype.load = function() {
     var dalek = this;
     var init = this.config.getInit();
@@ -158,43 +163,127 @@ module.exports = (function(){
     // load dalek plugins
     this.registry.initialize();
     // load user files
-    return this.Q({loaded: [], skipped: [], seen: {}}).then(function(index) {
-      dalek.reporter.debug('Loading user files');
-      groups.forEach(function(files) {
-        files.forEach(function(path) {
-          if (index.seen[path]) {
-            dalek.reporter.debug('Already examined ' + dalek.format.literal(path));
-            return;
-          }
+    var userFiles = this._loadUserFiles(groups);
+    // load installed bundles
+    return this._loadPackages()
+      // identify browser driver bundle
+      .then(this._loadDriver)
+      // return the user files, because that mapping is not easily acessible
+      .thenResolve(userFiles);
+  };
 
-          index.seen[path] = true;
-          var file = require(path);
-          if (typeof file !== 'function') {
-            index.skipped.push(path);
-            dalek.reporter.warning('Ignoring ' + dalek.format.literal(path) + ' because it is not a function');
-            return;
-          }
+  Dalek.prototype._loadUserFiles = function(groups) {
+    this.reporter.debug('Loading user files');
+    var index = {
+      loaded: [],
+      skipped: [],
+      seen: {}
+    };
 
-          if (file.length !== 1) {
-            index.skipped.push(path);
-            dalek.reporter.warning('Ignoring ' + dalek.format.literal(path) + ' because the function does not expect exactly 1 parameter');
-            return;
-          }
+    groups.forEach(function(files) {
+      files.forEach(function(path) {
+        if (index.seen[path]) {
+          this.reporter.debug('Already examined ' + this.format.literal(path));
+          return;
+        }
 
-          dalek.reporter.debug('Initializing ' + dalek.format.literal(path));
-          file(dalek);
-          index.loaded.push(path);
-        });
+        index.seen[path] = true;
+        var file = require(path);
+        if (typeof file !== 'function') {
+          index.skipped.push(path);
+          this.reporter.warning('Ignoring ' + this.format.literal(path) + ' because it is not a function');
+          return;
+        }
+
+        if (file.length !== 1) {
+          index.skipped.push(path);
+          this.reporter.warning('Ignoring ' + this.format.literal(path) + ' because the function does not expect exactly 1 parameter');
+          return;
+        }
+
+        this.reporter.debug('Initializing ' + this.format.literal(path));
+        file(this);
+        index.loaded.push(path);
+      }, this);
+    }, this);
+
+    this.reporter.debug('Finished loading user files');
+    return index;
+  };
+
+  Dalek.prototype._loadPackages = function() {
+    this.reporter.debug('Loading list of installed Dalek packages');
+    return findInstalledPackages(function(packageName) {
+      return packageName.slice(0, 5) === 'dalek';
+    }).then(function(packages) {
+      this.packages = packages.map;
+      this.reporter.debug('Finished loading list of installed Dalek packages');
+    }.bind(this));
+  };
+
+  Dalek.prototype._loadDriver = function() {
+    var name = this._options.browser;
+    if (Array.isArray(name)) {
+      name = name[0];
+    }
+
+    if (!name) {
+      throw new this.Error({
+        message: 'Cannot run without a browser specified!',
+        code: 'USAGE',
+        stack: false,
+        extra: {
+          title: 'Browser Documentation',
+          url: 'http://dalekjs.com/docs/config.html#browser',
+          extended: listAvailableBrowsers(this),
+        }
       });
+    }
 
-      dalek.reporter.debug('Finished loading user files');
-      return index;
-    });
+    this.reporter.debug('Loading browser Driver');
+    // the given browser could be a valid browser-driver
+    var packageName = 'dalek-driver-' + name;
+    // there may be custom config for running the binding
+    var options = _.clone(this._options['browser.' + name] || {});
+    // the custom config may explicitly identify the browser-driver to use
+    if (options['interface']) {
+      packageName = options['interface'];
+    }
+    // the custom config may explicitly name the browser instance
+    if (!options['browserName']) {
+      options['interface'] = name;
+    }
+    // we need a browser-driver, if we can't find one, we're dead in the water
+    if (!this.packages[packageName]) {
+      throw new this.Error({
+        message: 'Unknown browser "' + this.format.literal(name) + '"',
+        code: 'USAGE',
+        stack: false,
+        extra: {
+          title: 'Browser Documentation',
+          url: 'http://dalekjs.com/docs/config.html#browser',
+          extended: listAvailableBrowsers(this),
+        }
+      });
+    }
+
+    var Driver = require(packageName);
+    // initialize the binding (not starting anything yet)
+    this.driver = new Driver(options);
+    this.reporter.debug('Finished loading browser Driver');
   };
 
   Dalek.prototype.start = function() {
-    // TODO: start all services required to run
-    return this.Q(true);
+    var deferred = Q.defer();
+
+    // this.proxy.start();
+
+    this.driver.start(function(options) {
+      this.wd = wd(this).promiseChainRemote(options.wd);
+      this.wd.init(options.wd).then(deferred.resolve, deferred.reject);
+    }.bind(this), deferred.reject, this.catch);
+
+    return deferred.promise;
   };
 
   Dalek.prototype.run = function() {
@@ -213,15 +302,39 @@ module.exports = (function(){
   };
 
   Dalek.prototype.stop = function() {
+    var deferred = this.Q.defer();
     this._unregisterPlugins();
-    // TODO: gracefully stop all services
-    // this should be done with a timeout
-    return this.Q(true);
+
+    // this.proxy.stop();
+
+    if (!this.driver) {
+      return this.Q(true);
+    }
+
+    // a browser driver may not stop in time,
+    // in which case we want to kill the process
+    var timeout = setTimeout(deferred.reject, 5000);
+    deferred.promise.then(function() {
+      clearTimeout(timeout);
+    });
+
+    this.wd.quit().then(function() {
+      this.driver.stop(function() {
+        deferred.resolve()
+      });
+    }.bind(this));
+
+    return deferred.promise;
   };
 
   Dalek.prototype.kill = function() {
-    // TODO: kill -9 everything that is still alive
-    return this.Q(true);
+    // this.proxy.kill();
+
+    if (!this.driver) {
+      return this.Q(true);
+    }
+
+    this.driver.kill();
   };
 
   Dalek.prototype.endProcess = function() {

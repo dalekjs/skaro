@@ -13,6 +13,7 @@ module.exports = function (dalek, assert, action, wait) {
       // value: "first", "last", "all", 123, function
       // default: 'first'
       // "all" may not be supported by every plugin
+      // TODO: Think about implementing an 'any' strategy
       match: 'first',
       // filter callback for imperative element selection
       // function is executed in browser space
@@ -61,7 +62,7 @@ module.exports = function (dalek, assert, action, wait) {
       // used internally to provide error messages that make sense
       called: [{ name: 'functionName', file: 'file.js', line: 123 }],
 
-      // the arguments (as array) at call-time, this may be useful to plugins such as log.* 
+      // the arguments (as array) at call-time, this may be useful to plugins such as log.*
       // where you want to allow log.message('key1', 'key2', 'key3')
       arguments: [],
 

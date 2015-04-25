@@ -4,6 +4,8 @@ module.exports = function(config) {
   var Dalek = require('../../index.js');
   var dalek = new Dalek(config);
 
+  // TODO: how handle signals like SIGINT? - https://nodejs.org/api/process.html#process_signal_events
+
   return dalek.load()
     .then(dalek.start.bind(dalek))
     .then(dalek.run.bind(dalek))

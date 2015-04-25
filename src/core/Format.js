@@ -45,5 +45,9 @@ module.exports = function(dalek) {
     return expected.displayName || expected.name || '@function@';
   };
 
+  Format.prototype.link = function(url, title) {
+    return (title ? (title + ' ') : '') + '<' + url + '>';
+  };
+
   return Format;
 };

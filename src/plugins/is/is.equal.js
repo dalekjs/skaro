@@ -41,7 +41,10 @@ module.exports = function(dalek) {
     signature: ['expected'],
     required: ['expected'],
     displayName: function(options) {
-      return 'equals ' + dalek.format.literal(options.expected);
+      /*jshint laxbreak:true */
+      return (options.inverted ? 'does not equal ' : 'equals ')
+        + dalek.format.literal(options.expected);
+      /*jshint laxbreak:false */
     },
   };
 

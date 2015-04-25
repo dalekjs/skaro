@@ -52,7 +52,6 @@ test.click('#faq');
 
 module.exports = function(dalek) {
   var format = dalek.format;
-  var driver = dalek.driver;
 
   // plugin meta data
   var meta = {
@@ -65,47 +64,38 @@ module.exports = function(dalek) {
     // list of properties that must be specified at the very least
     required: ['selector'],
     // mark this plugin capable of handling {match: "all"}
-    iterator: true
+    iterator: false
   };
 
   var handler = function(options) {
     // the name invocations of this plugin will show up as
     var label = 'Click on ' + format.selector(options.selector);
-
     // we're creating an action, give dalek that context
     var handle = new dalek.Handle(label, dalek.Handle.ACTION, meta.name);
 
-    // data we need to pass to WebDriver
-    var data = {
-      selector: options.selector
+    var handleSuccess = function(data) {
+      handle.resolveItems(1);
     };
 
-    var handleResults = function(values) {
-      // walk results, abort with the first failure
-      // we always get an array returned, even if a single element was requested
-      values.some(function(value, index) {
-        if (value === true) {
-          // the click was performed
-          return;
-        }
-
-        // Driver responds with a semi-useful message
-        handle.rejectWithMessage(index, options.message, value);
-      });
-
-      // all elements were clicked on, if handle was rejected,
-      // this call is ignored by the Promise
-      handle.resolveItems(values.length);
+    var handleError = function(data) {
+      // data['jsonwire-error'] = {
+      //   status: 11,
+      //   summary: 'ElementNotVisible',
+      //   detail: 'An element command could not be completed because the element is not visible on the page.'
+      // }
+      // TODO: think about proper presentation of JsonWire errors
+      handle.reject(data['jsonwire-error'].summary);
     };
 
-    // talk to WebDriver
-    driver.element.click(data).then(
-      // process WebDriver results
-      handleResults,
-      // WebDriver rejects on empty selector-result with string
-      // any errors (including malformed selector) with DalekError
-      handle.reject
-    ).catch(dalek.catch);
+    var trigger = function (elements) {
+      return dalek.wd.clickElement(elements[0]);
+    };
+
+    dalek.wd
+      .matchElements(options)
+      .then(trigger, handle.reject)
+      .then(handleSuccess, handleError)
+      .catch(dalek.catch);
 
     return handle;
   };

@@ -129,42 +129,47 @@ module.exports = function(dalek) {
     // handle of failed task in Suite
     var _message = chalk.bgRed.white(message);
     var _error = chalk.bgBlack.red('⌞ error');
+    var _indent = '';
     switch (handle.type) {
       case Handle.SUITE:
         console.log(_error, chalk.bgRed.white('Suite failed'), 'in Unit', chalk.bgBlack.yellow(handle.operationsPerformed), 'of', chalk.bgBlack.yellow(handle.operationsPlanned));
         break;
 
       case Handle.UNIT:
-        console.log('', _error, chalk.bgRed.white('Unit failed'), 'in Task', chalk.bgBlack.yellow(handle.operationsPerformed), 'of', chalk.bgBlack.yellow(handle.operationsPlanned));
+        console.log(_indent, _error, chalk.bgRed.white('Unit failed'), 'in Task', chalk.bgBlack.yellow(handle.operationsPerformed), 'of', chalk.bgBlack.yellow(handle.operationsPlanned));
         break;
 
       case Handle.ASSERTION:
-        console.log('  ', _error, _message);
+        _indent = '  ';
+        console.log(_indent, _error, _message);
         break;
 
       case Handle.UNTIL:
-        console.log('  ', _error, _message);
+        _indent = '  ';
+        console.log(_indent, _error, _message);
         break;
 
       case Handle.UNIT_BEFORE_FIRST:
       case Handle.UNIT_BEFORE_EACH:
       case Handle.UNIT_AFTER_EACH:
       case Handle.UNIT_AFTER_LAST:
-        console.log(' ', _error, chalk.bgRed.grey('Unit failed'), 'in Task', chalk.bgBlack.yellow(handle.operationsPerformed), 'of', chalk.bgBlack.yellow(handle.operationsPlanned));
+        _indent = ' ';
+        console.log(_indent, _error, chalk.bgRed.grey('Unit failed'), 'in Task', chalk.bgBlack.yellow(handle.operationsPerformed), 'of', chalk.bgBlack.yellow(handle.operationsPlanned));
         break;
 
       case Handle.UNIT_MACRO:
-        console.log('  ', _error, chalk.bgRed.white('Macro failed'), 'in Task', chalk.bgBlack.yellow(handle.operationsPerformed), 'of', chalk.bgBlack.yellow(handle.operationsPlanned));
+        _indent = '  ';
+        console.log(_indent, _error, chalk.bgRed.white('Macro failed'), 'in Task', chalk.bgBlack.yellow(handle.operationsPerformed), 'of', chalk.bgBlack.yellow(handle.operationsPlanned));
         break;
 
       //case Handle.ACTION:
       default:
-        console.log('  ', _error, _message);
+        _indent = '  ';
+        console.log(_indent, _error, _message);
         break;
     }
+    this.printExtra(message);
   };
-
-
 
   Reporter.prototype.log = function() {
     if (!this.options.debug) {
@@ -195,20 +200,20 @@ module.exports = function(dalek) {
   };
 
   Reporter.prototype.error = function(error) {
-    // you should not be able to silence errors.
-    // if (this.options.silent) {
-    //   return;
-    // }
 
     // TODO: should Reporter#error() print to STDERR?
     console.log('\n');
     console.log(chalk.bgRed.white.bold(error.message));
 
-    if (!error._stack) {
-      error._stack = dalek.getStack(null, error);
+    if (error._stack !== false) {
+      if (!error._stack) {
+        error._stack = dalek.getStack(null, error);
+      }
+
+      this.printStack(error._stack, null, error.showStackTillName);
     }
 
-    this.printStack(error._stack, null, error.showStackTillName);
+    this.printExtra(error);
   };
 
   Reporter.prototype.printStack = function(stack, level, showStackTillName) {
@@ -226,6 +231,28 @@ module.exports = function(dalek) {
       console.log(' at ' + chalk.red(callSite.name) + ' (' + chalk.yellow(callSite.file) + ':' + chalk.cyan(callSite.line) + ')' );
       return false;
     });
+  };
+
+  Reporter.prototype.printExtra = function(error, indent) {
+    if (!(error instanceof dalek.Error) || !error.extra) {
+      return;
+    }
+
+    var _indent = [];
+    if (indent) {
+      _indent.push(indent);
+    }
+
+    if (error.extra.extended) {
+      console.log.apply(console, _indent.concat(
+        chalk.bgCyan.black(error.extra.extended)
+      ));
+    }
+    if (error.extra.url) {
+      console.log.apply(console, _indent.concat(
+        chalk.bgCyan.blue('see ' + dalek.format.link(error.extra.url, error.extra.title))
+      ));
+    }
   };
 
   return Reporter;
