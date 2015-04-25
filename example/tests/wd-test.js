@@ -37,8 +37,12 @@ module.exports = function(dalek) {
           expected: 'unchecked_checkbox',
           name: 'name',
         }),
+
         // type something (without keyboard events for every character)
-        action.setValue('input[type="text"]', 'Foo', { match: 'all' }),
+        action.value('input[type="text"]', 'Foo', { match: 'all' }),
+        assert.value('input[type="text"]', is.equal('Foo'), { match: 'all' }),
+        assert.value('input[type="text"]', is.not.equal('Bar'), { match: 'all' }),
+
         // test multiple attributes
         // TODO: wouldn't this need to test *property* instead of *attribute*?
         assert.attribute('input[type="text"]', 'value', 'Foo', {
