@@ -3,23 +3,40 @@
   category: 'navigation'
 }
 
-# Name Of Plugin
+# Browser Open URL
 
-Description Of Plugin
+Tell the browser to open an URL.
 
 
 ## Examples
 
 ```js
+// compact notation
 browser.open('http://dalekjs.com')
+// option notation
+browser.open({
+  url: 'http://dalekjs.com'
+})
 ```
 
 
 ## Notes
 
+If the browser can't resolve the host the action fails.
+However opening the url `http://example.com` does not mean *that* URL is the one the browser lands on.
+An HTTP redirect could have forwarded to `http://example.com/entry-point.html`, or JavaScript could've
+altered the URL to `http://example.com/#some-anchor`. To verify what URL is currently displayed by the
+browser use [assert.url](#plugin.assert.url).
+
 
 ## Compatibility
 
+The URL browsers redirect to when they can't resolve a host varies:
+
+* PhantomJS: `about:blank`
+* Chrome: `data:text/html,chromewebdata`
+
+*When* the browser considers a page loaded is not defined and thus varies from browser to browser - [#4: make resolution consistent across browsers](https://github.com/dalekjs/skaro/issues/4)
 
 ## See Also
 
@@ -69,7 +86,7 @@ module.exports = function(dalek) {
         || resolved === 'about:blank'
         // Chrome
         || resolved === 'data:text/html,chromewebdata';
-    }
+    };
 
     var handleResponse = function(url) {
       if (hostNotFound(options.url, url)) {
