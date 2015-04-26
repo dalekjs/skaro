@@ -9,6 +9,7 @@ var Dalek = require('../../src/Dalek');
 module.exports = function createDalekTestInstance(options, files) {
   options = _.extend(_.clone(options || {}), {
     silent: true,
+    browser: 'phantomjs',
     plugins: path.resolve(__dirname, 'plugins') + '/**/*.js',
   });
 
