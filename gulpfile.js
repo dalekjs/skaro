@@ -11,14 +11,14 @@ gulp.task('test', function () {
   } catch (e) {}
 
   return gulp.src('./test/**/*.test.js', {read: false})
-    .pipe(cover.instrument({
-      pattern: ['./src/**'],
-      debugDirectory: 'debug'
-    }))
+    // .pipe(cover.instrument({
+    //   pattern: ['./src/**'],
+    //   debugDirectory: 'debug'
+    // }))
     .pipe(mocha({reporter: 'spec'}))
-    .pipe(cover.report({
-      outFile: 'report/coverage.html'
-    }));
+    // .pipe(cover.report({
+    //   outFile: 'report/coverage.html'
+    // }));
 });
 
 gulp.task('lint', function() {
