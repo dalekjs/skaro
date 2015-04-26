@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>I am a page title - DalekJS</title>
+	<meta charset="utf-8" />
+  <script type="text/javascript" src="./jquery-2.1.0.js"></script>
+  <style>
+    @media all and (max-width: 500px) {
+      #only-visible-above-500px {
+        display: none;
+      }
+    }
+
+    #superColoredElement {
+      color: green;
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>This page is a Selenium sandbox</h1>
+
+  <a href="#" id="alert_alert">I make alert</a>
+  <a href="#" id="alert_prompt">I make prompt</a>
+  <a href="#" id="alert_confirm">I make confirm</a>
+
+  <p id="answer"></p>
+
+  <p id="superColoredElement">I am beautiful</p>
+
+  I am some page content
+
+  <div id="i_am_an_id" class="i_am_a_class">I am a div</div>
+
+  <a href="/test-guinea-pig2.html" id="i am a link">i am a link</a>
+
+  <div>i appear 3 times</div>
+  <div>i appear 3 times</div>
+  <div>i appear 3 times</div>
+
+  <div id="invisible-div" style="display:none;">i am invisible</div>
+
+  <form id="the_forms_id">
+    <p>
+      <input id="i_am_a_textbox" name="i_am_a_textbox" type="text" value="i has no focus" />
+    </p>
+    <input type="checkbox" id="unchecked_checkbox" name="unchecked_checkbox"/>
+    <input type="checkbox" id="checked_checkbox" name="checked_checkbox" checked="checked"/>
+    <select id="select_elm" name="select_elm">
+      <option value="9">Eccleston</option>
+      <option selected value="10">Tennant</option>
+      <option value="11">Smith</option>
+    </select>
+    <input id="disabled_input" type="text" size="50" name="disabled_input" disabled></input>
+  </form>
+
+  <h4 style="display: none">Not visible!</h4>
+
+  <p id="fixed-dimensions" style="width: 100px; height: 100px; background: #000, color: #fff">I have fixed dimensions</p>
+
+  <span id="your_comments">
+  Your comments: None<br/>
+  </span>
+
+  ñ☃
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $("#i_am_a_textbox")
+        .focus(function(){$(this).val("");})
+        .blur(function(){$(this).val("i has no focus");});
+
+      // form submit
+      $('#jumpContact').on('submit', function (event) {
+        event.preventDefault();
+        $('#comment_value').text($('textarea').val());
+        $('#email_value').text($('#fbemail').val());
+      });
+
+      // alert, prompt & confirm
+      $('#alert_alert').on('click', function (event) {
+        event.preventDefault();
+        alert('I am an alert');
+      });
+
+      $('#alert_prompt').on('click', function (event) {
+        event.preventDefault();
+        var answer = prompt('I am a prompt');
+        $('#answer').text(answer ? answer : 'Nope.');
+      });
+
+      $('#alert_confirm').on('click', function (event) {
+        event.preventDefault();
+        var answer = confirm('I am a confirm');
+        $('#answer').text(answer ? 'Yes' : 'No');
+      });
+    });
+  </script>
+
+  <div class="border">
+
+    <script type="text/javascript">
+    </script>
+
+    <form id="jumpContact" method="post">
+      <p>
+        <label for="fbemail">Email:</label><br>
+        <input id="fbemail" type="text" size="50" name="fbemail" placeholder="We would really like to follow up!"></input>
+      </p>
+      <p>
+        <label for="comments">Comments:</label><br>
+        <textarea id="comments" style="width:400px;height:100px" name="comments" placeholder="Thanks in advance, this is really helpful."></textarea>
+      </p>
+      <div style="float:left">
+        <input class="jumpButton" type="submit" name="submit" id="submit" value="send" />
+      </div>
+    </form>
+    <div class="formMessage"></div>
+    <br><br>
+
+    <center>
+      <input style="display:none" class="jumpOkButton" type="button"  value="OK" onclick="resetFeedback();"/>
+    </center>
+
+    <p id="email_value"></p>
+    <p id="comment_value"></p>
+
+    <p class="multi_class">Same class as below</p>
+    <p class="multi_class">Same class as above</p>
+
+    <p class="multi_class_vis">Same class as below</p>
+    <p class="multi_class_vis">Same class as above</p>
+    <p class="multi_class_vis" style="diplay: none">Same class as above</p>
+  </div>
+
+  <strong id="only-visible-above-500px">I'am not visible on mobile</strong>
+
+  <a id="open-pop-up" href="iframecont.html" onclick="javascript:void window.open('iframecont.html','pop-up-window','width=200,height=200,toolbar=0,menubar=0,location=0,status=0,scrollbars=0,resizable=0,left=0,top=0');return false;">Pop-up Window</a>
+
+  <iframe id="a-frame" src="iframecont.html"></iframe>
+
+  <a id="top-anchor" href="#top">Top</a>
+</body>
+</html>
