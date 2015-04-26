@@ -3,8 +3,8 @@
 var path = require('path');
 var _ = require('lodash');
 
-var Config = require('../src/config/Config');
-var Dalek = require('../src/Dalek');
+var Config = require('../../src/config/Config');
+var Dalek = require('../../src/Dalek');
 
 module.exports = function createDalekTestInstance(options, files) {
   options = _.extend(_.clone(options || {}), {
