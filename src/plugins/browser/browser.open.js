@@ -53,6 +53,7 @@ test.open('http://dalekjs.com');
 */
 
 module.exports = function(dalek) {
+  var URL = require('url');
   var format = dalek.format;
 
   // plugin meta data
@@ -73,17 +74,28 @@ module.exports = function(dalek) {
     // we're creating an action, give dalek that context
     var handle = new dalek.Handle(label, dalek.Handle.ACTION, meta.name);
 
+    var notFoundRedirect = dalek.driver.capability && dalek.driver.capability['POST :sessionId/url hostNotFoundRedirect'];
+    var notFoundUrl = dalek.driver.capability && dalek.driver.capability['POST :sessionId/url hostNotFoundUrl'];
+    var previousUrl = null;
+
     var hostNotFound = function(requested, resolved) {
       if (!resolved) {
         return true;
       }
 
-      var notFoundUrl = dalek.driver.capability && dalek.driver.capability['POST :sessionId/url hostNotFoundUrl']
       if (requested === resolved || !notFoundUrl) {
         return false;
       }
 
-      return resolved === notFoundUrl;
+      // some drivers don't change the document's location if the target URL can't be resolved,
+      // so we check where we came from, where we wanted to go, and where we ended up
+      var _previous = URL.parse(previousUrl);
+      var _requested = URL.parse(requested);
+      var _resolved = URL.parse(resolved);
+      return resolved === notFoundUrl
+        // if we wanted to go to another host, but remained on the same host, we likely hit an host resolution error
+        // NOTE: this could break tests involving forwarding to another host
+        || (!notFoundRedirect && _previous.hostname !== _requested.hostname && _resolved.hostname === _previous.hostname);
     };
 
     var verify = function(url) {
@@ -96,6 +108,8 @@ module.exports = function(dalek) {
     };
 
     dalek.wd
+      // obtain the URL we started from to later check if we ever left
+      .url().then(function(url){ previousUrl = url; })
       // opening URL never fails
       .get(options.url)
       // so query current URL
