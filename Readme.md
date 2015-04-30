@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/dalekjs/skaro.png?label=ready&title=Ready)](https://waffle.io/dalekjs/skaro)
 # Skaro - DalekJS
 
 > HINT: Run a first "real" UI test with:
