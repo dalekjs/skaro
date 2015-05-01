@@ -74,8 +74,8 @@ module.exports = function(dalek) {
     // we're creating an action, give dalek that context
     var handle = new dalek.Handle(label, dalek.Handle.ACTION, meta.name);
 
-    var notFoundRedirect = dalek.driver.capability && dalek.driver.capability['POST :sessionId/url hostNotFoundRedirect'];
-    var notFoundUrl = dalek.driver.capability && dalek.driver.capability['POST :sessionId/url hostNotFoundUrl'];
+    var notFoundRedirect = dalek.driver.behaviors && dalek.driver.behaviors['POST :sessionId/url hostNotFoundRedirect'];
+    var notFoundUrl = dalek.driver.behaviors && dalek.driver.behaviors['POST :sessionId/url hostNotFoundUrl'];
     var previousUrl = null;
 
     var hostNotFound = function(requested, resolved) {
