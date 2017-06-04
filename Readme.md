@@ -1,3 +1,11 @@
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
+# DalekJS is not maintained any longer :cry:
+
+We recommend [TestCafé](http://devexpress.github.io/testcafe/) for your automated browser testing needs.
+
+---
+
 [![Stories in Ready](https://badge.waffle.io/dalekjs/skaro.png?label=ready&title=Ready)](https://waffle.io/dalekjs/skaro)
 # Skaro - DalekJS
 
